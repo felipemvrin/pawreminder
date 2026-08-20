@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '@/theme/tokens';
+import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 export default function HomeScreen() {
   return (
@@ -25,7 +25,7 @@ export default function HomeScreen() {
             backgroundColor: colors.primary,
             paddingHorizontal: spacing[5],
             paddingVertical: spacing[3],
-            borderRadius: 12
+            borderRadius: radius.lg
           }}
         >
           <Text style={{ ...typography.label, color: colors.primaryForeground }}>Ir a la siguiente</Text>
