@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { Cat, Dog, Plus } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
@@ -96,6 +97,8 @@ export default function HomeScreen() {
   const { summaries } = usePetTreatmentSummaries(pets);
   const bottomPadding = useScreenBottomPadding();
 
+  const showAnimation = (pets?.length ?? 0) <= 4;
+
   return (
     <Screen
       title="Mis mascotas"
@@ -124,14 +127,30 @@ export default function HomeScreen() {
         <FlatList
           data={pets}
           keyExtractor={(item) => item.id}
+          style={{ flex: 1 }}
           contentContainerStyle={{
             padding: spacing[6],
             paddingTop: 0,
-            paddingBottom: bottomPadding,
+            paddingBottom: showAnimation ? spacing[3] : bottomPadding,
             gap: spacing[3]
           }}
           renderItem={({ item }) => <PetCard pet={item} nextTreatment={summaries.get(item.id)} />}
         />
+      )}
+
+      {showAnimation && (
+        <View style={{ marginBottom: bottomPadding, gap: spacing[1] }}>
+          <LottieView
+            source={require('../assets/animations/animacion-home.json')}
+            autoPlay
+            loop
+            style={{ width: '100%', height: 180 }}
+            resizeMode="contain"
+          />
+          <Text style={{ ...typography.caption, color: colors.primary, textAlign: 'center' }}>
+            PawReminder
+          </Text>
+        </View>
       )}
     </Screen>
   );
