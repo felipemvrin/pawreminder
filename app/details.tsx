@@ -18,7 +18,9 @@ export default function DetailsScreen() {
       }}
     >
       <Text style={{ ...typography.heading, color: colors.primary }}>Siguiente pantalla</Text>
-      <Text style={{ ...typography.body, color: colors.muted }}>PawReminder avanzó correctamente.</Text>
+      <Text style={{ ...typography.body, color: colors.muted }}>
+        PawReminder avanzó correctamente.
+      </Text>
 
       <Pressable
         onPress={() => router.back()}

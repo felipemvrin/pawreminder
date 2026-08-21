@@ -4,7 +4,12 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'rea
 
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
 import { useMarkTreatmentApplied, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
-import { getTreatmentStatus, treatmentStatusColors, treatmentStatusLabels } from '@/lib/treatment-status';
+import {
+  getTreatmentStatus,
+  treatmentStatusColors,
+  treatmentStatusLabels
+} from '@/lib/treatment-status';
+import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { useToast } from '@/lib/toast-context';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Treatment } from '@/types/domain';
@@ -101,20 +106,29 @@ export default function PetDetailScreen() {
   const { data: pet, isLoading } = usePet(id);
   const { data: treatments, isLoading: isLoadingTreatments } = useTreatmentsByPet(id);
   const deletePet = useDeletePet();
+  const bottomPadding = useScreenBottomPadding();
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
+      <Screen title="Mascota">
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </Screen>
     );
   }
 
   if (!pet) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background, padding: spacing[6] }}>
-        <Text style={{ ...typography.body, color: colors.muted }}>No se encontró la mascota.</Text>
-      </View>
+      <Screen title="Mascota">
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing[6] }}
+        >
+          <Text style={{ ...typography.body, color: colors.muted }}>
+            No se encontró la mascota.
+          </Text>
+        </View>
+      </Screen>
     );
   }
 
@@ -133,7 +147,7 @@ export default function PetDetailScreen() {
             try {
               await deletePet.mutateAsync(pet.id);
               toast.success('Mascota eliminada');
-              router.back();
+              router.replace('/');
             } catch {
               toast.error('No se pudo eliminar la mascota');
             }
@@ -144,122 +158,130 @@ export default function PetDetailScreen() {
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing[6], gap: spacing[4] }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+    <Screen title={pet.name}>
+      <ScrollView
+        contentContainerStyle={{
+          padding: spacing[6],
+          paddingTop: 0,
+          paddingBottom: bottomPadding,
           gap: spacing[4]
         }}
       >
         <View
           style={{
-            width: 56,
-            height: 56,
-            borderRadius: radius.full,
-            backgroundColor: colors.secondary,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Icon size={28} color={colors.primary} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ ...typography.display, color: colors.primary }}>{pet.name}</Text>
-          <Text style={{ ...typography.body, color: colors.muted }}>
-            {pet.breed ? `${pet.breed} · ` : ''}
-            {pet.weightKg} kg
-          </Text>
-        </View>
-      </View>
-
-      <View style={{ flexDirection: 'row', gap: spacing[3] }}>
-        <Pressable
-          onPress={() => router.push(`/pet/edit/${pet.id}`)}
-          style={{
-            flex: 1,
-            paddingVertical: spacing[3],
-            borderRadius: radius.md,
-            borderWidth: 1,
-            borderColor: colors.border,
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ ...typography.label, color: colors.foreground }}>Editar</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => router.push({ pathname: '/history', params: { petId: pet.id } })}
-          style={{
-            flex: 1,
-            paddingVertical: spacing[3],
-            borderRadius: radius.md,
-            borderWidth: 1,
-            borderColor: colors.border,
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ ...typography.label, color: colors.foreground }}>Historial</Text>
-        </Pressable>
-        <Pressable
-          onPress={handleDeletePet}
-          style={{
-            flex: 1,
-            paddingVertical: spacing[3],
-            borderRadius: radius.md,
-            borderWidth: 1,
-            borderColor: colors.error,
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ ...typography.label, color: colors.error }}>Eliminar</Text>
-        </Pressable>
-      </View>
-
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ ...typography.label, color: colors.foreground }}>Tratamientos</Text>
-        <Pressable
-          onPress={() => router.push({ pathname: '/treatment/new', params: { petId: pet.id } })}
-          style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: spacing[1],
-            paddingHorizontal: spacing[3],
-            paddingVertical: spacing[2],
-            borderRadius: radius.md,
-            backgroundColor: colors.secondary
+            gap: spacing[4]
           }}
         >
-          <Plus size={16} color={colors.primary} />
-          <Text style={{ ...typography.label, color: colors.primary }}>Agregar</Text>
-        </Pressable>
-      </View>
+          <View
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: radius.full,
+              backgroundColor: colors.secondary,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Icon size={28} color={colors.primary} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ ...typography.heading, color: colors.foreground }}>{pet.name}</Text>
+            <Text style={{ ...typography.body, color: colors.muted }}>
+              {pet.breed ? `${pet.breed} · ` : ''}
+              {pet.weightKg} kg
+            </Text>
+          </View>
+        </View>
 
-      {isLoadingTreatments ? (
-        <ActivityIndicator color={colors.primary} />
-      ) : treatments && treatments.length > 0 ? (
-        <View style={{ gap: spacing[3] }}>
-          {treatments.map((treatment) => (
-            <TreatmentCard key={treatment.id} treatment={treatment} />
-          ))}
+        <View style={{ flexDirection: 'row', gap: spacing[3] }}>
+          <Pressable
+            onPress={() => router.push(`/pet/edit/${pet.id}`)}
+            style={{
+              flex: 1,
+              paddingVertical: spacing[3],
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ ...typography.label, color: colors.foreground }}>Editar</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push({ pathname: '/history', params: { petId: pet.id } })}
+            style={{
+              flex: 1,
+              paddingVertical: spacing[3],
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ ...typography.label, color: colors.foreground }}>Historial</Text>
+          </Pressable>
+          <Pressable
+            onPress={handleDeletePet}
+            style={{
+              flex: 1,
+              paddingVertical: spacing[3],
+              borderRadius: radius.md,
+              borderWidth: 1,
+              borderColor: colors.error,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ ...typography.label, color: colors.error }}>Eliminar</Text>
+          </Pressable>
         </View>
-      ) : (
+
         <View
-          style={{
-            padding: spacing[5],
-            borderRadius: radius.lg,
-            borderWidth: 1,
-            borderColor: colors.border,
-            backgroundColor: colors.surface
-          }}
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <Text style={{ ...typography.body, color: colors.muted }}>
-            Aún no hay tratamientos configurados para {pet.name}.
-          </Text>
+          <Text style={{ ...typography.label, color: colors.foreground }}>Tratamientos</Text>
+          <Pressable
+            onPress={() => router.push({ pathname: '/treatment/new', params: { petId: pet.id } })}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing[1],
+              paddingHorizontal: spacing[3],
+              paddingVertical: spacing[2],
+              borderRadius: radius.md,
+              backgroundColor: colors.secondary
+            }}
+          >
+            <Plus size={16} color={colors.primary} />
+            <Text style={{ ...typography.label, color: colors.primary }}>Agregar</Text>
+          </Pressable>
         </View>
-      )}
-    </ScrollView>
+
+        {isLoadingTreatments ? (
+          <ActivityIndicator color={colors.primary} />
+        ) : treatments && treatments.length > 0 ? (
+          <View style={{ gap: spacing[3] }}>
+            {treatments.map((treatment) => (
+              <TreatmentCard key={treatment.id} treatment={treatment} />
+            ))}
+          </View>
+        ) : (
+          <View
+            style={{
+              padding: spacing[5],
+              borderRadius: radius.lg,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: colors.surface
+            }}
+          >
+            <Text style={{ ...typography.body, color: colors.muted }}>
+              Aún no hay tratamientos configurados para {pet.name}.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </Screen>
   );
 }

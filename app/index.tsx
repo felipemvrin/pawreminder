@@ -4,7 +4,12 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { usePets } from '@/lib/hooks/use-pets';
 import { usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
-import { getTreatmentStatus, treatmentStatusColors, treatmentStatusLabels } from '@/lib/treatment-status';
+import {
+  getTreatmentStatus,
+  treatmentStatusColors,
+  treatmentStatusLabels
+} from '@/lib/treatment-status';
+import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Pet, Treatment } from '@/types/domain';
 
@@ -89,22 +94,17 @@ export default function HomeScreen() {
   const router = useRouter();
   const { data: pets, isLoading } = usePets();
   const { summaries } = usePetTreatmentSummaries(pets);
+  const bottomPadding = useScreenBottomPadding();
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: spacing[6],
-          paddingTop: spacing[12],
-          paddingBottom: spacing[4]
-        }}
-      >
-        <Text style={{ ...typography.display, color: colors.primary }}>Mis mascotas</Text>
+    <Screen
+      title="Mis mascotas"
+      showBack={false}
+      right={
         <Pressable
           onPress={() => router.push('/pet/new')}
+          accessibilityRole="button"
+          accessibilityLabel="Agregar mascota"
           style={{
             width: 44,
             height: 44,
@@ -116,18 +116,23 @@ export default function HomeScreen() {
         >
           <Plus size={22} color={colors.primaryForeground} />
         </Pressable>
-      </View>
-
+      }
+    >
       {!isLoading && pets && pets.length === 0 ? (
         <EmptyState />
       ) : (
         <FlatList
           data={pets}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: spacing[6], gap: spacing[3] }}
+          contentContainerStyle={{
+            padding: spacing[6],
+            paddingTop: 0,
+            paddingBottom: bottomPadding,
+            gap: spacing[3]
+          }}
           renderItem={({ item }) => <PetCard pet={item} nextTreatment={summaries.get(item.id)} />}
         />
       )}
-    </View>
+    </Screen>
   );
 }

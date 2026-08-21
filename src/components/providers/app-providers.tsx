@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { QueryClientProvider } from '@tanstack/react-query';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 
 import { queryClient } from '@/lib/query-client';
@@ -41,7 +42,14 @@ function DatabaseInitializer({ children }: PropsWithChildren) {
   // Hold rendering until the DB is ready so queries don't fire before initialization completes
   if (!isReady) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.background
+        }}
+      >
         <ActivityIndicator color={colors.primary} />
       </View>
     );
@@ -67,18 +75,20 @@ function NotificationQuickActionHandler() {
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
-    <TamaguiProvider config={tamaguiConfig} defaultTheme="pawLight">
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <DatabaseInitializer>
-            <>
-              {children}
-              <ToastContainer />
-              <NotificationQuickActionHandler />
-            </>
-          </DatabaseInitializer>
-        </ToastProvider>
-      </QueryClientProvider>
-    </TamaguiProvider>
+    <SafeAreaProvider>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme="pawLight">
+        <QueryClientProvider client={queryClient}>
+          <ToastProvider>
+            <DatabaseInitializer>
+              <>
+                {children}
+                <ToastContainer />
+                <NotificationQuickActionHandler />
+              </>
+            </DatabaseInitializer>
+          </ToastProvider>
+        </QueryClientProvider>
+      </TamaguiProvider>
+    </SafeAreaProvider>
   );
 }
