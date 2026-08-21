@@ -97,7 +97,7 @@ export default function HomeScreen() {
   const { summaries } = usePetTreatmentSummaries(pets);
   const bottomPadding = useScreenBottomPadding();
 
-  const showAnimation = (pets?.length ?? 0) <= 4;
+  const showAnimation = !isLoading && (pets?.length ?? 0) > 0 && (pets?.length ?? 0) <= 4;
 
   return (
     <Screen

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -17,6 +17,7 @@ import tamaguiConfig from '../../../tamagui.config';
 
 function DatabaseInitializer({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -24,11 +25,15 @@ function DatabaseInitializer({ children }: PropsWithChildren) {
     const initializeDatabase = async () => {
       try {
         await databaseService.initialize();
-        console.log('Database initialized successfully');
+        if (!cancelled) setIsReady(true);
       } catch (error) {
         console.error('Failed to initialize database:', error);
-      } finally {
-        if (!cancelled) setIsReady(true);
+        if (!cancelled) {
+          setInitError(
+            error instanceof Error ? error.message : 'Error desconocido al inicializar la base de datos'
+          );
+          setIsReady(true);
+        }
       }
     };
 
@@ -51,6 +56,24 @@ function DatabaseInitializer({ children }: PropsWithChildren) {
         }}
       >
         <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (initError) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 24,
+          backgroundColor: colors.background
+        }}
+      >
+        <Text style={{ fontSize: 16, color: colors.error, textAlign: 'center' }}>
+          No se pudo inicializar la base de datos. Reinicia la aplicación.
+        </Text>
       </View>
     );
   }
