@@ -35,7 +35,7 @@ export const radius = {
 } as const;
 
 export const typography = {
-  display: { fontSize: 32, lineHeight: 40, fontWeight: '700' },
+  display: { fontSize: 29, lineHeight: 36, fontWeight: '700' },
   heading: { fontSize: 24, lineHeight: 32, fontWeight: '700' },
   body: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
   label: { fontSize: 14, lineHeight: 20, fontWeight: '600' },

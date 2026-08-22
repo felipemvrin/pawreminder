@@ -4,7 +4,11 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
+    "start": "npm run metro:kill --silent && expo start",
+    "start:clear": "npm run metro:kill --silent && expo start --clear",
+    "start:lan": "npm run metro:kill --silent && REACT_NATIVE_PACKAGER_HOSTNAME=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) expo start --lan",
+    "start:tunnel": "npm run metro:kill --silent && expo start --tunnel",
+    "metro:kill": "lsof -ti:8081,8082 | xargs kill -9 2>/dev/null; sleep 1; true",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -31,6 +35,7 @@
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.0",
     "jest-expo": "~54.0.17",
+    "lottie-react-native": "~7.3.1",
     "lucide-react-native": "^1.31.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -47,6 +52,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.10",
