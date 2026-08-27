@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
+import { ProductSelect } from '@/components/ProductSelect';
 import {
   treatmentFormDefaultValues,
   treatmentFormSchema,
@@ -109,44 +110,24 @@ export function TreatmentForm({
         <FieldError message={errors.type?.message} />
       </View>
 
-      <View style={{ gap: spacing[2] }}>
-        <FieldLabel>Producto (opcional)</FieldLabel>
-        <Controller
-          control={control}
-          name="productName"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder="Ej. Nexgard"
-              placeholderTextColor={colors.muted}
-              style={inputStyle}
-            />
-          )}
-        />
-        <FieldError message={errors.productName?.message} />
-      </View>
-
-      <View style={{ gap: spacing[2] }}>
-        <FieldLabel>Frecuencia (días)</FieldLabel>
-        <Controller
-          control={control}
-          name="frequencyDays"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              value={value ? String(value) : ''}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder="Ej. 30"
-              placeholderTextColor={colors.muted}
-              keyboardType="number-pad"
-              style={inputStyle}
-            />
-          )}
-        />
-        <FieldError message={errors.frequencyDays?.message} />
-      </View>
+      <Controller
+        control={control}
+        name="productName"
+        render={({ field: { onChange: onProductChange, value: productName } }) => (
+          <Controller
+            control={control}
+            name="frequencyDays"
+            render={({ field: { onChange: onFrequencyDaysChange, value: frequencyDays } }) => (
+              <ProductSelect
+                productName={productName}
+                onProductChange={(name) => onProductChange(name)}
+                onFrequencyDaysChange={(days) => onFrequencyDaysChange(days)}
+              />
+            )}
+          />
+        )}
+      />
+      <FieldError message={errors.productName?.message ?? errors.frequencyDays?.message} />
 
       <View style={{ gap: spacing[2] }}>
         <FieldLabel>Última aplicación (DD-MM-AAAA)</FieldLabel>
