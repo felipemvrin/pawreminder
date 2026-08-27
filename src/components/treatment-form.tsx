@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { ChevronDown } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 
 import {
   treatmentFormDefaultValues,
@@ -154,23 +155,73 @@ export function TreatmentForm({
             <>
               <Pressable
                 accessibilityRole="button"
+                accessibilityLabel="Seleccionar última fecha de aplicación"
                 onPress={() => setIsDatePickerVisible(true)}
-                style={{ ...inputStyle, justifyContent: 'center' }}
+                style={{
+                  ...inputStyle,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
               >
                 <Text style={{ fontSize: 16, color: colors.foreground }}>
                   {isoDateToDisplay(value)}
                 </Text>
+                <ChevronDown size={20} color={colors.muted} />
               </Pressable>
               {isDatePickerVisible && (
-                <DateTimePicker
-                  value={isoDateToLocalDate(value)}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => {
-                    setIsDatePickerVisible(false);
-                    if (selectedDate) onChange(localDateToISO(selectedDate));
-                  }}
-                />
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible
+                  onRequestClose={() => setIsDatePickerVisible(false)}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                      backgroundColor: 'rgba(0, 0, 0, 0.35)'
+                    }}
+                  >
+                    <View
+                      style={{
+                        padding: spacing[5],
+                        borderTopLeftRadius: radius.lg,
+                        borderTopRightRadius: radius.lg,
+                        backgroundColor: colors.surface,
+                        gap: spacing[3]
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <Text style={{ ...typography.label, color: colors.foreground }}>
+                          Selecciona una fecha
+                        </Text>
+                        <Pressable onPress={() => setIsDatePickerVisible(false)}>
+                          <Text style={{ ...typography.label, color: colors.primary }}>
+                            Cancelar
+                          </Text>
+                        </Pressable>
+                      </View>
+                      <DateTimePicker
+                        value={isoDateToLocalDate(value)}
+                        mode="date"
+                        display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+                        onChange={(event, selectedDate) => {
+                          if (selectedDate) onChange(localDateToISO(selectedDate));
+                          if (Platform.OS === 'android' || selectedDate) {
+                            setIsDatePickerVisible(false);
+                          }
+                        }}
+                      />
+                    </View>
+                  </View>
+                </Modal>
               )}
             </>
           )}
