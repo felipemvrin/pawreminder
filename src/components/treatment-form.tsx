@@ -1,8 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { ChevronDown } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import {
   treatmentFormDefaultValues,
@@ -49,6 +51,7 @@ export function TreatmentForm({
   onSubmit
 }: TreatmentFormProps) {
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [tempDate, setTempDate] = useState<Date | null>(null);
   const {
     control,
     handleSubmit,
@@ -154,23 +157,110 @@ export function TreatmentForm({
             <>
               <Pressable
                 accessibilityRole="button"
-                onPress={() => setIsDatePickerVisible(true)}
-                style={{ ...inputStyle, justifyContent: 'center' }}
+                accessibilityLabel="Seleccionar última fecha de aplicación"
+                onPress={() => {
+                  setTempDate(isoDateToLocalDate(value));
+                  setIsDatePickerVisible(true);
+                }}
+                style={{
+                  ...inputStyle,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
               >
                 <Text style={{ fontSize: 16, color: colors.foreground }}>
                   {isoDateToDisplay(value)}
                 </Text>
+                <ChevronDown size={20} color={colors.muted} />
               </Pressable>
               {isDatePickerVisible && (
-                <DateTimePicker
-                  value={isoDateToLocalDate(value)}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => {
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible
+                  onRequestClose={() => {
+                    setTempDate(null);
                     setIsDatePickerVisible(false);
-                    if (selectedDate) onChange(localDateToISO(selectedDate));
                   }}
-                />
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                      backgroundColor: 'rgba(0, 0, 0, 0.35)'
+                    }}
+                  >
+                    <View
+                      style={{
+                        padding: spacing[5],
+                        borderTopLeftRadius: radius.lg,
+                        borderTopRightRadius: radius.lg,
+                        backgroundColor: colors.surface,
+                        gap: spacing[3]
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <Text style={{ ...typography.label, color: colors.foreground }}>
+                          Selecciona una fecha
+                        </Text>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Cancelar selección de fecha"
+                          onPress={() => {
+                            setTempDate(null);
+                            setIsDatePickerVisible(false);
+                          }}
+                        >
+                          <Text style={{ ...typography.label, color: colors.primary }}>
+                            Cancelar
+                          </Text>
+                        </Pressable>
+                      </View>
+                      <DateTimePicker
+                        value={tempDate ?? isoDateToLocalDate(value)}
+                        mode="date"
+                        display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+                        locale="es"
+                        onChange={(_event: DateTimePickerEvent, selectedDate?: Date) => {
+                          if (Platform.OS === 'android') {
+                            if (selectedDate) onChange(localDateToISO(selectedDate));
+                            setIsDatePickerVisible(false);
+                          } else if (selectedDate) {
+                            setTempDate(selectedDate);
+                          }
+                        }}
+                      />
+                      {Platform.OS === 'ios' && (
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Confirmar fecha seleccionada"
+                          onPress={() => {
+                            if (tempDate) onChange(localDateToISO(tempDate));
+                            setTempDate(null);
+                            setIsDatePickerVisible(false);
+                          }}
+                          style={{
+                            paddingVertical: spacing[3],
+                            borderRadius: radius.md,
+                            backgroundColor: colors.primary,
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Text style={{ ...typography.label, color: colors.primaryForeground }}>
+                            Confirmar
+                          </Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  </View>
+                </Modal>
               )}
             </>
           )}

@@ -8,7 +8,10 @@
     "scheme": "pawreminder",
     "plugins": ["expo-router", "expo-notifications"],
     "experiments": { "typedRoutes": true },
-    "ios": { "supportsTablet": true },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": { "CFBundleLocalizations": ["es"] }
+    },
     "android": { "package": "com.felipemvrin.pawreminder" },
     "web": { "bundler": "metro", "output": "static" }
   }
