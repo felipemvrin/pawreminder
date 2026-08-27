@@ -1,14 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import type { Treatment, TreatmentLog, EntityId, ISODateString } from '@/types/domain';
 import { databaseService } from '@/services/database/database-service';
-
-function parseDate(dateString: string): Date {
-  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
-  if (!dateOnlyMatch) return new Date(dateString);
-
-  const [, year, month, day] = dateOnlyMatch;
-  return new Date(Number(year), Number(month) - 1, Number(day));
-}
+import { isoDateToLocalDate } from '@/lib/date-format';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -81,7 +74,7 @@ class NotificationServiceImpl implements NotificationServiceType {
       };
 
       // Calculate reminder date (X days before) - use number of seconds
-      const reminderDate = parseDate(treatment.nextDueDate);
+      const reminderDate = isoDateToLocalDate(treatment.nextDueDate);
       reminderDate.setDate(reminderDate.getDate() - treatment.reminderDaysBefore);
       const reminderSeconds = Math.floor((reminderDate.getTime() - Date.now()) / 1000);
 
@@ -108,7 +101,7 @@ class NotificationServiceImpl implements NotificationServiceType {
 
       // Schedule due date notification
       const dueSeconds = Math.floor(
-        (parseDate(treatment.nextDueDate).getTime() - Date.now()) / 1000
+        (isoDateToLocalDate(treatment.nextDueDate).getTime() - Date.now()) / 1000
       );
       if (dueSeconds > 0) {
         notificationIds.dueNotificationId = await Notifications.scheduleNotificationAsync({

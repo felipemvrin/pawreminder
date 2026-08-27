@@ -8,16 +8,9 @@ import type {
   Species,
   TreatmentType
 } from '@/types/domain';
+import { isoDateToLocalDate, localDateToISO } from '@/lib/date-format';
 
 const DATABASE_NAME = 'pawreminder.db';
-
-function parseDate(dateString: string): Date {
-  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
-  if (!dateOnlyMatch) return new Date(dateString);
-
-  const [, year, month, day] = dateOnlyMatch;
-  return new Date(Number(year), Number(month) - 1, Number(day));
-}
 
 class DatabaseService {
   private db: SQLite.SQLiteDatabase | null = null;
@@ -360,9 +353,9 @@ class DatabaseService {
   // ============ HELPER METHODS ============
 
   calculateNextDueDate(lastAppliedDate: ISODateString, frequencyDays: number): ISODateString {
-    const date = parseDate(lastAppliedDate);
+    const date = isoDateToLocalDate(lastAppliedDate);
     date.setDate(date.getDate() + frequencyDays);
-    return date.toISOString().split('T')[0];
+    return localDateToISO(date);
   }
 
   private generateId(): EntityId {

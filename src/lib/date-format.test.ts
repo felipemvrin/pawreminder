@@ -16,4 +16,9 @@ describe('date format helpers', () => {
   it('converts a local date back to the storage format', () => {
     expect(localDateToISO(new Date(2026, 7, 26))).toBe('2026-08-26');
   });
+
+  it('returns the raw string when the input does not match ISO format', () => {
+    expect(isoDateToDisplay('invalid')).toBe('invalid');
+    expect(isoDateToDisplay('')).toBe('');
+  });
 });
