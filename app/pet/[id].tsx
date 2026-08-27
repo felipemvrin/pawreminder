@@ -159,7 +159,7 @@ export default function PetDetailScreen() {
   };
 
   return (
-    <Screen title={pet.name}>
+    <Screen>
       <ScrollView
         contentContainerStyle={{
           padding: spacing[6],

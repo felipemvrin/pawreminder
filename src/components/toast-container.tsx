@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, Animated } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast, type ToastType } from '@/lib/toast-context';
 import { X } from 'lucide-react-native';
 
@@ -46,6 +47,7 @@ const ToastMessage: React.FC<{ text: string }> = ({ text }) => {
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToast();
+  const insets = useSafeAreaInsets();
 
   if (toasts.length === 0) return null;
 
@@ -53,7 +55,7 @@ export const ToastContainer: React.FC = () => {
     <View
       style={{
         position: 'absolute',
-        top: 0,
+        top: insets.top + 8,
         left: 0,
         right: 0,
         zIndex: 9999,
