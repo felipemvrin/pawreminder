@@ -6,10 +6,18 @@ import type {
   Treatment,
   TreatmentLog,
   Species,
-  TreatmentType,
+  TreatmentType
 } from '@/types/domain';
 
 const DATABASE_NAME = 'pawreminder.db';
+
+function parseDate(dateString: string): Date {
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+  if (!dateOnlyMatch) return new Date(dateString);
+
+  const [, year, month, day] = dateOnlyMatch;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
 
 class DatabaseService {
   private db: SQLite.SQLiteDatabase | null = null;
@@ -96,7 +104,7 @@ class DatabaseService {
           fullPet.weightKg,
           fullPet.livesOutdoors ? 1 : 0,
           fullPet.photoUri || null,
-          fullPet.createdAt,
+          fullPet.createdAt
         ]
       );
 
@@ -129,7 +137,10 @@ class DatabaseService {
     }
   }
 
-  async updatePet(petId: EntityId, updates: Partial<Omit<Pet, 'id' | 'createdAt'>>): Promise<Pet | null> {
+  async updatePet(
+    petId: EntityId,
+    updates: Partial<Omit<Pet, 'id' | 'createdAt'>>
+  ): Promise<Pet | null> {
     const pet = await this.getPetById(petId);
     if (!pet) return null;
 
@@ -149,7 +160,7 @@ class DatabaseService {
           updated.weightKg,
           updated.livesOutdoors ? 1 : 0,
           updated.photoUri || null,
-          petId,
+          petId
         ]
       );
 
@@ -201,7 +212,7 @@ class DatabaseService {
           fullTreatment.notificationIdDueDate || null,
           fullTreatment.notificationIdReminder || null,
           fullTreatment.active ? 1 : 0,
-          fullTreatment.createdAt,
+          fullTreatment.createdAt
         ]
       );
 
@@ -215,7 +226,9 @@ class DatabaseService {
   async getTreatmentById(treatmentId: EntityId): Promise<Treatment | null> {
     try {
       const db = this.ensureDb();
-      const row = await db.getFirstAsync<any>('SELECT * FROM treatments WHERE id = ?', [treatmentId]);
+      const row = await db.getFirstAsync<any>('SELECT * FROM treatments WHERE id = ?', [
+        treatmentId
+      ]);
       return row ? this.mapRowToTreatment(row) : null;
     } catch (error) {
       console.error('Failed to get treatment:', error);
@@ -237,7 +250,10 @@ class DatabaseService {
     }
   }
 
-  async updateTreatment(treatmentId: EntityId, updates: Partial<Omit<Treatment, 'id' | 'createdAt'>>): Promise<Treatment | null> {
+  async updateTreatment(
+    treatmentId: EntityId,
+    updates: Partial<Omit<Treatment, 'id' | 'createdAt'>>
+  ): Promise<Treatment | null> {
     const treatment = await this.getTreatmentById(treatmentId);
     if (!treatment) return null;
 
@@ -260,7 +276,7 @@ class DatabaseService {
           updated.notificationIdDueDate || null,
           updated.notificationIdReminder || null,
           updated.active ? 1 : 0,
-          treatmentId,
+          treatmentId
         ]
       );
 
@@ -302,7 +318,7 @@ class DatabaseService {
           fullLog.petId,
           fullLog.appliedDate,
           fullLog.notes || null,
-          fullLog.createdAt,
+          fullLog.createdAt
         ]
       );
 
@@ -344,7 +360,7 @@ class DatabaseService {
   // ============ HELPER METHODS ============
 
   calculateNextDueDate(lastAppliedDate: ISODateString, frequencyDays: number): ISODateString {
-    const date = new Date(lastAppliedDate);
+    const date = parseDate(lastAppliedDate);
     date.setDate(date.getDate() + frequencyDays);
     return date.toISOString().split('T')[0];
   }
@@ -365,7 +381,7 @@ class DatabaseService {
       weightKg: row.weightKg,
       livesOutdoors: row.livesOutdoors === 1,
       photoUri: row.photoUri || undefined,
-      createdAt: row.createdAt,
+      createdAt: row.createdAt
     };
   }
 
@@ -382,7 +398,7 @@ class DatabaseService {
       notificationIdDueDate: row.notificationIdDueDate || undefined,
       notificationIdReminder: row.notificationIdReminder || undefined,
       active: row.active === 1,
-      createdAt: row.createdAt,
+      createdAt: row.createdAt
     };
   }
 
@@ -393,7 +409,7 @@ class DatabaseService {
       petId: row.petId,
       appliedDate: row.appliedDate,
       notes: row.notes || undefined,
-      createdAt: row.createdAt,
+      createdAt: row.createdAt
     };
   }
 }

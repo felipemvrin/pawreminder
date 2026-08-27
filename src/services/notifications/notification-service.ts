@@ -2,6 +2,14 @@ import * as Notifications from 'expo-notifications';
 import type { Treatment, TreatmentLog, EntityId, ISODateString } from '@/types/domain';
 import { databaseService } from '@/services/database/database-service';
 
+function parseDate(dateString: string): Date {
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+  if (!dateOnlyMatch) return new Date(dateString);
+
+  const [, year, month, day] = dateOnlyMatch;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -9,15 +17,24 @@ Notifications.setNotificationHandler({
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
-    shouldShowList: true,
-  }),
+    shouldShowList: true
+  })
 });
 
 export interface NotificationServiceType {
   requestPermissions(): Promise<boolean>;
-  scheduleTreatmentNotifications(treatment: Treatment): Promise<{ reminderNotificationId?: string; dueNotificationId?: string }>;
-  cancelTreatmentNotifications(notificationIds: { reminderId?: string; dueId?: string }): Promise<void>;
-  markTreatmentAsApplied(treatmentId: EntityId, appliedDate: ISODateString, notes?: string): Promise<TreatmentLog>;
+  scheduleTreatmentNotifications(
+    treatment: Treatment
+  ): Promise<{ reminderNotificationId?: string; dueNotificationId?: string }>;
+  cancelTreatmentNotifications(notificationIds: {
+    reminderId?: string;
+    dueId?: string;
+  }): Promise<void>;
+  markTreatmentAsApplied(
+    treatmentId: EntityId,
+    appliedDate: ISODateString,
+    notes?: string
+  ): Promise<TreatmentLog>;
 }
 
 class NotificationServiceImpl implements NotificationServiceType {
@@ -33,8 +50,8 @@ class NotificationServiceImpl implements NotificationServiceType {
         ios: {
           allowAlert: true,
           allowBadge: true,
-          allowSound: true,
-        },
+          allowSound: true
+        }
       });
 
       return result.granted;
@@ -44,7 +61,9 @@ class NotificationServiceImpl implements NotificationServiceType {
     }
   }
 
-  async scheduleTreatmentNotifications(treatment: Treatment): Promise<{ reminderNotificationId?: string; dueNotificationId?: string }> {
+  async scheduleTreatmentNotifications(
+    treatment: Treatment
+  ): Promise<{ reminderNotificationId?: string; dueNotificationId?: string }> {
     try {
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
@@ -58,11 +77,11 @@ class NotificationServiceImpl implements NotificationServiceType {
 
       const notificationIds = {
         reminderNotificationId: undefined as string | undefined,
-        dueNotificationId: undefined as string | undefined,
+        dueNotificationId: undefined as string | undefined
       };
 
       // Calculate reminder date (X days before) - use number of seconds
-      const reminderDate = new Date(treatment.nextDueDate);
+      const reminderDate = parseDate(treatment.nextDueDate);
       reminderDate.setDate(reminderDate.getDate() - treatment.reminderDaysBefore);
       const reminderSeconds = Math.floor((reminderDate.getTime() - Date.now()) / 1000);
 
@@ -76,19 +95,21 @@ class NotificationServiceImpl implements NotificationServiceType {
               treatmentId: treatment.id,
               petId: treatment.petId,
               type: 'reminder',
-              treatmentType: treatment.type,
-            },
+              treatmentType: treatment.type
+            }
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
             seconds: reminderSeconds,
             repeats: false
-          },
+          }
         });
       }
 
       // Schedule due date notification
-      const dueSeconds = Math.floor((new Date(treatment.nextDueDate).getTime() - Date.now()) / 1000);
+      const dueSeconds = Math.floor(
+        (parseDate(treatment.nextDueDate).getTime() - Date.now()) / 1000
+      );
       if (dueSeconds > 0) {
         notificationIds.dueNotificationId = await Notifications.scheduleNotificationAsync({
           content: {
@@ -98,14 +119,14 @@ class NotificationServiceImpl implements NotificationServiceType {
               treatmentId: treatment.id,
               petId: treatment.petId,
               type: 'due-date',
-              treatmentType: treatment.type,
-            },
+              treatmentType: treatment.type
+            }
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
             seconds: dueSeconds,
             repeats: false
-          },
+          }
         });
       }
 
@@ -116,7 +137,10 @@ class NotificationServiceImpl implements NotificationServiceType {
     }
   }
 
-  async cancelTreatmentNotifications(notificationIds: { reminderId?: string; dueId?: string }): Promise<void> {
+  async cancelTreatmentNotifications(notificationIds: {
+    reminderId?: string;
+    dueId?: string;
+  }): Promise<void> {
     try {
       const promises: Promise<void>[] = [];
 
@@ -135,7 +159,11 @@ class NotificationServiceImpl implements NotificationServiceType {
     }
   }
 
-  async markTreatmentAsApplied(treatmentId: EntityId, appliedDate: ISODateString, notes?: string): Promise<TreatmentLog> {
+  async markTreatmentAsApplied(
+    treatmentId: EntityId,
+    appliedDate: ISODateString,
+    notes?: string
+  ): Promise<TreatmentLog> {
     try {
       const treatment = await databaseService.getTreatmentById(treatmentId);
       if (!treatment) {
@@ -147,16 +175,19 @@ class NotificationServiceImpl implements NotificationServiceType {
         treatmentId: treatment.id,
         petId: treatment.petId,
         appliedDate,
-        notes,
+        notes
       });
 
       // Calculate new next due date
-      const nextDueDate = databaseService.calculateNextDueDate(appliedDate, treatment.frequencyDays);
+      const nextDueDate = databaseService.calculateNextDueDate(
+        appliedDate,
+        treatment.frequencyDays
+      );
 
       // Cancel old notifications
       await this.cancelTreatmentNotifications({
         reminderId: treatment.notificationIdReminder,
-        dueId: treatment.notificationIdDueDate,
+        dueId: treatment.notificationIdDueDate
       });
 
       // Update treatment with new dates
@@ -164,7 +195,7 @@ class NotificationServiceImpl implements NotificationServiceType {
         lastAppliedDate: appliedDate,
         nextDueDate,
         notificationIdReminder: undefined,
-        notificationIdDueDate: undefined,
+        notificationIdDueDate: undefined
       });
 
       if (updatedTreatment) {
@@ -172,7 +203,7 @@ class NotificationServiceImpl implements NotificationServiceType {
         const newNotificationIds = await this.scheduleTreatmentNotifications(updatedTreatment);
         await databaseService.updateTreatment(treatmentId, {
           notificationIdReminder: newNotificationIds.reminderNotificationId,
-          notificationIdDueDate: newNotificationIds.dueNotificationId,
+          notificationIdDueDate: newNotificationIds.dueNotificationId
         });
       }
 
@@ -186,7 +217,7 @@ class NotificationServiceImpl implements NotificationServiceType {
   private getTreatmentTypeLabel(type: string): string {
     const labels: Record<string, string> = {
       internal: 'Tratamiento interno',
-      external: 'Tratamiento externo',
+      external: 'Tratamiento externo'
     };
     return labels[type] || 'Tratamiento';
   }
