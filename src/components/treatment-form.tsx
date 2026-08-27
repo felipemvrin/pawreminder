@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import {
   treatmentFormDefaultValues,
@@ -50,6 +51,7 @@ export function TreatmentForm({
   onSubmit
 }: TreatmentFormProps) {
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [tempDate, setTempDate] = useState<Date | null>(null);
   const {
     control,
     handleSubmit,
@@ -156,7 +158,10 @@ export function TreatmentForm({
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Seleccionar última fecha de aplicación"
-                onPress={() => setIsDatePickerVisible(true)}
+                onPress={() => {
+                  setTempDate(isoDateToLocalDate(value));
+                  setIsDatePickerVisible(true);
+                }}
                 style={{
                   ...inputStyle,
                   flexDirection: 'row',
@@ -174,7 +179,10 @@ export function TreatmentForm({
                   animationType="slide"
                   transparent
                   visible
-                  onRequestClose={() => setIsDatePickerVisible(false)}
+                  onRequestClose={() => {
+                    setTempDate(null);
+                    setIsDatePickerVisible(false);
+                  }}
                 >
                   <View
                     style={{
@@ -202,23 +210,54 @@ export function TreatmentForm({
                         <Text style={{ ...typography.label, color: colors.foreground }}>
                           Selecciona una fecha
                         </Text>
-                        <Pressable onPress={() => setIsDatePickerVisible(false)}>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Cancelar selección de fecha"
+                          onPress={() => {
+                            setTempDate(null);
+                            setIsDatePickerVisible(false);
+                          }}
+                        >
                           <Text style={{ ...typography.label, color: colors.primary }}>
                             Cancelar
                           </Text>
                         </Pressable>
                       </View>
                       <DateTimePicker
-                        value={isoDateToLocalDate(value)}
+                        value={tempDate ?? isoDateToLocalDate(value)}
                         mode="date"
                         display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
-                        onChange={(event, selectedDate) => {
-                          if (selectedDate) onChange(localDateToISO(selectedDate));
-                          if (Platform.OS === 'android' || selectedDate) {
+                        locale="es"
+                        onChange={(_event: DateTimePickerEvent, selectedDate?: Date) => {
+                          if (Platform.OS === 'android') {
+                            if (selectedDate) onChange(localDateToISO(selectedDate));
                             setIsDatePickerVisible(false);
+                          } else if (selectedDate) {
+                            setTempDate(selectedDate);
                           }
                         }}
                       />
+                      {Platform.OS === 'ios' && (
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Confirmar fecha seleccionada"
+                          onPress={() => {
+                            if (tempDate) onChange(localDateToISO(tempDate));
+                            setTempDate(null);
+                            setIsDatePickerVisible(false);
+                          }}
+                          style={{
+                            paddingVertical: spacing[3],
+                            borderRadius: radius.md,
+                            backgroundColor: colors.primary,
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Text style={{ ...typography.label, color: colors.primaryForeground }}>
+                            Confirmar
+                          </Text>
+                        </Pressable>
+                      )}
                     </View>
                   </View>
                 </Modal>
