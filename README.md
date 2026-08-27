@@ -79,6 +79,54 @@ Google Calendar y la programación de recordatorios se implementarán en etapas 
 | `npm run format`    | Comprueba formato con Prettier             |
 | `npm test`          | Ejecuta pruebas unitarias y de componentes |
 
+## Estado del proyecto
+
+PawReminder se encuentra en la **Fase 3: validación y estabilización del MVP**.
+
+### Fases
+
+- [x] **Fase 0: Preparación técnica**
+  - Configuración de Expo, TypeScript, Expo Router y Tamagui.
+  - Definición de tipos, tokens y arquitectura.
+  - Configuración de ESLint, Prettier y Jest.
+
+- [x] **Fase 1: Persistencia e infraestructura**
+  - Base de datos local SQLite.
+  - Servicios desacoplados para almacenamiento y notificaciones.
+  - Configuración de TanStack Query y formularios con React Hook Form y Zod.
+
+- [x] **Fase 2: MVP funcional local**
+  - Crear, editar y eliminar mascotas.
+  - Configurar tratamientos internos y externos.
+  - Calcular próximas fechas de aplicación.
+  - Mostrar estados próximo, hoy y vencido.
+  - Registrar aplicaciones e historial.
+  - Programar notificaciones locales.
+  - Marcar tratamientos como aplicados desde una notificación.
+  - Consultar el estado de los tratamientos desde la pantalla principal.
+
+- [ ] **Fase 3: Validación y estabilización**
+  - Probar los flujos completos en dispositivos físicos Android e iOS.
+  - Añadir pruebas para base de datos, tratamientos y notificaciones.
+  - Mejorar estados de carga, error y ausencia de datos.
+  - Revisar permisos y comportamiento de notificaciones.
+  - Mejorar la selección y validación de fechas.
+  - Corregir incidencias encontradas durante el uso real.
+
+- [ ] **Fase 4: Mejoras de producto**
+  - Calendario de tratamientos.
+  - Fotografías de mascotas.
+  - Repetición y edición avanzada de tratamientos.
+  - Configuración de horarios y preferencias de notificación.
+  - Soporte ampliado para cuidados y vacunas.
+
+- [ ] **Fase 5: Sincronización y publicación**
+  - Sincronización opcional en la nube.
+  - Cuenta de usuario y recuperación de datos.
+  - Copias de seguridad y migraciones.
+  - Analítica y monitoreo de errores.
+  - Builds de producción y publicación en App Store y Google Play.
+
 ## Estado actual
 
 La configuración inicial está preparada con Expo Router, design tokens, tipos de dominio,
