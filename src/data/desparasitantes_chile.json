@@ -1,0 +1,204 @@
+{
+  "moneda": "CLP",
+  "pais": "Chile",
+  "fecha_referencia": "2026-08-26",
+  "nota": "Precios referenciales de tiendas online chilenas (Amigales, Petvet, B-Pets, Punto Mascotas, Perros y Gatos, Salcobrand, EcoFarmacias, Centralvet, VetBox). Varían por farmacia, promoción y stock.",
+  "productos": [
+    {
+      "marca": "Bravecto",
+      "tipo": ["externo"],
+      "laboratorio": "MSD",
+      "principio_activo": "Fluralaner",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 84,
+      "frecuencia_texto": "Cada 12 semanas (3 meses)",
+      "presentaciones": [
+        { "peso_min_kg": 2, "peso_max_kg": 4.5, "mg": 112.5, "precio_min": 17990, "precio_max": 21990 },
+        { "peso_min_kg": 4.5, "peso_max_kg": 10, "mg": 250, "precio_min": 21990, "precio_max": 23990 },
+        { "peso_min_kg": 10, "peso_max_kg": 20, "mg": 500, "precio_min": 23990, "precio_max": 27990 },
+        { "peso_min_kg": 20, "peso_max_kg": 40, "mg": 1000, "precio_min": 32990, "precio_max": 35990 },
+        { "peso_min_kg": 40, "peso_max_kg": 56, "mg": 1400, "precio_min": 40990, "precio_max": 44990 }
+      ]
+    },
+    {
+      "marca": "NexGard",
+      "tipo": ["externo"],
+      "laboratorio": "Boehringer Ingelheim",
+      "principio_activo": "Afoxolaner",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual",
+      "presentaciones": [
+        { "peso_min_kg": 2, "peso_max_kg": 4, "mg": 11.3, "precio_min": 6990, "precio_max": 7990 },
+        { "peso_min_kg": 4, "peso_max_kg": 10, "mg": 28.3, "precio_min": 6990, "precio_max": 8500 },
+        { "peso_min_kg": 10, "peso_max_kg": 25, "mg": 68, "precio_min": 7990, "precio_max": 8900 },
+        { "peso_min_kg": 25, "peso_max_kg": 50, "mg": 136, "precio_min": 11990, "precio_max": 14990 }
+      ]
+    },
+    {
+      "marca": "NexGard Spectra",
+      "tipo": ["externo", "interno"],
+      "laboratorio": "Boehringer Ingelheim",
+      "principio_activo": "Afoxolaner + Milbemicina oxima",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual (cubre pulgas, garrapatas, gusanos redondos, anquilostomas, tricocéfalos y gusano del corazón)",
+      "presentaciones": [
+        { "peso_min_kg": 2, "peso_max_kg": 3.5, "mg": null, "precio_min": 10990, "precio_max": 13990 },
+        { "peso_min_kg": 3.5, "peso_max_kg": 7.5, "mg": null, "precio_min": 10990, "precio_max": 14990 },
+        { "peso_min_kg": 7.5, "peso_max_kg": 15, "mg": null, "precio_min": 12990, "precio_max": 16990 },
+        { "peso_min_kg": 15, "peso_max_kg": 30, "mg": null, "precio_min": 14990, "precio_max": 18990 },
+        { "peso_min_kg": 30, "peso_max_kg": 60, "mg": null, "precio_min": 17990, "precio_max": 21990 }
+      ]
+    },
+    {
+      "marca": "Simparica",
+      "tipo": ["externo"],
+      "laboratorio": "Zoetis",
+      "principio_activo": "Sarolaner",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 35,
+      "frecuencia_texto": "Cada 35 días (mensual)",
+      "presentaciones": [
+        { "peso_min_kg": 2.5, "peso_max_kg": 5, "mg": 10, "precio_min": 7290, "precio_max": 9990 },
+        { "peso_min_kg": 5, "peso_max_kg": 10, "mg": 20, "precio_min": 8290, "precio_max": 9990 },
+        { "peso_min_kg": 10, "peso_max_kg": 20, "mg": 40, "precio_min": 8290, "precio_max": 11990 },
+        { "peso_min_kg": 20, "peso_max_kg": 40, "mg": 80, "precio_min": 12990, "precio_max": 14990 }
+      ]
+    },
+    {
+      "marca": "Simparica Trio",
+      "tipo": ["externo", "interno"],
+      "laboratorio": "Zoetis",
+      "principio_activo": "Sarolaner + Moxidectina + Pirantel",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual (cubre externo + interno + prevención corazón)",
+      "presentaciones": [
+        { "peso_min_kg": 5, "peso_max_kg": 10, "mg": null, "precio_min": 17990, "precio_max": 19990 },
+        { "peso_min_kg": 10, "peso_max_kg": 20, "mg": null, "precio_min": 19990, "precio_max": 27990 },
+        { "peso_min_kg": 20, "peso_max_kg": 40, "mg": null, "precio_min": 23990, "precio_max": 25990 },
+        { "peso_min_kg": 40, "peso_max_kg": 60, "mg": null, "precio_min": 30990, "precio_max": 33990 }
+      ]
+    },
+    {
+      "marca": "Credelio",
+      "tipo": ["externo"],
+      "laboratorio": "Elanco",
+      "principio_activo": "Lotilaner",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual",
+      "presentaciones": [
+        { "peso_min_kg": 2.5, "peso_max_kg": 5.5, "mg": null, "precio_min": 12990, "precio_max": 13990 },
+        { "peso_min_kg": 11, "peso_max_kg": 22, "mg": null, "precio_min": 13990, "precio_max": 16990 }
+      ]
+    },
+    {
+      "marca": "Seresto",
+      "tipo": ["externo"],
+      "laboratorio": "Elanco/Bayer",
+      "principio_activo": "Imidacloprid + Flumetrina",
+      "formato": "Collar",
+      "frecuencia_dias": 240,
+      "frecuencia_texto": "Hasta 6-8 meses por unidad",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 30000, "precio_max": 45000, "nota": "Precio único, rinde varios meses" }
+      ]
+    },
+    {
+      "marca": "Frontline Plus",
+      "tipo": ["externo"],
+      "laboratorio": "Boehringer Ingelheim",
+      "principio_activo": "Fipronil + Metopreno",
+      "formato": "Pipeta",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 8000, "precio_max": 15000 }
+      ]
+    },
+    {
+      "marca": "Advantix",
+      "tipo": ["externo"],
+      "laboratorio": "Elanco/Bayer",
+      "principio_activo": "Imidacloprid + Permetrina",
+      "formato": "Pipeta",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 8000, "precio_max": 15000 }
+      ]
+    },
+    {
+      "marca": "Revolution Plus",
+      "tipo": ["externo", "interno"],
+      "laboratorio": "Zoetis",
+      "principio_activo": "Selamectina + Sarolaner",
+      "formato": "Pipeta",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual (cubre pulgas, garrapatas, ácaros, gusanos internos y gusano del corazón, según presentación)",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 10000, "precio_max": 20000 }
+      ]
+    },
+    {
+      "marca": "Drontal Plus",
+      "tipo": ["interno"],
+      "laboratorio": "Elanco (ex Bayer)",
+      "principio_activo": "Praziquantel + Pirantel + Febantel",
+      "formato": "Comprimido",
+      "frecuencia_dias": 90,
+      "frecuencia_texto": "Cada 3 meses en adultos; regla general 1 comprimido cada 10 kg de peso",
+      "presentaciones": [
+        { "peso_min_kg": 0, "peso_max_kg": 10, "comprimidos_por_envase": 2, "precio_min": 6990, "precio_max": 9990 },
+        { "peso_min_kg": 10, "peso_max_kg": 35, "comprimidos_por_envase": 1, "precio_min": 6990, "precio_max": 9990, "nota": "Puede requerir combinar comprimidos según peso exacto" },
+        { "peso_min_kg": 35, "peso_max_kg": null, "comprimidos_por_envase": 1, "precio_min": 6990, "precio_max": 9990 }
+      ]
+    },
+    {
+      "marca": "Vermic Total",
+      "tipo": ["interno"],
+      "laboratorio": "Drag Pharma",
+      "principio_activo": "Praziquantel + Pirantel pamoato + Febantel",
+      "formato": "Comprimido",
+      "frecuencia_dias": 90,
+      "frecuencia_texto": "Cada 3 meses en adultos (1 comprimido cada 10 kg); cachorros: 15 días, 1°-6° mes de edad",
+      "presentaciones": [
+        { "peso_min_kg": 0, "peso_max_kg": 10, "comprimidos_por_envase": 1, "precio_min": 5000, "precio_max": 15000 },
+        { "peso_min_kg": 10, "peso_max_kg": null, "comprimidos_por_envase": null, "precio_min": 15000, "precio_max": 42990, "nota": "Precio varía según cantidad de comprimidos por envase" }
+      ]
+    },
+    {
+      "marca": "Prazitel",
+      "tipo": ["interno"],
+      "laboratorio": "Drag Pharma",
+      "principio_activo": "Praziquantel + Pirantel embonato + Febantel",
+      "formato": "Comprimido",
+      "frecuencia_dias": 90,
+      "frecuencia_texto": "Cada 3 meses en adultos",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "comprimidos_por_envase": null, "precio_min": 4000, "precio_max": 8000 }
+      ]
+    },
+    {
+      "marca": "Flovovermic",
+      "tipo": ["interno"],
+      "laboratorio": "Drag Pharma",
+      "principio_activo": "No especificado en fuente",
+      "formato": "Comprimido",
+      "frecuencia_dias": 90,
+      "frecuencia_texto": "Cada 3 meses en adultos",
+      "presentaciones": [
+        { "peso_min_kg": 0, "peso_max_kg": 10, "comprimidos_por_envase": 1, "precio_min": 4000, "precio_max": 8000 }
+      ]
+    }
+  ],
+  "notas_generales": {
+    "campo_tipo": "El campo 'tipo' es un array. Puede contener 'externo', 'interno', o ambos si el producto es combinado (ej: Simparica Trio, NexGard Spectra, Revolution Plus). Al filtrar en la app, usar tipo.includes('externo') o tipo.includes('interno') en vez de comparar por igualdad exacta.",
+    "regla_dosis_interno": "La mayoría de los desparasitantes internos usan la regla '1 comprimido cada 10 kg de peso vivo', por lo que perros más grandes simplemente requieren más comprimidos del mismo envase.",
+    "cachorros": "En cachorros la frecuencia interna es más seguida: cada 15 días hasta el mes, luego mensual hasta completar 6 meses-1 año de edad.",
+    "comparacion_costo": "Bravecto tiene el precio por dosis más alto, pero al durar 3 meses su costo mensual equivalente es similar o menor que NexGard/Simparica comprados mes a mes.",
+    "recomendacion": "Consultar siempre con un médico veterinario antes de definir el esquema de desparasitación, ya que puede variar según edad, entorno y estado de salud de la mascota."
+  }
+}

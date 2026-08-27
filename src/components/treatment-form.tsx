@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
+import { ProductSelect } from '@/components/ProductSelect';
 import {
   treatmentFormDefaultValues,
   treatmentFormSchema,
@@ -14,6 +15,8 @@ import {
 } from '@/lib/schemas/treatment-schema';
 import { isoDateToDisplay, isoDateToLocalDate, localDateToISO } from '@/lib/date-format';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
+import { getAllProductos } from '@/utils/desparasitantes';
+import type { Producto, TratamientoTipo } from '@/types/desparasitante';
 
 function FieldLabel({ children }: { children: string }) {
   return <Text style={{ ...typography.label, color: colors.foreground }}>{children}</Text>;
@@ -50,11 +53,22 @@ export function TreatmentForm({
   isSubmitting,
   onSubmit
 }: TreatmentFormProps) {
+  const initialProduct = getAllProductos().find(
+    (producto) => producto.marca === (defaultValues.productName ?? '')
+  );
+  const [treatmentType, setTreatmentType] = useState<TratamientoTipo | null>(
+    defaultValues.type === 'internal' ? 'interno' : defaultValues.type === 'external' ? 'externo' : null
+  );
+  const [selectedProduct, setSelectedProduct] = useState<Producto | null>(initialProduct ?? null);
+  const [frequencyDays, setFrequencyDays] = useState<number | ''>(
+    initialProduct?.frecuencia_dias ?? ''
+  );
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [tempDate, setTempDate] = useState<Date | null>(null);
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<TreatmentFormValues, unknown, TreatmentFormOutput>({
     resolver: zodResolver(treatmentFormSchema),
@@ -80,7 +94,14 @@ export function TreatmentForm({
                 return (
                   <Pressable
                     key={key}
-                    onPress={() => onChange(key)}
+                    onPress={() => {
+                      onChange(key);
+                      setTreatmentType(key === 'internal' ? 'interno' : 'externo');
+                      setSelectedProduct(null);
+                      setFrequencyDays('');
+                      setValue('productName', '');
+                      setValue('frequencyDays', '');
+                    }}
                     style={{
                       flex: 1,
                       alignItems: 'center',
@@ -109,44 +130,32 @@ export function TreatmentForm({
         <FieldError message={errors.type?.message} />
       </View>
 
-      <View style={{ gap: spacing[2] }}>
-        <FieldLabel>Producto (opcional)</FieldLabel>
-        <Controller
-          control={control}
-          name="productName"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder="Ej. Nexgard"
-              placeholderTextColor={colors.muted}
-              style={inputStyle}
-            />
-          )}
-        />
-        <FieldError message={errors.productName?.message} />
-      </View>
-
-      <View style={{ gap: spacing[2] }}>
-        <FieldLabel>Frecuencia (días)</FieldLabel>
-        <Controller
-          control={control}
-          name="frequencyDays"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              value={value ? String(value) : ''}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder="Ej. 30"
-              placeholderTextColor={colors.muted}
-              keyboardType="number-pad"
-              style={inputStyle}
-            />
-          )}
-        />
-        <FieldError message={errors.frequencyDays?.message} />
-      </View>
+      <Controller
+        control={control}
+        name="productName"
+        render={({ field: { onChange: onProductChange } }) => (
+          <Controller
+            control={control}
+            name="frequencyDays"
+            render={({ field: { onChange: onFrequencyDaysChange } }) => (
+              <ProductSelect
+                treatmentType={treatmentType}
+                selectedProduct={selectedProduct}
+                frequencyDays={frequencyDays}
+                onProductChange={(product) => {
+                  setSelectedProduct(product);
+                  onProductChange(product?.marca ?? '');
+                }}
+                onFrequencyDaysChange={(days) => {
+                  setFrequencyDays(days);
+                  onFrequencyDaysChange(days);
+                }}
+              />
+            )}
+          />
+        )}
+      />
+      <FieldError message={errors.productName?.message ?? errors.frequencyDays?.message} />
 
       <View style={{ gap: spacing[2] }}>
         <FieldLabel>Última aplicación (DD-MM-AAAA)</FieldLabel>
