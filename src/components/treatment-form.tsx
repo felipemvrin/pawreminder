@@ -57,12 +57,11 @@ export function TreatmentForm({
     (producto) => producto.marca === (defaultValues.productName ?? '')
   );
   const [treatmentType, setTreatmentType] = useState<TratamientoTipo | null>(
-    defaultValues.type === 'internal' ? 'interno' : 'externo'
+    defaultValues.type === 'internal' ? 'interno' : defaultValues.type === 'external' ? 'externo' : null
   );
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(initialProduct ?? null);
   const [frequencyDays, setFrequencyDays] = useState<number | ''>(
-    initialProduct?.frecuencia_dias ??
-      (typeof defaultValues.frequencyDays === 'number' ? defaultValues.frequencyDays : '')
+    initialProduct?.frecuencia_dias ?? ''
   );
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [tempDate, setTempDate] = useState<Date | null>(null);

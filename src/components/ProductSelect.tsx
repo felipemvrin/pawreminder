@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
 
 import { getProductosByTipo } from '@/utils/desparasitantes';
@@ -32,7 +32,10 @@ export function ProductSelect({
   onFrequencyDaysChange
 }: ProductSelectProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const productos = treatmentType ? getProductosByTipo(treatmentType) : [];
+  const productos = useMemo(
+    () => (treatmentType ? getProductosByTipo(treatmentType) : []),
+    [treatmentType]
+  );
 
   function selectProduct(product: Producto) {
     onProductChange(product);
