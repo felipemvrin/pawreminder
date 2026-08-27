@@ -1,33 +1,17 @@
-import desparasitantes from '@/data/desparasitantes_chile.json';
+import desparasitantes from '../data/desparasitantes_chile.json';
 
-import type { Presentacion, Producto } from '@/types/desparasitante';
-
-interface ProductoJson {
-  marca: string;
-  laboratorio: string;
-  principio_activo: string;
-  formato: string;
-  frecuencia_dias: number;
-  frecuencia_texto: string;
-  presentaciones: Presentacion[];
-}
+import type { Producto, TratamientoTipo } from '@/types/desparasitante';
 
 interface DesparasitantesJson {
-  antiparasitarios_externos: ProductoJson[];
-  antiparasitarios_internos: ProductoJson[];
+  productos: Producto[];
 }
 
 const catalogo = desparasitantes as DesparasitantesJson;
 
 export function getAllProductos(): Producto[] {
-  return [
-    ...catalogo.antiparasitarios_externos.map((producto) => ({
-      ...producto,
-      tipo: 'externo' as const
-    })),
-    ...catalogo.antiparasitarios_internos.map((producto) => ({
-      ...producto,
-      tipo: 'interno' as const
-    }))
-  ];
+  return catalogo.productos;
+}
+
+export function getProductosByTipo(tipo: TratamientoTipo): Producto[] {
+  return getAllProductos().filter((producto) => producto.tipo.includes(tipo));
 }

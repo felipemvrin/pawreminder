@@ -1,4 +1,4 @@
-export type TipoProducto = 'externo' | 'interno';
+export type TratamientoTipo = 'interno' | 'externo';
 
 export interface Presentacion {
   peso_min_kg: number | null;
@@ -18,5 +18,5 @@ export interface Producto {
   frecuencia_dias: number;
   frecuencia_texto: string;
   presentaciones: Presentacion[];
-  tipo: TipoProducto;
+  tipo: TratamientoTipo[];
 }

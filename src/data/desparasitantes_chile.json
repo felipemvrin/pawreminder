@@ -3,9 +3,10 @@
   "pais": "Chile",
   "fecha_referencia": "2026-08-26",
   "nota": "Precios referenciales de tiendas online chilenas (Amigales, Petvet, B-Pets, Punto Mascotas, Perros y Gatos, Salcobrand, EcoFarmacias, Centralvet, VetBox). Varían por farmacia, promoción y stock.",
-  "antiparasitarios_externos": [
+  "productos": [
     {
       "marca": "Bravecto",
+      "tipo": ["externo"],
       "laboratorio": "MSD",
       "principio_activo": "Fluralaner",
       "formato": "Comprimido masticable",
@@ -21,6 +22,7 @@
     },
     {
       "marca": "NexGard",
+      "tipo": ["externo"],
       "laboratorio": "Boehringer Ingelheim",
       "principio_activo": "Afoxolaner",
       "formato": "Comprimido masticable",
@@ -34,7 +36,24 @@
       ]
     },
     {
+      "marca": "NexGard Spectra",
+      "tipo": ["externo", "interno"],
+      "laboratorio": "Boehringer Ingelheim",
+      "principio_activo": "Afoxolaner + Milbemicina oxima",
+      "formato": "Comprimido masticable",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual (cubre pulgas, garrapatas, gusanos redondos, anquilostomas, tricocéfalos y gusano del corazón)",
+      "presentaciones": [
+        { "peso_min_kg": 2, "peso_max_kg": 3.5, "mg": null, "precio_min": 10990, "precio_max": 13990 },
+        { "peso_min_kg": 3.5, "peso_max_kg": 7.5, "mg": null, "precio_min": 10990, "precio_max": 14990 },
+        { "peso_min_kg": 7.5, "peso_max_kg": 15, "mg": null, "precio_min": 12990, "precio_max": 16990 },
+        { "peso_min_kg": 15, "peso_max_kg": 30, "mg": null, "precio_min": 14990, "precio_max": 18990 },
+        { "peso_min_kg": 30, "peso_max_kg": 60, "mg": null, "precio_min": 17990, "precio_max": 21990 }
+      ]
+    },
+    {
       "marca": "Simparica",
+      "tipo": ["externo"],
       "laboratorio": "Zoetis",
       "principio_activo": "Sarolaner",
       "formato": "Comprimido masticable",
@@ -49,11 +68,12 @@
     },
     {
       "marca": "Simparica Trio",
+      "tipo": ["externo", "interno"],
       "laboratorio": "Zoetis",
       "principio_activo": "Sarolaner + Moxidectina + Pirantel",
       "formato": "Comprimido masticable",
       "frecuencia_dias": 30,
-      "frecuencia_texto": "Mensual (cubre externo + interno + corazón)",
+      "frecuencia_texto": "Mensual (cubre externo + interno + prevención corazón)",
       "presentaciones": [
         { "peso_min_kg": 5, "peso_max_kg": 10, "mg": null, "precio_min": 17990, "precio_max": 19990 },
         { "peso_min_kg": 10, "peso_max_kg": 20, "mg": null, "precio_min": 19990, "precio_max": 27990 },
@@ -63,6 +83,7 @@
     },
     {
       "marca": "Credelio",
+      "tipo": ["externo"],
       "laboratorio": "Elanco",
       "principio_activo": "Lotilaner",
       "formato": "Comprimido masticable",
@@ -75,6 +96,7 @@
     },
     {
       "marca": "Seresto",
+      "tipo": ["externo"],
       "laboratorio": "Elanco/Bayer",
       "principio_activo": "Imidacloprid + Flumetrina",
       "formato": "Collar",
@@ -86,6 +108,7 @@
     },
     {
       "marca": "Frontline Plus",
+      "tipo": ["externo"],
       "laboratorio": "Boehringer Ingelheim",
       "principio_activo": "Fipronil + Metopreno",
       "formato": "Pipeta",
@@ -97,6 +120,7 @@
     },
     {
       "marca": "Advantix",
+      "tipo": ["externo"],
       "laboratorio": "Elanco/Bayer",
       "principio_activo": "Imidacloprid + Permetrina",
       "formato": "Pipeta",
@@ -105,11 +129,22 @@
       "presentaciones": [
         { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 8000, "precio_max": 15000 }
       ]
-    }
-  ],
-  "antiparasitarios_internos": [
+    },
+    {
+      "marca": "Revolution Plus",
+      "tipo": ["externo", "interno"],
+      "laboratorio": "Zoetis",
+      "principio_activo": "Selamectina + Sarolaner",
+      "formato": "Pipeta",
+      "frecuencia_dias": 30,
+      "frecuencia_texto": "Mensual (cubre pulgas, garrapatas, ácaros, gusanos internos y gusano del corazón, según presentación)",
+      "presentaciones": [
+        { "peso_min_kg": null, "peso_max_kg": null, "mg": null, "precio_min": 10000, "precio_max": 20000 }
+      ]
+    },
     {
       "marca": "Drontal Plus",
+      "tipo": ["interno"],
       "laboratorio": "Elanco (ex Bayer)",
       "principio_activo": "Praziquantel + Pirantel + Febantel",
       "formato": "Comprimido",
@@ -123,6 +158,7 @@
     },
     {
       "marca": "Vermic Total",
+      "tipo": ["interno"],
       "laboratorio": "Drag Pharma",
       "principio_activo": "Praziquantel + Pirantel pamoato + Febantel",
       "formato": "Comprimido",
@@ -135,6 +171,7 @@
     },
     {
       "marca": "Prazitel",
+      "tipo": ["interno"],
       "laboratorio": "Drag Pharma",
       "principio_activo": "Praziquantel + Pirantel embonato + Febantel",
       "formato": "Comprimido",
@@ -146,6 +183,7 @@
     },
     {
       "marca": "Flovovermic",
+      "tipo": ["interno"],
       "laboratorio": "Drag Pharma",
       "principio_activo": "No especificado en fuente",
       "formato": "Comprimido",
@@ -157,6 +195,7 @@
     }
   ],
   "notas_generales": {
+    "campo_tipo": "El campo 'tipo' es un array. Puede contener 'externo', 'interno', o ambos si el producto es combinado (ej: Simparica Trio, NexGard Spectra, Revolution Plus). Al filtrar en la app, usar tipo.includes('externo') o tipo.includes('interno') en vez de comparar por igualdad exacta.",
     "regla_dosis_interno": "La mayoría de los desparasitantes internos usan la regla '1 comprimido cada 10 kg de peso vivo', por lo que perros más grandes simplemente requieren más comprimidos del mismo envase.",
     "cachorros": "En cachorros la frecuencia interna es más seguida: cada 15 días hasta el mes, luego mensual hasta completar 6 meses-1 año de edad.",
     "comparacion_costo": "Bravecto tiene el precio por dosis más alto, pero al durar 3 meses su costo mensual equivalente es similar o menor que NexGard/Simparica comprados mes a mes.",

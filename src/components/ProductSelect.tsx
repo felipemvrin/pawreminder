@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
 
-import { getAllProductos } from '@/utils/desparasitantes';
-import type { Producto } from '@/types/desparasitante';
+import { getProductosByTipo } from '@/utils/desparasitantes';
+import type { Producto, TratamientoTipo } from '@/types/desparasitante';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
-
-const productos = getAllProductos();
 
 const inputStyle = {
   borderWidth: 1,
@@ -19,34 +17,25 @@ const inputStyle = {
 };
 
 interface ProductSelectProps {
-  productName?: string;
-  onProductChange: (productName: string, product?: Producto) => void;
-  onFrequencyDaysChange: (frequencyDays: number) => void;
+  treatmentType: TratamientoTipo | null;
+  selectedProduct: Producto | null;
+  frequencyDays: number | '';
+  onProductChange: (product: Producto | null) => void;
+  onFrequencyDaysChange: (frequencyDays: number | '') => void;
 }
 
 export function ProductSelect({
-  productName = '',
+  treatmentType,
+  selectedProduct,
+  frequencyDays,
   onProductChange,
   onFrequencyDaysChange
 }: ProductSelectProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Producto | undefined>(() =>
-    productos.find((producto) => producto.marca === productName)
-  );
-  const [frequencyDays, setFrequencyDays] = useState<number | ''>(
-    selectedProduct?.frecuencia_dias ?? ''
-  );
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  useEffect(() => {
-    const nextProduct = productos.find((producto) => producto.marca === productName);
-    setSelectedProduct(nextProduct);
-    setFrequencyDays(nextProduct?.frecuencia_dias ?? '');
-  }, [productName]);
+  const productos = treatmentType ? getProductosByTipo(treatmentType) : [];
 
   function selectProduct(product: Producto) {
-    setSelectedProduct(product);
-    setFrequencyDays(product.frecuencia_dias);
-    onProductChange(product.marca, product);
+    onProductChange(product);
     onFrequencyDaysChange(product.frecuencia_dias);
     setIsModalVisible(false);
   }
@@ -58,8 +47,9 @@ export function ProductSelect({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Seleccionar producto"
+          disabled={!treatmentType}
           onPress={() => setIsModalVisible(true)}
-          style={{ ...inputStyle, justifyContent: 'center' }}
+          style={{ ...inputStyle, justifyContent: 'center', opacity: treatmentType ? 1 : 0.6 }}
         >
           <Text style={{ fontSize: 16, color: selectedProduct ? colors.foreground : colors.muted }}>
             {selectedProduct?.marca ?? 'Selecciona un producto'}
@@ -102,7 +92,7 @@ export function ProductSelect({
             </Text>
             <FlatList
               data={productos}
-              keyExtractor={(product, index) => `${product.tipo}-${product.marca}-${index}`}
+              keyExtractor={(product, index) => `${product.marca}-${index}`}
               renderItem={({ item }) => (
                 <Pressable
                   accessibilityRole="button"
@@ -115,7 +105,9 @@ export function ProductSelect({
                 >
                   <Text style={{ ...typography.body, color: colors.foreground }}>{item.marca}</Text>
                   <Text style={{ ...typography.caption, color: colors.muted }}>
-                    {item.tipo === 'externo' ? 'Externo' : 'Interno'}
+                    {item.tipo
+                      .map((tipo) => (tipo === 'externo' ? 'Externo' : 'Interno'))
+                      .join(' + ')}
                   </Text>
                 </Pressable>
               )}

@@ -15,6 +15,8 @@ import {
 } from '@/lib/schemas/treatment-schema';
 import { isoDateToDisplay, isoDateToLocalDate, localDateToISO } from '@/lib/date-format';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
+import { getAllProductos } from '@/utils/desparasitantes';
+import type { Producto, TratamientoTipo } from '@/types/desparasitante';
 
 function FieldLabel({ children }: { children: string }) {
   return <Text style={{ ...typography.label, color: colors.foreground }}>{children}</Text>;
@@ -51,11 +53,23 @@ export function TreatmentForm({
   isSubmitting,
   onSubmit
 }: TreatmentFormProps) {
+  const initialProduct = getAllProductos().find(
+    (producto) => producto.marca === (defaultValues.productName ?? '')
+  );
+  const [treatmentType, setTreatmentType] = useState<TratamientoTipo | null>(
+    defaultValues.type === 'internal' ? 'interno' : 'externo'
+  );
+  const [selectedProduct, setSelectedProduct] = useState<Producto | null>(initialProduct ?? null);
+  const [frequencyDays, setFrequencyDays] = useState<number | ''>(
+    initialProduct?.frecuencia_dias ??
+      (typeof defaultValues.frequencyDays === 'number' ? defaultValues.frequencyDays : '')
+  );
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [tempDate, setTempDate] = useState<Date | null>(null);
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<TreatmentFormValues, unknown, TreatmentFormOutput>({
     resolver: zodResolver(treatmentFormSchema),
@@ -81,7 +95,14 @@ export function TreatmentForm({
                 return (
                   <Pressable
                     key={key}
-                    onPress={() => onChange(key)}
+                    onPress={() => {
+                      onChange(key);
+                      setTreatmentType(key === 'internal' ? 'interno' : 'externo');
+                      setSelectedProduct(null);
+                      setFrequencyDays('');
+                      setValue('productName', '');
+                      setValue('frequencyDays', '');
+                    }}
                     style={{
                       flex: 1,
                       alignItems: 'center',
@@ -113,15 +134,23 @@ export function TreatmentForm({
       <Controller
         control={control}
         name="productName"
-        render={({ field: { onChange: onProductChange, value: productName } }) => (
+        render={({ field: { onChange: onProductChange } }) => (
           <Controller
             control={control}
             name="frequencyDays"
-            render={({ field: { onChange: onFrequencyDaysChange, value: frequencyDays } }) => (
+            render={({ field: { onChange: onFrequencyDaysChange } }) => (
               <ProductSelect
-                productName={productName}
-                onProductChange={(name) => onProductChange(name)}
-                onFrequencyDaysChange={(days) => onFrequencyDaysChange(days)}
+                treatmentType={treatmentType}
+                selectedProduct={selectedProduct}
+                frequencyDays={frequencyDays}
+                onProductChange={(product) => {
+                  setSelectedProduct(product);
+                  onProductChange(product?.marca ?? '');
+                }}
+                onFrequencyDaysChange={(days) => {
+                  setFrequencyDays(days);
+                  onFrequencyDaysChange(days);
+                }}
               />
             )}
           />
