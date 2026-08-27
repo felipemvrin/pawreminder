@@ -1,5 +1,6 @@
 import { colors } from '@/theme/tokens';
 import type { Treatment } from '@/types/domain';
+import { isoDateToLocalDate } from '@/lib/date-format';
 
 export type TreatmentStatus = 'upcoming' | 'today' | 'overdue';
 
@@ -22,7 +23,7 @@ function startOfDay(date: Date): Date {
 }
 
 export function getTreatmentStatus(nextDueDate: string, today: Date = new Date()): TreatmentStatus {
-  const due = startOfDay(new Date(nextDueDate));
+  const due = startOfDay(isoDateToLocalDate(nextDueDate));
   const now = startOfDay(today);
 
   if (due.getTime() < now.getTime()) return 'overdue';

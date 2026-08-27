@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'rea
 
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
 import { useMarkTreatmentApplied, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
+import { isoDateToDisplay, localDateToISO } from '@/lib/date-format';
 import {
   getTreatmentStatus,
   treatmentStatusColors,
@@ -34,7 +35,7 @@ function TreatmentCard({ treatment }: { treatment: Treatment }) {
             await markApplied.mutateAsync({
               treatmentId: treatment.id,
               petId: treatment.petId,
-              appliedDate: new Date().toISOString().split('T')[0]
+              appliedDate: localDateToISO(new Date())
             });
             toast.success('Tratamiento registrado, próxima fecha actualizada');
           } catch {
@@ -78,7 +79,7 @@ function TreatmentCard({ treatment }: { treatment: Treatment }) {
         {treatmentTypeLabel(treatment.type)} · cada {treatment.frequencyDays} días
       </Text>
       <Text style={{ ...typography.body, color: colors.foreground }}>
-        Próxima fecha: {treatment.nextDueDate}
+        Próxima fecha: {isoDateToDisplay(treatment.nextDueDate)}
       </Text>
       <Pressable
         onPress={handleMarkApplied}

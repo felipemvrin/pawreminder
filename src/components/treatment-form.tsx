@@ -1,5 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Controller, useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import {
@@ -8,6 +10,7 @@ import {
   type TreatmentFormOutput,
   type TreatmentFormValues
 } from '@/lib/schemas/treatment-schema';
+import { isoDateToDisplay, isoDateToLocalDate, localDateToISO } from '@/lib/date-format';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 function FieldLabel({ children }: { children: string }) {
@@ -45,6 +48,7 @@ export function TreatmentForm({
   isSubmitting,
   onSubmit
 }: TreatmentFormProps) {
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const {
     control,
     handleSubmit,
@@ -65,12 +69,10 @@ export function TreatmentForm({
           name="type"
           render={({ field: { onChange, value } }) => (
             <View style={{ flexDirection: 'row', gap: spacing[3] }}>
-              {(
-                [
-                  { key: 'internal' as const, label: 'Interno' },
-                  { key: 'external' as const, label: 'Externo' }
-                ]
-              ).map(({ key, label }) => {
+              {[
+                { key: 'internal' as const, label: 'Interno' },
+                { key: 'external' as const, label: 'Externo' }
+              ].map(({ key, label }) => {
                 const selected = value === key;
                 return (
                   <Pressable
@@ -144,19 +146,33 @@ export function TreatmentForm({
       </View>
 
       <View style={{ gap: spacing[2] }}>
-        <FieldLabel>Última aplicación (AAAA-MM-DD)</FieldLabel>
+        <FieldLabel>Última aplicación (DD-MM-AAAA)</FieldLabel>
         <Controller
           control={control}
           name="lastAppliedDate"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder="2026-08-20"
-              placeholderTextColor={colors.muted}
-              style={inputStyle}
-            />
+          render={({ field: { onChange, value } }) => (
+            <>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setIsDatePickerVisible(true)}
+                style={{ ...inputStyle, justifyContent: 'center' }}
+              >
+                <Text style={{ fontSize: 16, color: colors.foreground }}>
+                  {isoDateToDisplay(value)}
+                </Text>
+              </Pressable>
+              {isDatePickerVisible && (
+                <DateTimePicker
+                  value={isoDateToLocalDate(value)}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setIsDatePickerVisible(false);
+                    if (selectedDate) onChange(localDateToISO(selectedDate));
+                  }}
+                />
+              )}
+            </>
           )}
         />
         <FieldError message={errors.lastAppliedDate?.message} />

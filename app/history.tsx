@@ -4,6 +4,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { usePets } from '@/lib/hooks/use-pets';
 import { useTreatmentLogsByPet, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
+import { isoDateToDisplay } from '@/lib/date-format';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Pet, TreatmentLog } from '@/types/domain';
 
@@ -58,7 +59,9 @@ function LogRow({ log, productLabel }: { log: TreatmentLog; productLabel: string
       }}
     >
       <Text style={{ ...typography.label, color: colors.foreground }}>{productLabel}</Text>
-      <Text style={{ ...typography.body, color: colors.muted }}>Aplicado el {log.appliedDate}</Text>
+      <Text style={{ ...typography.body, color: colors.muted }}>
+        Aplicado el {isoDateToDisplay(log.appliedDate)}
+      </Text>
       {log.notes ? (
         <Text style={{ ...typography.caption, color: colors.muted }}>{log.notes}</Text>
       ) : null}
