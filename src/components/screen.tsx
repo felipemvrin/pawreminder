@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 type ScreenHeaderProps = {
-  title: string;
+  title?: string;
   showBack?: boolean;
   right?: ReactNode;
 };
@@ -51,9 +51,13 @@ export function ScreenHeader({ title, showBack = true, right }: ScreenHeaderProp
         </Pressable>
       ) : null}
 
-      <Text style={{ ...typography.display, color: colors.primary, flex: 1 }} numberOfLines={1}>
-        {title}
-      </Text>
+      {title ? (
+        <Text style={{ ...typography.display, color: colors.primary, flex: 1 }} numberOfLines={1}>
+          {title}
+        </Text>
+      ) : (
+        <View style={{ flex: 1 }} />
+      )}
 
       {right}
     </View>
