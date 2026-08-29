@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, Cat, Dog, X } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, Image, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, Switch, Text, TextInput, View } from 'react-native';
 
 import {
   petFormDefaultValues,
@@ -61,7 +61,18 @@ export function PetForm({
   const selectPhoto = async (onChange: (value: string) => void) => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permiso necesario', 'Permite el acceso a tus fotos para elegir una imagen.');
+      if (!permission.canAskAgain) {
+        Alert.alert(
+          'Permiso necesario',
+          'El acceso a tus fotos está desactivado. Actívalo en Configuración.',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Abrir Configuración', onPress: () => void Linking.openSettings() }
+          ]
+        );
+      } else {
+        Alert.alert('Permiso necesario', 'Permite el acceso a tus fotos para elegir una imagen.');
+      }
       return;
     }
 
@@ -72,7 +83,7 @@ export function PetForm({
       quality: 0.8
     });
 
-    if (!result.canceled) onChange(result.assets[0].uri);
+    if (!result.canceled && result.assets?.[0]) onChange(result.assets[0].uri);
   };
 
   return (

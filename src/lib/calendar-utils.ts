@@ -20,7 +20,7 @@ export function getTreatmentsInMonth<T extends Treatment>(treatments: T[], month
 
 export function groupTreatmentsByDueDay<T extends Treatment>(treatments: T[]) {
   return treatments.reduce((groups, treatment) => {
-    const day = Number(treatment.nextDueDate.slice(-2));
+    const day = parseInt(treatment.nextDueDate.substring(8, 10), 10);
     groups.set(day, [...(groups.get(day) ?? []), treatment]);
     return groups;
   }, new Map<number, T[]>());

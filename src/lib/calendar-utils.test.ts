@@ -44,4 +44,14 @@ describe('calendar utilities', () => {
     expect(scheduled.map((item) => item.id)).toEqual(['treatment-1', 'treatment-2']);
     expect(grouped.get(5)?.map((item) => item.id)).toEqual(['treatment-1', 'treatment-2']);
   });
+
+  it('groups correctly when nextDueDate includes a time component', () => {
+    const treatments = [treatment('t-1', '2026-08-15T00:00:00.000Z')];
+
+    const scheduled = getTreatmentsInMonth(treatments, new Date(2026, 7, 1));
+    const grouped = groupTreatmentsByDueDay(scheduled);
+
+    expect(grouped.get(15)?.map((item) => item.id)).toEqual(['t-1']);
+    expect(grouped.has(NaN)).toBe(false);
+  });
 });
