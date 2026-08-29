@@ -275,11 +275,12 @@ export default function PetDetailScreen() {
         </View>
 
         {isLoadingTreatments ? (
-          <QueryLoadingState />
+          <QueryLoadingState style={{ flex: 0, paddingVertical: spacing[6] }} />
         ) : isTreatmentsError ? (
           <QueryErrorState
             message="No pudimos cargar los tratamientos de esta mascota."
             onRetry={() => void refetchTreatments()}
+            style={{ flex: 0 }}
           />
         ) : treatments && treatments.length > 0 ? (
           <View style={{ gap: spacing[3] }}>

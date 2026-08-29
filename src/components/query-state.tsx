@@ -1,25 +1,36 @@
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View, type ViewStyle } from 'react-native';
 
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
-export function QueryLoadingState() {
+export function QueryLoadingState({ style }: { style?: ViewStyle }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View testID="query-loading" style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, style]}>
       <ActivityIndicator color={colors.primary} />
     </View>
   );
 }
 
-export function QueryErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+export function QueryErrorState({
+  message,
+  onRetry,
+  style
+}: {
+  message: string;
+  onRetry: () => void;
+  style?: ViewStyle;
+}) {
   return (
     <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: spacing[3],
-        padding: spacing[6]
-      }}
+      style={[
+        {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing[3],
+          padding: spacing[6]
+        },
+        style
+      ]}
     >
       <Text style={{ ...typography.heading, color: colors.foreground, textAlign: 'center' }}>
         No pudimos cargar esta información
