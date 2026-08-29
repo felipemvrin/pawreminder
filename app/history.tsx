@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
+import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { usePets } from '@/lib/hooks/use-pets';
 import { useTreatmentLogsByPet, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
@@ -71,12 +72,36 @@ function LogRow({ log, productLabel }: { log: TreatmentLog; productLabel: string
 
 export default function HistoryScreen() {
   const { petId } = useLocalSearchParams<{ petId?: string }>();
-  const { data: pets } = usePets();
-  const { data: logs, isLoading } = useTreatmentLogsByPet(petId);
+  const {
+    data: pets,
+    isLoading: isLoadingPets,
+    isError: isPetsError,
+    refetch: refetchPets
+  } = usePets();
+  const { data: logs, isLoading, isError, refetch } = useTreatmentLogsByPet(petId);
   const { data: treatments } = useTreatmentsByPet(petId);
   const bottomPadding = useScreenBottomPadding();
 
   if (!petId) {
+    if (isLoadingPets) {
+      return (
+        <Screen title="Historial">
+          <QueryLoadingState />
+        </Screen>
+      );
+    }
+
+    if (isPetsError) {
+      return (
+        <Screen title="Historial">
+          <QueryErrorState
+            message="No pudimos cargar tus mascotas."
+            onRetry={() => void refetchPets()}
+          />
+        </Screen>
+      );
+    }
+
     return <PetPicker pets={pets} />;
   }
 
@@ -94,7 +119,14 @@ export default function HistoryScreen() {
 
   return (
     <Screen title={`Historial${pet ? ` de ${pet.name}` : ''}`}>
-      {!isLoading && logs && logs.length === 0 ? (
+      {isLoading ? (
+        <QueryLoadingState />
+      ) : isError ? (
+        <QueryErrorState
+          message="No pudimos cargar el historial de tratamientos."
+          onRetry={() => void refetch()}
+        />
+      ) : logs && logs.length === 0 ? (
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing[6] }}
         >

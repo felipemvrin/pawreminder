@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Cat, Dog, Plus } from 'lucide-react-native';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
+import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
 import { useMarkTreatmentApplied, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
 import { isoDateToDisplay, localDateToISO } from '@/lib/date-format';
@@ -104,17 +105,31 @@ export default function PetDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const toast = useToast();
-  const { data: pet, isLoading } = usePet(id);
-  const { data: treatments, isLoading: isLoadingTreatments } = useTreatmentsByPet(id);
+  const { data: pet, isLoading, isError, refetch } = usePet(id);
+  const {
+    data: treatments,
+    isLoading: isLoadingTreatments,
+    isError: isTreatmentsError,
+    refetch: refetchTreatments
+  } = useTreatmentsByPet(id);
   const deletePet = useDeletePet();
   const bottomPadding = useScreenBottomPadding();
 
   if (isLoading) {
     return (
       <Screen title="Mascota">
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
+        <QueryLoadingState />
+      </Screen>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Screen title="Mascota">
+        <QueryErrorState
+          message="Revisa tu conexión e inténtalo nuevamente."
+          onRetry={() => void refetch()}
+        />
       </Screen>
     );
   }
@@ -260,7 +275,12 @@ export default function PetDetailScreen() {
         </View>
 
         {isLoadingTreatments ? (
-          <ActivityIndicator color={colors.primary} />
+          <QueryLoadingState />
+        ) : isTreatmentsError ? (
+          <QueryErrorState
+            message="No pudimos cargar los tratamientos de esta mascota."
+            onRetry={() => void refetchTreatments()}
+          />
         ) : treatments && treatments.length > 0 ? (
           <View style={{ gap: spacing[3] }}>
             {treatments.map((treatment) => (
