@@ -1,11 +1,14 @@
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import { databaseService } from '@/services/database/database-service';
 import { notificationService } from './notification-service';
 import type { Treatment } from '@/types/domain';
 
 jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { TIME_INTERVAL: 'timeInterval' },
+  AndroidImportance: { HIGH: 4 },
   setNotificationHandler: jest.fn(),
+  setNotificationChannelAsync: jest.fn(),
   getPermissionsAsync: jest.fn(),
   requestPermissionsAsync: jest.fn(),
   scheduleNotificationAsync: jest.fn(),
@@ -36,6 +39,8 @@ const treatment: Treatment = {
   createdAt: '2026-08-01T12:00:00.000Z'
 };
 
+const originalPlatformOS = Platform.OS;
+
 const databaseMethods = {
   getPetById: jest.spyOn(databaseService, 'getPetById'),
   getTreatmentById: jest.spyOn(databaseService, 'getTreatmentById'),
@@ -64,6 +69,7 @@ describe('notificationService', () => {
 
   afterEach(() => {
     jest.useRealTimers();
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
   it('returns existing permission without requesting it again', async () => {
@@ -121,6 +127,24 @@ describe('notificationService', () => {
         trigger: expect.objectContaining({ type: 'timeInterval', repeats: false })
       })
     );
+  });
+
+  it('configures the Android notification channel before scheduling reminders', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue({ granted: true } as never);
+    jest
+      .mocked(Notifications.scheduleNotificationAsync)
+      .mockResolvedValueOnce('reminder-1')
+      .mockResolvedValueOnce('due-1');
+
+    await notificationService.scheduleTreatmentNotifications(treatment);
+
+    expect(Notifications.setNotificationChannelAsync).toHaveBeenCalledWith('treatment-reminders', {
+      name: 'Recordatorios de tratamientos',
+      importance: 4,
+      vibrationPattern: [0, 250, 250, 250],
+      sound: 'default'
+    });
   });
 
   it('does not schedule past notifications', async () => {

@@ -109,12 +109,12 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ### Pendiente / en mejora
 
-- [ ] validación real en dispositivos físicos Android e iOS
-- [ ] revisión de permisos y comportamiento de notificaciones en entorno real
+- [x] validación real en dispositivos físicos Android e iOS
+- [x] revisión de permisos y comportamiento de notificaciones en entorno real
 - [x] mejorar estados de carga, error y vacío
 - [ ] completar cobertura de pruebas del flujo completo
-- [ ] mejorar validación de fechas y reglas del dominio
-- [ ] calendario de tratamientos
+- [x] mejorar validación de fechas y reglas del dominio
+- [x] calendario de tratamientos
 - [ ] fotos de mascotas
 - [ ] sincronización en la nube / usuario
 - [ ] publicación en tiendas
@@ -140,12 +140,12 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] notificaciones locales
 
 ### Fase 3: validación y estabilización
-- [ ] validación real en dispositivos
+- [x] validación real en dispositivos
 - [x] limpieza de flujos y errores
 - [ ] pruebas end-to-end y regresión
 
 ### Fase 4: mejoras de producto
-- [ ] calendario
+- [x] calendario
 - [ ] administración avanzada de recordatorios
 - [ ] soporte para más tipos de cuidado
 
@@ -156,7 +156,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con los estados de consulta de Inicio, detalle e historial cubiertos para carga, error, vacío y reintento. La prioridad actual es validar notificaciones y el flujo completo en dispositivos reales.
+El proyecto se encuentra en una etapa de MVP funcional local con validación funcional en dispositivos físicos, permisos de notificación revisados y calendario mensual de tratamientos. La prioridad actual es ampliar las pruebas de regresión del flujo principal.
 
 ## Registro de evolución
 
@@ -166,7 +166,11 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 - [x] Se agregaron estados explícitos de carga, error y reintento en Inicio, detalle de mascota e historial.
 - [x] Validado: TypeScript, ESLint y 36 pruebas unitarias ejecutadas correctamente; Prettier verificado en los archivos modificados.
-- [ ] Siguiente paso pendiente: validar comportamiento real de notificaciones en Android e iOS con dispositivos físicos.
+- [x] Se revisaron las notificaciones y permisos en dispositivos físicos Android e iOS, y se configuró el canal de Android para recordatorios de tratamientos.
+- [x] Se validaron fechas de calendario y el rango de anticipación de los recordatorios en el formulario de tratamientos.
+- [x] Se agregó un calendario mensual navegable con los tratamientos programados y su estado de vencimiento.
+- [x] Validado: TypeScript, ESLint y 46 pruebas unitarias ejecutadas correctamente.
+- [ ] Siguiente paso pendiente: ampliar las pruebas de regresión del flujo principal.
 
 ## Evolución por sprint
 
@@ -188,8 +192,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 ### Sprint 3: validación y estabilización
 
-- [ ] validación real en dispositivos Android e iOS
-- [ ] revisión final de notificaciones locales
+- [x] validación real en dispositivos Android e iOS
+- [x] revisión final de notificaciones locales
 - [x] mejora de UX para carga, error y vacíos
 - [ ] pruebas de regresión del flujo principal
 
@@ -199,12 +203,12 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 | Prioridad | Bloque | Estado |
 | --- | --- | --- |
-| Alto | Validación real en Android e iOS | Pendiente |
-| Alto | Revisión de permisos y notificaciones | Pendiente |
+| Alto | Validación real en Android e iOS | Completado |
+| Alto | Revisión de permisos y notificaciones | Completado |
 | Medio | Mejorar estados de carga, error y vacío | Completado |
 | Medio | Pruebas de regresión del flujo principal | Pendiente |
-| Medio | Validación de fechas y reglas del dominio | Pendiente |
-| Bajo | Calendario de tratamientos | Pendiente |
+| Medio | Validación de fechas y reglas del dominio | Completado |
+| Bajo | Calendario de tratamientos | Completado |
 | Bajo | Fotos de mascotas | Pendiente |
 | Bajo | Sincronización en la nube / usuario | Pendiente |
 | Bajo | Publicación en tiendas | Pendiente |
@@ -219,6 +223,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Historial de tratamiento | Registro y marcado de aplicación | Revisión del flujo principal |
 | Notificaciones | Programación y cancelación de recordatorios | Revisión de servicios |
 | Home y estado visual | Indicadores por mascota según urgencia | Revisión del flujo de UI |
+| Calendario de tratamientos | Vista mensual y tratamientos programados | TypeScript, ESLint y pruebas unitarias |
 
 ## Plantilla de update diario/semanal
 
