@@ -1,143 +1,271 @@
 # PawReminder
 
-Aplicación móvil para organizar los recordatorios de salud y cuidados de perros.
+Aplicación móvil para gestionar recordatorios de salud y cuidados de perros.
 
 ## Objetivo
 
-PawReminder está en etapa de preparación técnica. Esta base establece la arquitectura, el sistema
-de diseño y las integraciones desacopladas para desarrollar la aplicación de forma escalable. No
-incluye todavía funcionalidades de negocio ni pantallas finales.
+PawReminder tiene como objetivo ayudar a llevar un control claro de los tratamientos preventivos y de cuidado de mascotas, con recordatorios basados en fechas y estados de vencimiento.
+
+El proyecto ya cuenta con una base funcional local para gestionar mascotas y tratamientos. La intención actual es estabilizar la experiencia, completar validaciones de flujo y preparar mejoras de producto y publicación.
 
 ## Stack
 
-- React Native con Expo SDK 54 y TypeScript estricto
+- React Native con Expo
+- TypeScript
 - Expo Router
-- Tamagui como sistema de componentes y tokens
-- TanStack Query, React Hook Form y Zod
-- React Native Reanimated y Lucide React Native
-- Expo Notifications preparado para futuras notificaciones locales
-- AsyncStorage detrás de una interfaz intercambiable por MMKV
-- Jest, React Native Testing Library, ESLint y Prettier
+- Tamagui
+- TanStack Query
+- React Hook Form y Zod
+- Expo Notifications
+- AsyncStorage / servicios de persistencia abstraídos
+- Jest y React Native Testing Library
+- ESLint y Prettier
 
 ## Requisitos
 
-- Node.js 20.19.4 o superior (el proyecto incluye `.nvmrc`)
+- Node.js 20.19.4 o superior
 - npm 10 o superior
-- Expo Go en un dispositivo físico, o Android Studio para emulador Android
+- Expo Go en un dispositivo físico o Android Studio para emulador
 
 ## Instalación
 
 ```bash
 nvm use
 npm install
-cp .env.example .env
 ```
-
-Las variables de `.env` no deben contener secretos. Las credenciales privadas se configurarán
-fuera del repositorio cuando se integren los proveedores correspondientes.
 
 ## Ejecución local
 
 ```bash
 npm start
 npm run android
+npm run ios
 npm run web
 ```
 
-En macOS 12 no se pueden crear builds iOS locales para el SDK actual por la limitación de Xcode.
-Usa Expo Go en un dispositivo iOS o EAS Build para builds en la nube.
-
-## Estructura
+## Estructura principal
 
 ```text
-app/                 Rutas y layouts de Expo Router
-src/components/      Componentes reutilizables y proveedores
-src/features/        Módulos orientados a funcionalidades futuras
-src/hooks/           Hooks reutilizables
-src/lib/             Clientes y configuración de librerías
-src/services/        Contratos e implementaciones de integraciones
-src/store/           Estado global futuro
-src/theme/           Tokens del sistema de diseño
-src/types/           Modelos y tipos de dominio
+app/                 Rutas y pantallas de la aplicación
+src/components/      Componentes reutilizables
+src/lib/             Lógica de dominio, hooks y utilidades
+src/services/        Servicios de base de datos, notificaciones y calendario
+src/theme/           Tokens y estilos
+src/types/           Modelos de dominio
 src/utils/           Utilidades puras
-src/test/            Configuración compartida de pruebas
+src/test/            Configuración común de pruebas
 ```
-
-`services/calendar` y `services/notifications` contienen solo contratos. La integración con
-Google Calendar y la programación de recordatorios se implementarán en etapas posteriores.
 
 ## Comandos
 
-| Comando             | Descripción                                |
-| ------------------- | ------------------------------------------ |
-| `npm start`         | Inicia Expo Metro                          |
-| `npm run android`   | Abre el proyecto en Android                |
-| `npm run ios`       | Solicita ejecución iOS mediante Expo       |
-| `npm run web`       | Inicia la versión web                      |
-| `npm run typecheck` | Valida TypeScript estricto                 |
-| `npm run lint`      | Ejecuta ESLint                             |
-| `npm run format`    | Comprueba formato con Prettier             |
-| `npm test`          | Ejecuta pruebas unitarias y de componentes |
+| Comando | Descripción |
+| --- | --- |
+| `npm start` | Inicia Metro/Expo |
+| `npm run android` | Ejecuta la app en Android |
+| `npm run ios` | Ejecuta la app en iOS |
+| `npm run web` | Ejecuta versión web |
+| `npm run lint` | Ejecuta ESLint |
+| `npm run format` | Verifica formato con Prettier |
+| `npm test` | Ejecuta pruebas |
 
-## Estado del proyecto
+## Estado verificado del proyecto
 
-PawReminder se encuentra en la **Fase 3: validación y estabilización del MVP**.
+A fecha de revisión actual, este proyecto ya incluye funcionalidad real en varias áreas:
 
-### Fases
+### Implementado y verificado
 
-- [x] **Fase 0: Preparación técnica**
-  - Configuración de Expo, TypeScript, Expo Router y Tamagui.
-  - Definición de tipos, tokens y arquitectura.
-  - Configuración de ESLint, Prettier y Jest.
+- [x] Gestión de mascotas
+  - crear, editar y eliminar mascotas
+  - pantalla principal con listado de mascotas
+  - detalle de mascota
 
-- [x] **Fase 1: Persistencia e infraestructura**
-  - Base de datos local SQLite.
-  - Servicios desacoplados para almacenamiento y notificaciones.
-  - Configuración de TanStack Query y formularios con React Hook Form y Zod.
+- [x] Gestión de tratamientos
+  - crear tratamiento
+  - editar tratamiento
+  - eliminar tratamiento
+  - cálculo de próxima fecha de aplicación
+  - lógica de estados de tratamiento: `upcoming`, `today`, `overdue`
 
-- [x] **Fase 2: MVP funcional local**
-  - Crear, editar y eliminar mascotas.
-  - Configurar tratamientos internos y externos.
-  - Calcular próximas fechas de aplicación.
-  - Mostrar estados próximo, hoy y vencido.
-  - Registrar aplicaciones e historial.
-  - Programar notificaciones locales.
-  - Marcar tratamientos como aplicados desde una notificación.
-  - Consultar el estado de los tratamientos desde la pantalla principal.
+- [x] Registro de historial
+  - log de aplicaciones realizadas
+  - marcado de tratamientos como aplicados
 
-- [ ] **Fase 3: Validación y estabilización**
-  - Probar los flujos completos en dispositivos físicos Android e iOS.
-  - Añadir pruebas para base de datos, tratamientos y notificaciones.
-  - Mejorar estados de carga, error y ausencia de datos.
-  - Revisar permisos y comportamiento de notificaciones.
-  - Mejorar la selección y validación de fechas.
-  - Corregir incidencias encontradas durante el uso real.
+- [x] Notificaciones
+  - programación de recordatorios relacionados al tratamiento
+  - cancelación de notificaciones al editar o eliminar
 
-- [ ] **Fase 4: Mejoras de producto**
-  - Calendario de tratamientos.
-  - Fotografías de mascotas.
-  - Repetición y edición avanzada de tratamientos.
-  - Configuración de horarios y preferencias de notificación.
-  - Soporte ampliado para cuidados y vacunas.
+- [x] UI y flujo principal
+  - home con estado de cada mascota
+  - detalle de tratamientos por mascota
+  - modal para registrar tratamiento aplicado
 
-- [ ] **Fase 5: Sincronización y publicación**
-  - Sincronización opcional en la nube.
-  - Cuenta de usuario y recuperación de datos.
-  - Copias de seguridad y migraciones.
-  - Analítica y monitoreo de errores.
-  - Builds de producción y publicación en App Store y Google Play.
+- [x] Base técnica
+  - Expo Router
+  - TanStack Query
+  - servicios desacoplados
+  - diseño con tokens y estilos centralizados
+  - pruebas unitarias para utilidades y servicios clave
 
-## Estado actual
+### Pendiente / en mejora
 
-La configuración inicial está preparada con Expo Router, design tokens, tipos de dominio,
-contratos de servicios, almacenamiento local intercambiable y herramientas de calidad. Las
-pantallas, la persistencia de dominio, Calendar, autenticación y notificaciones siguen pendientes.
+- [ ] validación real en dispositivos físicos Android e iOS
+- [ ] revisión de permisos y comportamiento de notificaciones en entorno real
+- [ ] mejorar estados de carga, error y vacío
+- [ ] completar cobertura de pruebas del flujo completo
+- [ ] mejorar validación de fechas y reglas del dominio
+- [ ] calendario de tratamientos
+- [ ] fotos de mascotas
+- [ ] sincronización en la nube / usuario
+- [ ] publicación en tiendas
+
+## Fases del proyecto
+
+### Fase 0: preparación técnica
+- [x] configuración base del proyecto
+- [x] arquitectura inicial
+- [x] tokens y diseño
+- [x] herramientas de calidad
+
+### Fase 1: persistencia e infraestructura
+- [x] almacenamiento local
+- [x] servicios desacoplados
+- [x] consultas apoyadas por React Query
+
+### Fase 2: MVP funcional local
+- [x] CRUD de mascotas
+- [x] CRUD de tratamientos
+- [x] cálculo y visualización de estados
+- [x] historial y aplicación de tratamientos
+- [x] notificaciones locales
+
+### Fase 3: validación y estabilización
+- [ ] validación real en dispositivos
+- [ ] limpieza de flujos y errores
+- [ ] pruebas end-to-end y regresión
+
+### Fase 4: mejoras de producto
+- [ ] calendario
+- [ ] administración avanzada de recordatorios
+- [ ] soporte para más tipos de cuidado
+
+### Fase 5: publicación
+- [ ] sincronización en la nube
+- [ ] despliegue de producción
+- [ ] App Store / Google Play
+
+## Estado actual del proceso
+
+El proyecto se encuentra en una etapa de MVP funcional local con flujo de dominio ya implementado y validado en parte por código y pruebas. La prioridad actual es estabilizar la experiencia de uso real, revisar notificaciones y confirmar que el flujo completo funciona bien en dispositivos reales.
+
+## Registro de evolución
+
+Este registro sirve como historial formal del progreso del proyecto. Cada actualización debe documentar la fecha, el bloque completado, la validación asociada y el siguiente paso pendiente.
+
+### 2026-08-29
+
+- [x] Se actualizó la documentación del proyecto para reflejar el estado real del MVP local.
+- [x] Validado: revisión del código del flujo principal de mascotas y tratamientos y alineación del README con el estado real del repositorio.
+- [ ] Siguiente paso pendiente: validar comportamiento real de notificaciones en Android e iOS con dispositivos físicos.
+
+## Evolución por sprint
+
+### Sprint 1: base técnica y dominio
+
+- [x] configuración inicial del proyecto
+- [x] arquitectura base
+- [x] modelo de dominio para mascotas y tratamientos
+- [x] tokenización visual y estructura principal
+- [x] servicios de persistencia y notificaciones desacoplados
+
+### Sprint 2: flujo principal de MVP
+
+- [x] creación, edición y eliminación de mascotas
+- [x] creación, edición y eliminación de tratamientos
+- [x] cálculo de fechas y estados (`upcoming`, `today`, `overdue`)
+- [x] historial de aplicaciones y marcado de tratamientos aplicados
+- [x] listado principal con estado de urgencia por mascota
+
+### Sprint 3: validación y estabilización
+
+- [ ] validación real en dispositivos Android e iOS
+- [ ] revisión final de notificaciones locales
+- [ ] mejora de UX para carga, error y vacíos
+- [ ] pruebas de regresión del flujo principal
+
+## Backlog + Done (visual)
+
+### Backlog
+
+| Prioridad | Bloque | Estado |
+| --- | --- | --- |
+| Alto | Validación real en Android e iOS | Pendiente |
+| Alto | Revisión de permisos y notificaciones | Pendiente |
+| Medio | Mejorar estados de carga, error y vacío | Pendiente |
+| Medio | Pruebas de regresión del flujo principal | Pendiente |
+| Medio | Validación de fechas y reglas del dominio | Pendiente |
+| Bajo | Calendario de tratamientos | Pendiente |
+| Bajo | Fotos de mascotas | Pendiente |
+| Bajo | Sincronización en la nube / usuario | Pendiente |
+| Bajo | Publicación en tiendas | Pendiente |
+
+### Done
+
+| Bloque | Resultado | Validado |
+| --- | --- | --- |
+| Base técnica | Proyecto inicial configurado y operativo | Revisión de código y estructura |
+| Dominio de mascotas | CRUD funcionando | Código y arquitectura |
+| Dominio de tratamientos | CRUD, fechas y estados funcionando | Código y pruebas de utilidades |
+| Historial de tratamiento | Registro y marcado de aplicación | Revisión del flujo principal |
+| Notificaciones | Programación y cancelación de recordatorios | Revisión de servicios |
+| Home y estado visual | Indicadores por mascota según urgencia | Revisión del flujo de UI |
+
+## Plantilla de update diario/semanal
+
+```text
+### Fecha: YYYY-MM-DD
+
+#### Objetivo del bloque
+- <qué se buscaba resolver>
+
+#### Trabajo completado
+- [x] <tarea completada>
+- [x] Validado: <qué se verificó>
+
+#### Siguiente paso pendiente
+- [ ] <siguiente bloque de trabajo>
+
+#### Riesgos o bloqueadores
+- <si aplica>
+```
+
+### Patrón obligatorio de actualización
+
+- [x] Tarea completada
+- [x] Validado: breve nota de verificación
+- [ ] Siguiente paso pendiente: descripción concreta
+
+## Cómo mantener este README actualizado
+
+Cada vez que se complete una funcionalidad o se cierre un bloque de trabajo, se debe actualizar esta sección siguiendo este patrón:
+
+1. mover la tarea desde “pendiente” a “implementado”
+2. añadir una breve nota del resultado tangible
+3. registrar si fue validado en pruebas o en dispositivo real
+4. dejar el siguiente bloque de trabajo pendiente con claridad
+5. añadir entrada en “Registro de evolución” con la fecha correspondiente
+
+Ejemplo:
+
+- [x] Registro de tratamiento aplicado desde la pantalla de detalle
+- [x] Validado con pruebas de hook y flujo de notificación
+- [ ] Revisar comportamiento real en Android con permisos de notificación
 
 ## Convenciones Git
 
-Los commits siguen Conventional Commits y se escriben siempre en español, por ejemplo:
+Los commits siguen Conventional Commits y se escriben en español, por ejemplo:
 
 ```text
-feat: configura entorno inicial de React Native
-chore: agrega configuración de ESLint
+feat: agrega gestión de tratamientos
+fix: corrige estado de vencimiento del tratamiento
+chore: actualiza documentación del README
 ```
