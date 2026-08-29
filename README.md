@@ -64,6 +64,7 @@ src/test/            Configuración común de pruebas
 | `npm run android` | Ejecuta la app en Android |
 | `npm run ios` | Ejecuta la app en iOS |
 | `npm run web` | Ejecuta versión web |
+| `npm run typecheck` | Valida TypeScript sin compilar |
 | `npm run lint` | Ejecuta ESLint |
 | `npm run format` | Verifica formato con Prettier |
 | `npm test` | Ejecuta pruebas |
