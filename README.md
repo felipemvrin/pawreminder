@@ -115,7 +115,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [ ] completar cobertura de pruebas del flujo completo
 - [x] mejorar validación de fechas y reglas del dominio
 - [x] calendario de tratamientos
-- [ ] fotos de mascotas
+- [x] fotos de mascotas
 - [ ] sincronización en la nube / usuario
 - [ ] publicación en tiendas
 
@@ -156,7 +156,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con validación funcional en dispositivos físicos, permisos de notificación revisados y calendario mensual de tratamientos. La prioridad actual es ampliar las pruebas de regresión del flujo principal.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual y fotos locales de mascotas. La prioridad actual es ampliar las pruebas de regresión del flujo principal.
 
 ## Registro de evolución
 
@@ -172,6 +172,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: TypeScript, ESLint y 46 pruebas unitarias ejecutadas correctamente.
 - [x] Se corrigió la programación de notificaciones en Android para usar explícitamente el canal `treatment-reminders` en cada trigger.
 - [x] Validado: `npm test -- --runInBand src/services/notifications/notification-service.test.ts`, `npm run lint -- src/services/notifications/notification-service.ts src/services/notifications/notification-service.test.ts` y `npm run typecheck`.
+- [x] Se habilitó la selección, previsualización y persistencia local de fotos de mascotas desde la galería.
+- [x] Validado: configuración de Expo, TypeScript, ESLint y 49 pruebas unitarias ejecutadas correctamente.
 - [ ] Siguiente paso pendiente: ampliar las pruebas de regresión del flujo principal.
 
 ## Evolución por sprint
@@ -211,7 +213,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Medio | Pruebas de regresión del flujo principal | Pendiente |
 | Medio | Validación de fechas y reglas del dominio | Completado |
 | Bajo | Calendario de tratamientos | Completado |
-| Bajo | Fotos de mascotas | Pendiente |
+| Bajo | Fotos de mascotas | Completado |
 | Bajo | Sincronización en la nube / usuario | Pendiente |
 | Bajo | Publicación en tiendas | Pendiente |
 
@@ -226,6 +228,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Notificaciones | Programación y cancelación de recordatorios | Revisión de servicios |
 | Home y estado visual | Indicadores por mascota según urgencia | Revisión del flujo de UI |
 | Calendario de tratamientos | Vista mensual y tratamientos programados | TypeScript, ESLint y pruebas unitarias |
+| Fotos de mascotas | Selección y persistencia local desde galería | Revisión de código |
 
 ## Plantilla de update diario/semanal
 

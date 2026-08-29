@@ -34,6 +34,7 @@ export default function NewPetScreen() {
                 name: values.name,
                 species: values.species,
                 breed: values.breed || undefined,
+                photoUri: values.photoUri || undefined,
                 weightKg: values.weightKg,
                 livesOutdoors: values.livesOutdoors
               });
