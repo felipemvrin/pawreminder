@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { Cat, Dog, Plus } from 'lucide-react-native';
+import { CalendarDays, Cat, Dog, Plus } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
@@ -105,21 +105,38 @@ export default function HomeScreen() {
       title="Mis mascotas"
       showBack={false}
       right={
-        <Pressable
-          onPress={() => router.push('/pet/new')}
-          accessibilityRole="button"
-          accessibilityLabel="Agregar mascota"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: radius.full,
-            backgroundColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Plus size={22} color={colors.primaryForeground} />
-        </Pressable>
+        <View style={{ flexDirection: 'row', gap: spacing[2] }}>
+          <Pressable
+            onPress={() => router.push('/calendar')}
+            accessibilityRole="button"
+            accessibilityLabel="Ver calendario de tratamientos"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: radius.full,
+              backgroundColor: colors.secondary,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <CalendarDays size={21} color={colors.primary} />
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/pet/new')}
+            accessibilityRole="button"
+            accessibilityLabel="Agregar mascota"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: radius.full,
+              backgroundColor: colors.primary,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Plus size={22} color={colors.primaryForeground} />
+          </Pressable>
+        </View>
       }
     >
       {isLoading ? (

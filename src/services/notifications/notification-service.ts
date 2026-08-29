@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import type { Treatment, TreatmentLog, EntityId, ISODateString } from '@/types/domain';
 import { databaseService } from '@/services/database/database-service';
 import { isoDateToLocalDate } from '@/lib/date-format';
@@ -31,6 +32,17 @@ export interface NotificationServiceType {
 }
 
 class NotificationServiceImpl implements NotificationServiceType {
+  private async configureAndroidNotificationChannel() {
+    if (Platform.OS !== 'android') return;
+
+    await Notifications.setNotificationChannelAsync('treatment-reminders', {
+      name: 'Recordatorios de tratamientos',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      sound: 'default'
+    });
+  }
+
   async requestPermissions(): Promise<boolean> {
     try {
       const permission = await Notifications.getPermissionsAsync();
@@ -58,6 +70,8 @@ class NotificationServiceImpl implements NotificationServiceType {
     treatment: Treatment
   ): Promise<{ reminderNotificationId?: string; dueNotificationId?: string }> {
     try {
+      await this.configureAndroidNotificationChannel();
+
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
         throw new Error('Notification permissions not granted');
@@ -93,6 +107,7 @@ class NotificationServiceImpl implements NotificationServiceType {
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            channelId: 'treatment-reminders',
             seconds: reminderSeconds,
             repeats: false
           }
@@ -117,6 +132,7 @@ class NotificationServiceImpl implements NotificationServiceType {
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            channelId: 'treatment-reminders',
             seconds: dueSeconds,
             repeats: false
           }

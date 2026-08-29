@@ -53,6 +53,41 @@ export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
   };
 }
 
+export interface UpcomingTreatment extends Treatment {
+  pet: Pet;
+}
+
+export function useUpcomingTreatments(pets: Pet[] | undefined) {
+  const results = useQueries({
+    queries: (pets ?? []).map((pet) => ({
+      queryKey: treatmentsKeys.byPet(pet.id),
+      queryFn: () => databaseService.getTreatmentsByPetId(pet.id),
+      enabled: Boolean(pets)
+    }))
+  });
+
+  const treatments = results
+    .flatMap((result, index) => {
+      const pet = pets?.[index];
+      return pet
+        ? (result.data ?? [])
+            .filter((treatment) => treatment.active)
+            .map((treatment) => ({
+              ...treatment,
+              pet
+            }))
+        : [];
+    })
+    .sort((first, second) => first.nextDueDate.localeCompare(second.nextDueDate));
+
+  return {
+    treatments,
+    isLoading: results.some((result) => result.isLoading),
+    isError: results.some((result) => result.isError),
+    refetch: () => Promise.all(results.map((result) => result.refetch()))
+  };
+}
+
 export function useTreatmentLogsByPet(petId: string | undefined) {
   return useQuery({
     queryKey: treatmentLogsKeys.byPet(petId ?? ''),
@@ -75,7 +110,10 @@ export function useCreateTreatment() {
 
   return useMutation({
     mutationFn: async (input: CreateTreatmentInput) => {
-      const nextDueDate = databaseService.calculateNextDueDate(input.lastAppliedDate, input.frequencyDays);
+      const nextDueDate = databaseService.calculateNextDueDate(
+        input.lastAppliedDate,
+        input.frequencyDays
+      );
 
       const treatment = await databaseService.createTreatment({
         petId: input.petId,
@@ -123,7 +161,10 @@ export function useUpdateTreatment() {
         dueId: current.notificationIdDueDate
       });
 
-      const nextDueDate = databaseService.calculateNextDueDate(input.lastAppliedDate, input.frequencyDays);
+      const nextDueDate = databaseService.calculateNextDueDate(
+        input.lastAppliedDate,
+        input.frequencyDays
+      );
 
       const updated = await databaseService.updateTreatment(input.treatmentId, {
         type: input.type,
