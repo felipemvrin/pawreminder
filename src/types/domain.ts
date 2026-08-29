@@ -1,7 +1,7 @@
 export type EntityId = string;
 export type ISODateString = string;
 export type Species = 'dog' | 'cat';
-export type TreatmentType = 'internal' | 'external';
+export type TreatmentType = 'internal' | 'external' | 'vaccine' | 'other';
 
 // Antiparasitic treatment reminder model
 export interface Pet {

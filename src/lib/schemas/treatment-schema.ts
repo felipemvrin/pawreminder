@@ -12,8 +12,10 @@ function isValidISODate(value: string) {
 
 export const treatmentFormSchema = z
   .object({
-    type: z.enum(['internal', 'external'], { message: 'Selecciona un tipo de tratamiento' }),
-    productName: z.string().trim().max(60, 'Máximo 60 caracteres').optional().or(z.literal('')),
+    type: z.enum(['internal', 'external', 'vaccine', 'other'], {
+      message: 'Selecciona un tipo de cuidado'
+    }),
+    productName: z.string().trim().max(60, 'Máximo 60 caracteres'),
     frequencyDays: z.coerce
       .number({ message: 'Ingresa una frecuencia válida' })
       .int('Debe ser un número entero')
@@ -31,7 +33,15 @@ export const treatmentFormSchema = z
   .refine((values) => values.reminderDaysBefore < values.frequencyDays, {
     message: 'Debe ser menor que la frecuencia del tratamiento',
     path: ['reminderDaysBefore']
-  });
+  })
+  .refine(
+    (values) =>
+      values.type === 'internal' || values.type === 'external' || values.productName.length > 0,
+    {
+      message: 'Ingresa un nombre para este cuidado',
+      path: ['productName']
+    }
+  );
 
 export type TreatmentFormValues = z.input<typeof treatmentFormSchema>;
 export type TreatmentFormOutput = z.output<typeof treatmentFormSchema>;

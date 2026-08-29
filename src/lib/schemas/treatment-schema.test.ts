@@ -13,6 +13,16 @@ describe('treatmentFormSchema', () => {
     expect(treatmentFormSchema.safeParse(validTreatment).success).toBe(true);
   });
 
+  it.each(['vaccine', 'other'] as const)('accepts %s as a manual care type', (type) => {
+    expect(treatmentFormSchema.safeParse({ ...validTreatment, type }).success).toBe(true);
+  });
+
+  it('requires a name for manual care types', () => {
+    expect(
+      treatmentFormSchema.safeParse({ ...validTreatment, type: 'vaccine', productName: '' }).success
+    ).toBe(false);
+  });
+
   it('rejects dates that do not exist in the calendar', () => {
     const result = treatmentFormSchema.safeParse({
       ...validTreatment,

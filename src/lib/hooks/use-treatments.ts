@@ -213,6 +213,57 @@ export function useDeleteTreatment() {
   });
 }
 
+export function usePauseTreatment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ treatmentId }: { treatmentId: EntityId; petId: EntityId }) => {
+      const treatment = await databaseService.getTreatmentById(treatmentId);
+      if (!treatment) throw new Error('Tratamiento no encontrado');
+
+      await notificationService.cancelTreatmentNotifications({
+        reminderId: treatment.notificationIdReminder,
+        dueId: treatment.notificationIdDueDate
+      });
+
+      return databaseService.updateTreatment(treatmentId, {
+        active: false,
+        notificationIdReminder: undefined,
+        notificationIdDueDate: undefined
+      });
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: treatmentsKeys.byPet(variables.petId) });
+      queryClient.invalidateQueries({ queryKey: treatmentsKeys.detail(variables.treatmentId) });
+    }
+  });
+}
+
+export function useResumeTreatment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ treatmentId }: { treatmentId: EntityId; petId: EntityId }) => {
+      const treatment = await databaseService.getTreatmentById(treatmentId);
+      if (!treatment) throw new Error('Tratamiento no encontrado');
+
+      const activeTreatment = await databaseService.updateTreatment(treatmentId, { active: true });
+      if (!activeTreatment) throw new Error('Tratamiento no encontrado');
+
+      const notificationIds =
+        await notificationService.scheduleTreatmentNotifications(activeTreatment);
+      return databaseService.updateTreatment(treatmentId, {
+        notificationIdReminder: notificationIds.reminderNotificationId,
+        notificationIdDueDate: notificationIds.dueNotificationId
+      });
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: treatmentsKeys.byPet(variables.petId) });
+      queryClient.invalidateQueries({ queryKey: treatmentsKeys.detail(variables.treatmentId) });
+    }
+  });
+}
+
 export function useMarkTreatmentApplied() {
   const queryClient = useQueryClient();
 
