@@ -3,7 +3,13 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'rea
 
 import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { TreatmentForm } from '@/components/treatment-form';
-import { useDeleteTreatment, useTreatment, useUpdateTreatment } from '@/lib/hooks/use-treatments';
+import {
+  useDeleteTreatment,
+  usePauseTreatment,
+  useResumeTreatment,
+  useTreatment,
+  useUpdateTreatment
+} from '@/lib/hooks/use-treatments';
 import { useToast } from '@/lib/toast-context';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
@@ -14,6 +20,8 @@ export default function EditTreatmentScreen() {
   const { data: treatment, isLoading } = useTreatment(id);
   const updateTreatment = useUpdateTreatment();
   const deleteTreatment = useDeleteTreatment();
+  const pauseTreatment = usePauseTreatment();
+  const resumeTreatment = useResumeTreatment();
   const bottomPadding = useScreenBottomPadding();
 
   if (isLoading) {
@@ -66,6 +74,20 @@ export default function EditTreatmentScreen() {
     );
   };
 
+  const handleReminderToggle = async () => {
+    try {
+      if (treatment.active) {
+        await pauseTreatment.mutateAsync({ treatmentId: treatment.id, petId: treatment.petId });
+        toast.success('Recordatorios pausados');
+      } else {
+        await resumeTreatment.mutateAsync({ treatmentId: treatment.id, petId: treatment.petId });
+        toast.success('Recordatorios reactivados');
+      }
+    } catch {
+      toast.error('No se pudieron actualizar los recordatorios');
+    }
+  };
+
   return (
     <Screen title="Editar tratamiento">
       <ScrollView
@@ -106,6 +128,23 @@ export default function EditTreatmentScreen() {
             }
           }}
         />
+
+        <Pressable
+          onPress={handleReminderToggle}
+          disabled={pauseTreatment.isPending || resumeTreatment.isPending}
+          style={{
+            paddingVertical: spacing[4],
+            borderRadius: radius.md,
+            borderWidth: 1,
+            borderColor: colors.primary,
+            alignItems: 'center',
+            opacity: pauseTreatment.isPending || resumeTreatment.isPending ? 0.7 : 1
+          }}
+        >
+          <Text style={{ ...typography.label, color: colors.primary }}>
+            {treatment.active ? 'Pausar recordatorios' : 'Reactivar recordatorios'}
+          </Text>
+        </Pressable>
 
         <Pressable
           onPress={handleDelete}

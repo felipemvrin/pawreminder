@@ -57,11 +57,16 @@ export function TreatmentForm({
     (producto) => producto.marca === (defaultValues.productName ?? '')
   );
   const [treatmentType, setTreatmentType] = useState<TratamientoTipo | null>(
-    defaultValues.type === 'internal' ? 'interno' : defaultValues.type === 'external' ? 'externo' : null
+    defaultValues.type === 'internal'
+      ? 'interno'
+      : defaultValues.type === 'external'
+        ? 'externo'
+        : null
   );
   const [selectedProduct, setSelectedProduct] = useState<Producto | null>(initialProduct ?? null);
   const [frequencyDays, setFrequencyDays] = useState<number | ''>(
-    initialProduct?.frecuencia_dias ?? ''
+    initialProduct?.frecuencia_dias ??
+      (typeof defaultValues.frequencyDays === 'number' ? defaultValues.frequencyDays : '')
   );
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [tempDate, setTempDate] = useState<Date | null>(null);
@@ -88,7 +93,9 @@ export function TreatmentForm({
             <View style={{ flexDirection: 'row', gap: spacing[3] }}>
               {[
                 { key: 'internal' as const, label: 'Interno' },
-                { key: 'external' as const, label: 'Externo' }
+                { key: 'external' as const, label: 'Externo' },
+                { key: 'vaccine' as const, label: 'Vacuna' },
+                { key: 'other' as const, label: 'Otro' }
               ].map(({ key, label }) => {
                 const selected = value === key;
                 return (
@@ -96,7 +103,9 @@ export function TreatmentForm({
                     key={key}
                     onPress={() => {
                       onChange(key);
-                      setTreatmentType(key === 'internal' ? 'interno' : 'externo');
+                      setTreatmentType(
+                        key === 'internal' ? 'interno' : key === 'external' ? 'externo' : null
+                      );
                       setSelectedProduct(null);
                       setFrequencyDays('');
                       setValue('productName', '');
@@ -132,28 +141,78 @@ export function TreatmentForm({
 
       <Controller
         control={control}
-        name="productName"
-        render={({ field: { onChange: onProductChange } }) => (
-          <Controller
-            control={control}
-            name="frequencyDays"
-            render={({ field: { onChange: onFrequencyDaysChange } }) => (
-              <ProductSelect
-                treatmentType={treatmentType}
-                selectedProduct={selectedProduct}
-                frequencyDays={frequencyDays}
-                onProductChange={(product) => {
-                  setSelectedProduct(product);
-                  onProductChange(product?.marca ?? '');
-                }}
-                onFrequencyDaysChange={(days) => {
-                  setFrequencyDays(days);
-                  onFrequencyDaysChange(days);
-                }}
-              />
-            )}
-          />
-        )}
+        name="type"
+        render={({ field: { value: type } }) =>
+          type === 'internal' || type === 'external' ? (
+            <Controller
+              control={control}
+              name="productName"
+              render={({ field: { onChange: onProductChange } }) => (
+                <Controller
+                  control={control}
+                  name="frequencyDays"
+                  render={({ field: { onChange: onFrequencyDaysChange } }) => (
+                    <ProductSelect
+                      treatmentType={treatmentType}
+                      selectedProduct={selectedProduct}
+                      frequencyDays={frequencyDays}
+                      onProductChange={(product) => {
+                        setSelectedProduct(product);
+                        onProductChange(product?.marca ?? '');
+                      }}
+                      onFrequencyDaysChange={(days) => {
+                        setFrequencyDays(days);
+                        onFrequencyDaysChange(days);
+                      }}
+                    />
+                  )}
+                />
+              )}
+            />
+          ) : (
+            <>
+              <View style={{ gap: spacing[2] }}>
+                <FieldLabel>
+                  {type === 'vaccine' ? 'Nombre de la vacuna' : 'Nombre del cuidado'}
+                </FieldLabel>
+                <Controller
+                  control={control}
+                  name="productName"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder={
+                        type === 'vaccine' ? 'Ej. Antirrábica' : 'Ej. Control veterinario'
+                      }
+                      placeholderTextColor={colors.muted}
+                      style={inputStyle}
+                    />
+                  )}
+                />
+              </View>
+              <View style={{ gap: spacing[2] }}>
+                <FieldLabel>Frecuencia (días)</FieldLabel>
+                <Controller
+                  control={control}
+                  name="frequencyDays"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      value={value !== undefined ? String(value) : ''}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Ej. 365"
+                      placeholderTextColor={colors.muted}
+                      keyboardType="number-pad"
+                      style={inputStyle}
+                    />
+                  )}
+                />
+              </View>
+            </>
+          )
+        }
       />
       <FieldError message={errors.productName?.message ?? errors.frequencyDays?.message} />
 

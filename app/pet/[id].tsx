@@ -17,7 +17,13 @@ import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Treatment } from '@/types/domain';
 
 function treatmentTypeLabel(type: Treatment['type']) {
-  return type === 'internal' ? 'Interno' : 'Externo';
+  const labels: Record<Treatment['type'], string> = {
+    internal: 'Interno',
+    external: 'Externo',
+    vaccine: 'Vacuna',
+    other: 'Otro cuidado'
+  };
+  return labels[type];
 }
 
 function TreatmentCard({ treatment }: { treatment: Treatment }) {
