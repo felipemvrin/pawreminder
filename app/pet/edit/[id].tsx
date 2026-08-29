@@ -55,6 +55,7 @@ export default function EditPetScreen() {
             name: pet.name,
             species: pet.species,
             breed: pet.breed ?? '',
+            photoUri: pet.photoUri ?? '',
             weightKg: pet.weightKg,
             livesOutdoors: pet.livesOutdoors
           }}
@@ -69,6 +70,7 @@ export default function EditPetScreen() {
                   name: values.name,
                   species: values.species,
                   breed: values.breed || undefined,
+                  photoUri: values.photoUri || undefined,
                   weightKg: values.weightKg,
                   livesOutdoors: values.livesOutdoors
                 }

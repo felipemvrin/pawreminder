@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Cat, Dog, Plus } from 'lucide-react-native';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
@@ -190,18 +190,26 @@ export default function PetDetailScreen() {
             gap: spacing[4]
           }}
         >
-          <View
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: radius.full,
-              backgroundColor: colors.secondary,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Icon size={28} color={colors.primary} />
-          </View>
+          {pet.photoUri ? (
+            <Image
+              source={{ uri: pet.photoUri }}
+              accessibilityLabel={`Foto de ${pet.name}`}
+              style={{ width: 56, height: 56, borderRadius: radius.full }}
+            />
+          ) : (
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: radius.full,
+                backgroundColor: colors.secondary,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Icon size={28} color={colors.primary} />
+            </View>
+          )}
           <View style={{ flex: 1 }}>
             <Text style={{ ...typography.heading, color: colors.foreground }}>{pet.name}</Text>
             <Text style={{ ...typography.body, color: colors.muted }}>

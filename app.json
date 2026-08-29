@@ -6,7 +6,16 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "scheme": "pawreminder",
-    "plugins": ["expo-router", "expo-notifications"],
+    "plugins": [
+      "expo-router",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permite a PawReminder acceder a tus fotos para elegir una imagen de tu mascota."
+        }
+      ]
+    ],
     "experiments": { "typedRoutes": true },
     "ios": {
       "supportsTablet": true,

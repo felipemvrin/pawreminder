@@ -4,6 +4,7 @@ export const petFormSchema = z.object({
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(40, 'Máximo 40 caracteres'),
   species: z.enum(['dog', 'cat'], { message: 'Selecciona una especie' }),
   breed: z.string().trim().max(40, 'Máximo 40 caracteres').optional().or(z.literal('')),
+  photoUri: z.string().url('Selecciona una foto válida').optional().or(z.literal('')),
   weightKg: z.coerce
     .number({ message: 'Ingresa un peso válido' })
     .positive('El peso debe ser mayor a 0')
@@ -18,6 +19,7 @@ export const petFormDefaultValues: PetFormValues = {
   name: '',
   species: 'dog',
   breed: '',
+  photoUri: '',
   weightKg: 0,
   livesOutdoors: false
 };

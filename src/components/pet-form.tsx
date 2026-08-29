@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Cat, Dog } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Camera, Cat, Dog, X } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, Switch, Text, TextInput, View } from 'react-native';
 
 import {
   petFormDefaultValues,
@@ -57,6 +58,34 @@ export function PetForm({
 
   const submit = handleSubmit(onSubmit);
 
+  const selectPhoto = async (onChange: (value: string) => void) => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      if (!permission.canAskAgain) {
+        Alert.alert(
+          'Permiso necesario',
+          'El acceso a tus fotos está desactivado. Actívalo en Configuración.',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Abrir Configuración', onPress: () => void Linking.openSettings() }
+          ]
+        );
+      } else {
+        Alert.alert('Permiso necesario', 'Permite el acceso a tus fotos para elegir una imagen.');
+      }
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8
+    });
+
+    if (!result.canceled && result.assets?.[0]) onChange(result.assets[0].uri);
+  };
+
   return (
     <View style={{ gap: spacing[5] }}>
       <View style={{ gap: spacing[2] }}>
@@ -85,12 +114,10 @@ export function PetForm({
           name="species"
           render={({ field: { onChange, value } }) => (
             <View style={{ flexDirection: 'row', gap: spacing[3] }}>
-              {(
-                [
-                  { key: 'dog' as const, label: 'Perro', Icon: Dog },
-                  { key: 'cat' as const, label: 'Gato', Icon: Cat }
-                ]
-              ).map(({ key, label, Icon }) => {
+              {[
+                { key: 'dog' as const, label: 'Perro', Icon: Dog },
+                { key: 'cat' as const, label: 'Gato', Icon: Cat }
+              ].map(({ key, label, Icon }) => {
                 const selected = value === key;
                 return (
                   <Pressable
@@ -144,6 +171,66 @@ export function PetForm({
           )}
         />
         <FieldError message={errors.breed?.message} />
+      </View>
+
+      <View style={{ gap: spacing[2] }}>
+        <FieldLabel>Foto (opcional)</FieldLabel>
+        <Controller
+          control={control}
+          name="photoUri"
+          render={({ field: { onChange, value } }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[3] }}>
+              {value ? (
+                <View>
+                  <Image
+                    source={{ uri: value }}
+                    accessibilityLabel="Foto de la mascota"
+                    style={{ width: 72, height: 72, borderRadius: radius.full }}
+                  />
+                  <Pressable
+                    onPress={() => onChange('')}
+                    accessibilityRole="button"
+                    accessibilityLabel="Eliminar foto"
+                    style={{
+                      position: 'absolute',
+                      right: -4,
+                      top: -4,
+                      width: 24,
+                      height: 24,
+                      borderRadius: radius.full,
+                      backgroundColor: colors.error,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <X size={14} color={colors.primaryForeground} />
+                  </Pressable>
+                </View>
+              ) : null}
+              <Pressable
+                onPress={() => void selectPhoto(onChange)}
+                accessibilityRole="button"
+                accessibilityLabel="Seleccionar foto de mascota"
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing[2],
+                  paddingHorizontal: spacing[4],
+                  paddingVertical: spacing[3],
+                  borderRadius: radius.md,
+                  borderWidth: 1,
+                  borderColor: colors.border
+                }}
+              >
+                <Camera size={18} color={colors.primary} />
+                <Text style={{ ...typography.label, color: colors.primary }}>
+                  {value ? 'Cambiar foto' : 'Elegir foto'}
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        />
+        <FieldError message={errors.photoUri?.message} />
       </View>
 
       <View style={{ gap: spacing[2] }}>

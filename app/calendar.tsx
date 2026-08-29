@@ -4,6 +4,11 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { Screen, useScreenBottomPadding } from '@/components/screen';
+import {
+  getMonthDays,
+  getTreatmentsInMonth,
+  groupTreatmentsByDueDay
+} from '@/lib/calendar-utils';
 import { isoDateToDisplay } from '@/lib/date-format';
 import { usePets } from '@/lib/hooks/use-pets';
 import { useUpcomingTreatments } from '@/lib/hooks/use-treatments';
@@ -16,20 +21,6 @@ import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 const weekdayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 const monthFormatter = new Intl.DateTimeFormat('es-CL', { month: 'long', year: 'numeric' });
-
-function getMonthDays(month: Date) {
-  const firstDay = new Date(month.getFullYear(), month.getMonth(), 1);
-  const leadingDays = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
-
-  return Array.from({ length: leadingDays + daysInMonth }, (_, index) =>
-    index < leadingDays ? undefined : index - leadingDays + 1
-  );
-}
-
-function monthKey(month: Date) {
-  return `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`;
-}
 
 export default function CalendarScreen() {
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -44,16 +35,8 @@ export default function CalendarScreen() {
   } = usePets();
   const { treatments, isLoading, isError, refetch } = useUpcomingTreatments(pets);
   const bottomPadding = useScreenBottomPadding();
-  const selectedMonthKey = monthKey(selectedMonth);
-  const treatmentsInMonth = treatments.filter((treatment) =>
-    treatment.nextDueDate.startsWith(selectedMonthKey)
-  );
-  const treatmentsByDay = new Map<number, typeof treatments>();
-
-  treatmentsInMonth.forEach((treatment) => {
-    const day = Number(treatment.nextDueDate.slice(-2));
-    treatmentsByDay.set(day, [...(treatmentsByDay.get(day) ?? []), treatment]);
-  });
+  const treatmentsInMonth = getTreatmentsInMonth(treatments, selectedMonth);
+  const treatmentsByDay = groupTreatmentsByDueDay(treatmentsInMonth);
 
   const moveMonth = (offset: number) => {
     setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() + offset, 1));
