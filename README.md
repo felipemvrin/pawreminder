@@ -111,7 +111,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 - [ ] validación real en dispositivos físicos Android e iOS
 - [ ] revisión de permisos y comportamiento de notificaciones en entorno real
-- [ ] mejorar estados de carga, error y vacío
+- [x] mejorar estados de carga, error y vacío
 - [ ] completar cobertura de pruebas del flujo completo
 - [ ] mejorar validación de fechas y reglas del dominio
 - [ ] calendario de tratamientos
@@ -141,7 +141,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ### Fase 3: validación y estabilización
 - [ ] validación real en dispositivos
-- [ ] limpieza de flujos y errores
+- [x] limpieza de flujos y errores
 - [ ] pruebas end-to-end y regresión
 
 ### Fase 4: mejoras de producto
@@ -156,7 +156,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con flujo de dominio ya implementado y validado en parte por código y pruebas. La prioridad actual es estabilizar la experiencia de uso real, revisar notificaciones y confirmar que el flujo completo funciona bien en dispositivos reales.
+El proyecto se encuentra en una etapa de MVP funcional local con los estados de consulta de Inicio, detalle e historial cubiertos para carga, error, vacío y reintento. La prioridad actual es validar notificaciones y el flujo completo en dispositivos reales.
 
 ## Registro de evolución
 
@@ -164,8 +164,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 ### 2026-08-29
 
-- [x] Se actualizó la documentación del proyecto para reflejar el estado real del MVP local.
-- [x] Validado: revisión del código del flujo principal de mascotas y tratamientos y alineación del README con el estado real del repositorio.
+- [x] Se agregaron estados explícitos de carga, error y reintento en Inicio, detalle de mascota e historial.
+- [x] Validado: TypeScript, ESLint y 36 pruebas unitarias ejecutadas correctamente; Prettier verificado en los archivos modificados.
 - [ ] Siguiente paso pendiente: validar comportamiento real de notificaciones en Android e iOS con dispositivos físicos.
 
 ## Evolución por sprint
@@ -190,7 +190,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 - [ ] validación real en dispositivos Android e iOS
 - [ ] revisión final de notificaciones locales
-- [ ] mejora de UX para carga, error y vacíos
+- [x] mejora de UX para carga, error y vacíos
 - [ ] pruebas de regresión del flujo principal
 
 ## Backlog + Done (visual)
@@ -201,7 +201,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | --- | --- | --- |
 | Alto | Validación real en Android e iOS | Pendiente |
 | Alto | Revisión de permisos y notificaciones | Pendiente |
-| Medio | Mejorar estados de carga, error y vacío | Pendiente |
+| Medio | Mejorar estados de carga, error y vacío | Completado |
 | Medio | Pruebas de regresión del flujo principal | Pendiente |
 | Medio | Validación de fechas y reglas del dominio | Pendiente |
 | Bajo | Calendario de tratamientos | Pendiente |

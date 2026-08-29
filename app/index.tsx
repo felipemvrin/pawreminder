@@ -3,6 +3,7 @@ import LottieView from 'lottie-react-native';
 import { Cat, Dog, Plus } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
+import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { usePets } from '@/lib/hooks/use-pets';
 import { usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
 import {
@@ -93,7 +94,7 @@ function EmptyState() {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { data: pets, isLoading } = usePets();
+  const { data: pets, isLoading, isError, refetch } = usePets();
   const { summaries } = usePetTreatmentSummaries(pets);
   const bottomPadding = useScreenBottomPadding();
 
@@ -121,7 +122,14 @@ export default function HomeScreen() {
         </Pressable>
       }
     >
-      {!isLoading && pets && pets.length === 0 ? (
+      {isLoading ? (
+        <QueryLoadingState />
+      ) : isError ? (
+        <QueryErrorState
+          message="Revisa tu conexión e inténtalo nuevamente."
+          onRetry={() => void refetch()}
+        />
+      ) : pets && pets.length === 0 ? (
         <EmptyState />
       ) : (
         <FlatList
