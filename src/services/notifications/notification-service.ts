@@ -107,6 +107,7 @@ class NotificationServiceImpl implements NotificationServiceType {
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            channelId: 'treatment-reminders',
             seconds: reminderSeconds,
             repeats: false
           }
@@ -131,6 +132,7 @@ class NotificationServiceImpl implements NotificationServiceType {
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            channelId: 'treatment-reminders',
             seconds: dueSeconds,
             repeats: false
           }

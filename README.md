@@ -170,6 +170,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Se validaron fechas de calendario y el rango de anticipación de los recordatorios en el formulario de tratamientos.
 - [x] Se agregó un calendario mensual navegable con los tratamientos programados y su estado de vencimiento.
 - [x] Validado: TypeScript, ESLint y 46 pruebas unitarias ejecutadas correctamente.
+- [x] Se corrigió la programación de notificaciones en Android para usar explícitamente el canal `treatment-reminders` en cada trigger.
+- [x] Validado: `npm test -- --runInBand src/services/notifications/notification-service.test.ts`, `npm run lint -- src/services/notifications/notification-service.ts src/services/notifications/notification-service.test.ts` y `npm run typecheck`.
 - [ ] Siguiente paso pendiente: ampliar las pruebas de regresión del flujo principal.
 
 ## Evolución por sprint

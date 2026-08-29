@@ -113,7 +113,11 @@ describe('notificationService', () => {
           body: 'En 2 día(s) vence el tratamiento de Luna',
           data: expect.objectContaining({ treatmentId: 'treatment-1', type: 'reminder' })
         }),
-        trigger: expect.objectContaining({ type: 'timeInterval', repeats: false })
+        trigger: expect.objectContaining({
+          type: 'timeInterval',
+          channelId: 'treatment-reminders',
+          repeats: false
+        })
       })
     );
     expect(Notifications.scheduleNotificationAsync).toHaveBeenNthCalledWith(
@@ -124,7 +128,11 @@ describe('notificationService', () => {
           body: 'Es hora de aplicar el tratamiento a Luna',
           data: expect.objectContaining({ treatmentId: 'treatment-1', type: 'due-date' })
         }),
-        trigger: expect.objectContaining({ type: 'timeInterval', repeats: false })
+        trigger: expect.objectContaining({
+          type: 'timeInterval',
+          channelId: 'treatment-reminders',
+          repeats: false
+        })
       })
     );
   });
