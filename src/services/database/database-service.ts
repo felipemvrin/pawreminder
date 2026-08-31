@@ -142,11 +142,22 @@ class DatabaseService {
         ]
       );
 
+      await this.enqueueEntitySync('pet', fullPet.id, 'upsert', fullPet.updatedAt as string);
+
       return fullPet;
     } catch (error) {
       console.error('Failed to create pet:', error);
       throw error;
     }
+  }
+
+  private async enqueueEntitySync(
+    entityType: SyncQueueEntry['entityType'],
+    entityId: EntityId,
+    operation: SyncQueueEntry['operation'],
+    updatedAt: ISODateString
+  ): Promise<void> {
+    await this.enqueueSyncEntry({ entityType, entityId, operation, status: 'pending', updatedAt });
   }
 
   async getPetById(petId: EntityId): Promise<Pet | null> {
@@ -163,7 +174,9 @@ class DatabaseService {
   async getAllPets(): Promise<Pet[]> {
     try {
       const db = this.ensureDb();
-      const rows = await db.getAllAsync<any>('SELECT * FROM pets ORDER BY createdAt DESC');
+      const rows = await db.getAllAsync<any>(
+        'SELECT * FROM pets WHERE deletedAt IS NULL ORDER BY createdAt DESC'
+      );
       return rows.map((row: any) => this.mapRowToPet(row));
     } catch (error) {
       console.error('Failed to get all pets:', error);
@@ -201,6 +214,8 @@ class DatabaseService {
         ]
       );
 
+      await this.enqueueEntitySync('pet', petId, 'upsert', updated.updatedAt);
+
       return updated;
     } catch (error) {
       console.error('Failed to update pet:', error);
@@ -211,9 +226,42 @@ class DatabaseService {
   async deletePet(petId: EntityId): Promise<boolean> {
     try {
       const db = this.ensureDb();
-      await db.runAsync('DELETE FROM treatment_logs WHERE petId = ?', [petId]);
-      await db.runAsync('DELETE FROM treatments WHERE petId = ?', [petId]);
-      await db.runAsync('DELETE FROM pets WHERE id = ?', [petId]);
+      const now = new Date().toISOString();
+
+      const treatments = await db.getAllAsync<{ id: string }>(
+        'SELECT id FROM treatments WHERE petId = ? AND deletedAt IS NULL',
+        [petId]
+      );
+      const logs = await db.getAllAsync<{ id: string }>(
+        'SELECT id FROM treatment_logs WHERE petId = ? AND deletedAt IS NULL',
+        [petId]
+      );
+
+      // Soft delete so the deletion can be propagated to Supabase instead of vanishing from the outbox
+      await db.runAsync('UPDATE treatment_logs SET deletedAt = ?, updatedAt = ? WHERE petId = ?', [
+        now,
+        now,
+        petId
+      ]);
+      await db.runAsync('UPDATE treatments SET deletedAt = ?, updatedAt = ? WHERE petId = ?', [
+        now,
+        now,
+        petId
+      ]);
+      await db.runAsync('UPDATE pets SET deletedAt = ?, updatedAt = ? WHERE id = ?', [
+        now,
+        now,
+        petId
+      ]);
+
+      for (const log of logs) {
+        await this.enqueueEntitySync('treatment_log', log.id, 'delete', now);
+      }
+      for (const treatment of treatments) {
+        await this.enqueueEntitySync('treatment', treatment.id, 'delete', now);
+      }
+      await this.enqueueEntitySync('pet', petId, 'delete', now);
+
       return true;
     } catch (error) {
       console.error('Failed to delete pet:', error);
@@ -257,6 +305,13 @@ class DatabaseService {
         ]
       );
 
+      await this.enqueueEntitySync(
+        'treatment',
+        fullTreatment.id,
+        'upsert',
+        fullTreatment.updatedAt as string
+      );
+
       return fullTreatment;
     } catch (error) {
       console.error('Failed to create treatment:', error);
@@ -281,7 +336,7 @@ class DatabaseService {
     try {
       const db = this.ensureDb();
       const rows = await db.getAllAsync<any>(
-        'SELECT * FROM treatments WHERE petId = ? ORDER BY createdAt DESC',
+        'SELECT * FROM treatments WHERE petId = ? AND deletedAt IS NULL ORDER BY createdAt DESC',
         [petId]
       );
       return rows.map((row: any) => this.mapRowToTreatment(row));
@@ -325,6 +380,8 @@ class DatabaseService {
         ]
       );
 
+      await this.enqueueEntitySync('treatment', treatmentId, 'upsert', updated.updatedAt);
+
       return updated;
     } catch (error) {
       console.error('Failed to update treatment:', error);
@@ -335,8 +392,28 @@ class DatabaseService {
   async deleteTreatment(treatmentId: EntityId): Promise<boolean> {
     try {
       const db = this.ensureDb();
-      await db.runAsync('DELETE FROM treatment_logs WHERE treatmentId = ?', [treatmentId]);
-      await db.runAsync('DELETE FROM treatments WHERE id = ?', [treatmentId]);
+      const now = new Date().toISOString();
+
+      const logs = await db.getAllAsync<{ id: string }>(
+        'SELECT id FROM treatment_logs WHERE treatmentId = ? AND deletedAt IS NULL',
+        [treatmentId]
+      );
+
+      await db.runAsync(
+        'UPDATE treatment_logs SET deletedAt = ?, updatedAt = ? WHERE treatmentId = ?',
+        [now, now, treatmentId]
+      );
+      await db.runAsync('UPDATE treatments SET deletedAt = ?, updatedAt = ? WHERE id = ?', [
+        now,
+        now,
+        treatmentId
+      ]);
+
+      for (const log of logs) {
+        await this.enqueueEntitySync('treatment_log', log.id, 'delete', now);
+      }
+      await this.enqueueEntitySync('treatment', treatmentId, 'delete', now);
+
       return true;
     } catch (error) {
       console.error('Failed to delete treatment:', error);
@@ -370,6 +447,8 @@ class DatabaseService {
         ]
       );
 
+      await this.enqueueEntitySync('treatment_log', fullLog.id, 'upsert', fullLog.updatedAt as string);
+
       return fullLog;
     } catch (error) {
       console.error('Failed to create treatment log:', error);
@@ -381,7 +460,7 @@ class DatabaseService {
     try {
       const db = this.ensureDb();
       const rows = await db.getAllAsync<any>(
-        'SELECT * FROM treatment_logs WHERE treatmentId = ? ORDER BY appliedDate DESC',
+        'SELECT * FROM treatment_logs WHERE treatmentId = ? AND deletedAt IS NULL ORDER BY appliedDate DESC',
         [treatmentId]
       );
       return rows.map((row: any) => this.mapRowToTreatmentLog(row));
@@ -395,7 +474,7 @@ class DatabaseService {
     try {
       const db = this.ensureDb();
       const rows = await db.getAllAsync<any>(
-        'SELECT * FROM treatment_logs WHERE petId = ? ORDER BY appliedDate DESC',
+        'SELECT * FROM treatment_logs WHERE petId = ? AND deletedAt IS NULL ORDER BY appliedDate DESC',
         [petId]
       );
       return rows.map((row: any) => this.mapRowToTreatmentLog(row));

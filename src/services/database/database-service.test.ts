@@ -116,14 +116,41 @@ describe('databaseService', () => {
     );
   });
 
-  it('deletes a pet and its dependent records in order', async () => {
+  it('soft-deletes a pet, cascades to its treatments/logs and enqueues sync entries', async () => {
+    mockDatabase.getAllAsync
+      .mockResolvedValueOnce([{ id: 'treatment-1' }])
+      .mockResolvedValueOnce([{ id: 'log-1' }]);
+
     await expect(databaseService.deletePet('pet-1')).resolves.toBe(true);
 
-    expect(mockDatabase.runAsync.mock.calls).toEqual([
-      ['DELETE FROM treatment_logs WHERE petId = ?', ['pet-1']],
-      ['DELETE FROM treatments WHERE petId = ?', ['pet-1']],
-      ['DELETE FROM pets WHERE id = ?', ['pet-1']]
+    const updateCalls = mockDatabase.runAsync.mock.calls.filter(([sql]: [string]) =>
+      sql.startsWith('UPDATE')
+    );
+    expect(updateCalls).toEqual([
+      [
+        'UPDATE treatment_logs SET deletedAt = ?, updatedAt = ? WHERE petId = ?',
+        [expect.any(String), expect.any(String), 'pet-1']
+      ],
+      [
+        'UPDATE treatments SET deletedAt = ?, updatedAt = ? WHERE petId = ?',
+        [expect.any(String), expect.any(String), 'pet-1']
+      ],
+      [
+        'UPDATE pets SET deletedAt = ?, updatedAt = ? WHERE id = ?',
+        [expect.any(String), expect.any(String), 'pet-1']
+      ]
     ]);
+
+    const syncQueueCalls = mockDatabase.runAsync.mock.calls.filter(([sql]: [string]) =>
+      sql.includes('INSERT INTO sync_queue')
+    );
+    expect(syncQueueCalls.map(([, params]: [string, unknown[]]) => [params[1], params[2], params[3]])).toEqual(
+      [
+        ['treatment_log', 'log-1', 'delete'],
+        ['treatment', 'treatment-1', 'delete'],
+        ['pet', 'pet-1', 'delete']
+      ]
+    );
   });
 
   it.each([
