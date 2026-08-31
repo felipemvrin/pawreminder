@@ -116,6 +116,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] mejorar validación de fechas y reglas del dominio
 - [x] calendario de tratamientos
 - [x] fotos de mascotas
+- [x] completar cobertura de pruebas del flujo completo
 - [ ] sincronización en la nube / usuario
 - [ ] publicación en tiendas
 
@@ -142,7 +143,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 ### Fase 3: validación y estabilización
 - [x] validación real en dispositivos
 - [x] limpieza de flujos y errores
-- [ ] pruebas end-to-end y regresión
+- [x] pruebas end-to-end y regresión
 
 ### Fase 4: mejoras de producto
 - [x] calendario
@@ -156,7 +157,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La prioridad actual es ampliar las pruebas de regresión del flujo principal.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. Se completó la regresión manual del flujo principal en dispositivo/emulador. La prioridad actual es evaluar la sincronización en la nube y la publicación en tiendas.
 
 ## Registro de evolución
 
@@ -178,7 +179,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: TypeScript, ESLint y 53 pruebas unitarias ejecutadas correctamente.
 - [x] Se agregaron vacunas y otros cuidados con nombre y frecuencia configurables, junto al catálogo antiparasitario existente.
 - [x] Validado: TypeScript, ESLint y 56 pruebas unitarias ejecutadas correctamente.
-- [ ] Siguiente paso pendiente: ampliar las pruebas de regresión del flujo principal.
+- [x] Se completaron las pruebas end-to-end y de regresión del flujo principal.
+- [x] Validado: regresión manual completa en dispositivo/emulador cubriendo alta, edición y eliminación de mascotas y tratamientos, notificaciones y calendario.
+- [ ] Siguiente paso pendiente: evaluar sincronización en la nube y preparación para publicación en tiendas.
 
 ## Evolución por sprint
 
@@ -203,7 +206,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] validación real en dispositivos Android e iOS
 - [x] revisión final de notificaciones locales
 - [x] mejora de UX para carga, error y vacíos
-- [ ] pruebas de regresión del flujo principal
+- [x] pruebas de regresión del flujo principal
 
 ## Backlog + Done (visual)
 
@@ -214,7 +217,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Alto | Validación real en Android e iOS | Completado |
 | Alto | Revisión de permisos y notificaciones | Completado |
 | Medio | Mejorar estados de carga, error y vacío | Completado |
-| Medio | Pruebas de regresión del flujo principal | Pendiente |
+| Medio | Pruebas de regresión del flujo principal | Completado |
 | Medio | Validación de fechas y reglas del dominio | Completado |
 | Bajo | Calendario de tratamientos | Completado |
 | Bajo | Fotos de mascotas | Completado |
@@ -234,6 +237,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Calendario de tratamientos | Vista mensual y tratamientos programados | TypeScript, ESLint y pruebas unitarias |
 | Fotos de mascotas | Selección y persistencia local desde galería | Revisión de código |
 | Tipos de cuidado ampliados | Vacunas y cuidados manuales configurables | TypeScript, ESLint y pruebas unitarias |
+| Pruebas de regresión del flujo principal | Regresión manual completa del flujo end-to-end | Revisión manual en dispositivo/emulador |
 
 ## Plantilla de update diario/semanal
 
