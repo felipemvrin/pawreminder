@@ -11,9 +11,11 @@
 create extension if not exists "pgcrypto";
 
 -- Reusable trigger to keep updated_at current on every UPDATE.
+-- search_path is pinned to '' to avoid search_path hijacking (Supabase security linter).
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = ''
 as $$
 begin
   new.updated_at = now();
