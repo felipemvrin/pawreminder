@@ -14,6 +14,10 @@ export interface Pet {
   livesOutdoors: boolean;
   photoUri?: string;
   createdAt: ISODateString;
+  // Sync fields (optional until the sync migration lands): populated once cloud sync is wired up
+  ownerId?: EntityId;
+  updatedAt?: ISODateString;
+  deletedAt?: ISODateString;
 }
 
 export interface Treatment {
@@ -29,6 +33,9 @@ export interface Treatment {
   notificationIdReminder?: string;
   active: boolean;
   createdAt: ISODateString;
+  ownerId?: EntityId;
+  updatedAt?: ISODateString;
+  deletedAt?: ISODateString;
 }
 
 export interface TreatmentLog {
@@ -38,4 +45,7 @@ export interface TreatmentLog {
   appliedDate: ISODateString;
   notes?: string;
   createdAt: ISODateString;
+  ownerId?: EntityId;
+  updatedAt?: ISODateString;
+  deletedAt?: ISODateString;
 }

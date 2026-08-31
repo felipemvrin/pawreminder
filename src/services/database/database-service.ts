@@ -8,9 +8,11 @@ import type {
   Species,
   TreatmentType
 } from '@/types/domain';
+import type { SyncQueueEntry, SyncStatus } from '@/types/sync';
 import { isoDateToLocalDate, localDateToISO } from '@/lib/date-format';
 
 const DATABASE_NAME = 'pawreminder.db';
+const SCHEMA_VERSION = 1;
 
 class DatabaseService {
   private db: SQLite.SQLiteDatabase | null = null;
@@ -65,11 +67,47 @@ class DatabaseService {
         );
       `);
 
+      await this.migrateToSyncSchema();
+
       this.initialized = true;
     } catch (error) {
       console.error('Failed to initialize database:', error);
       throw error;
     }
+  }
+
+  // Adds sync-related columns/table to installs created before cloud sync existed.
+  // Idempotent: guarded by PRAGMA user_version so it only runs once per device.
+  private async migrateToSyncSchema(): Promise<void> {
+    const db = this.ensureDb();
+    const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
+    if ((row?.user_version ?? 0) >= SCHEMA_VERSION) return;
+
+    await db.execAsync(`
+      ALTER TABLE pets ADD COLUMN ownerId TEXT;
+      ALTER TABLE pets ADD COLUMN updatedAt TEXT;
+      ALTER TABLE pets ADD COLUMN deletedAt TEXT;
+      ALTER TABLE treatments ADD COLUMN ownerId TEXT;
+      ALTER TABLE treatments ADD COLUMN updatedAt TEXT;
+      ALTER TABLE treatments ADD COLUMN deletedAt TEXT;
+      ALTER TABLE treatment_logs ADD COLUMN ownerId TEXT;
+      ALTER TABLE treatment_logs ADD COLUMN updatedAt TEXT;
+      ALTER TABLE treatment_logs ADD COLUMN deletedAt TEXT;
+      UPDATE pets SET updatedAt = createdAt WHERE updatedAt IS NULL;
+      UPDATE treatments SET updatedAt = createdAt WHERE updatedAt IS NULL;
+      UPDATE treatment_logs SET updatedAt = createdAt WHERE updatedAt IS NULL;
+      CREATE TABLE IF NOT EXISTS sync_queue (
+        id TEXT PRIMARY KEY,
+        entityType TEXT NOT NULL,
+        entityId TEXT NOT NULL,
+        operation TEXT NOT NULL,
+        status TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        lastError TEXT
+      );
+      PRAGMA user_version = ${SCHEMA_VERSION};
+    `);
   }
 
   private ensureDb(): SQLite.SQLiteDatabase {
@@ -81,13 +119,13 @@ class DatabaseService {
     const id = this.generateId();
     const createdAt = new Date().toISOString();
 
-    const fullPet: Pet = { id, createdAt, ...pet };
+    const fullPet: Pet = { updatedAt: createdAt, ...pet, id, createdAt };
 
     try {
       const db = this.ensureDb();
       await db.runAsync(
-        `INSERT INTO pets (id, name, species, breed, birthDate, weightKg, livesOutdoors, photoUri, createdAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO pets (id, name, species, breed, birthDate, weightKg, livesOutdoors, photoUri, createdAt, ownerId, updatedAt, deletedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           fullPet.id,
           fullPet.name,
@@ -97,7 +135,10 @@ class DatabaseService {
           fullPet.weightKg,
           fullPet.livesOutdoors ? 1 : 0,
           fullPet.photoUri || null,
-          fullPet.createdAt
+          fullPet.createdAt,
+          fullPet.ownerId || null,
+          fullPet.updatedAt || null,
+          fullPet.deletedAt || null
         ]
       );
 
@@ -137,13 +178,13 @@ class DatabaseService {
     const pet = await this.getPetById(petId);
     if (!pet) return null;
 
-    const updated = { ...pet, ...updates };
+    const updated = { ...pet, ...updates, updatedAt: new Date().toISOString() };
 
     try {
       const db = this.ensureDb();
       await db.runAsync(
         `UPDATE pets
-         SET name = ?, species = ?, breed = ?, birthDate = ?, weightKg = ?, livesOutdoors = ?, photoUri = ?
+         SET name = ?, species = ?, breed = ?, birthDate = ?, weightKg = ?, livesOutdoors = ?, photoUri = ?, ownerId = ?, updatedAt = ?, deletedAt = ?
          WHERE id = ?`,
         [
           updated.name,
@@ -153,6 +194,9 @@ class DatabaseService {
           updated.weightKg,
           updated.livesOutdoors ? 1 : 0,
           updated.photoUri || null,
+          updated.ownerId || null,
+          updated.updatedAt,
+          updated.deletedAt || null,
           petId
         ]
       );
@@ -183,16 +227,17 @@ class DatabaseService {
     const id = this.generateId();
     const createdAt = new Date().toISOString();
 
-    const fullTreatment: Treatment = { id, createdAt, ...treatment };
+    const fullTreatment: Treatment = { updatedAt: createdAt, ...treatment, id, createdAt };
 
     try {
       const db = this.ensureDb();
       await db.runAsync(
         `INSERT INTO treatments (
           id, petId, type, productName, frequencyDays, lastAppliedDate, nextDueDate,
-          reminderDaysBefore, notificationIdDueDate, notificationIdReminder, active, createdAt
+          reminderDaysBefore, notificationIdDueDate, notificationIdReminder, active, createdAt,
+          ownerId, updatedAt, deletedAt
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           fullTreatment.id,
           fullTreatment.petId,
@@ -205,7 +250,10 @@ class DatabaseService {
           fullTreatment.notificationIdDueDate || null,
           fullTreatment.notificationIdReminder || null,
           fullTreatment.active ? 1 : 0,
-          fullTreatment.createdAt
+          fullTreatment.createdAt,
+          fullTreatment.ownerId || null,
+          fullTreatment.updatedAt || null,
+          fullTreatment.deletedAt || null
         ]
       );
 
@@ -250,14 +298,15 @@ class DatabaseService {
     const treatment = await this.getTreatmentById(treatmentId);
     if (!treatment) return null;
 
-    const updated = { ...treatment, ...updates };
+    const updated = { ...treatment, ...updates, updatedAt: new Date().toISOString() };
 
     try {
       const db = this.ensureDb();
       await db.runAsync(
         `UPDATE treatments
          SET type = ?, productName = ?, frequencyDays = ?, lastAppliedDate = ?, nextDueDate = ?,
-             reminderDaysBefore = ?, notificationIdDueDate = ?, notificationIdReminder = ?, active = ?
+             reminderDaysBefore = ?, notificationIdDueDate = ?, notificationIdReminder = ?, active = ?,
+             ownerId = ?, updatedAt = ?, deletedAt = ?
          WHERE id = ?`,
         [
           updated.type,
@@ -269,6 +318,9 @@ class DatabaseService {
           updated.notificationIdDueDate || null,
           updated.notificationIdReminder || null,
           updated.active ? 1 : 0,
+          updated.ownerId || null,
+          updated.updatedAt,
+          updated.deletedAt || null,
           treatmentId
         ]
       );
@@ -298,20 +350,23 @@ class DatabaseService {
     const id = this.generateId();
     const createdAt = new Date().toISOString();
 
-    const fullLog: TreatmentLog = { id, createdAt, ...log };
+    const fullLog: TreatmentLog = { updatedAt: createdAt, ...log, id, createdAt };
 
     try {
       const db = this.ensureDb();
       await db.runAsync(
-        `INSERT INTO treatment_logs (id, treatmentId, petId, appliedDate, notes, createdAt)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO treatment_logs (id, treatmentId, petId, appliedDate, notes, createdAt, ownerId, updatedAt, deletedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           fullLog.id,
           fullLog.treatmentId,
           fullLog.petId,
           fullLog.appliedDate,
           fullLog.notes || null,
-          fullLog.createdAt
+          fullLog.createdAt,
+          fullLog.ownerId || null,
+          fullLog.updatedAt || null,
+          fullLog.deletedAt || null
         ]
       );
 
@@ -374,7 +429,10 @@ class DatabaseService {
       weightKg: row.weightKg,
       livesOutdoors: row.livesOutdoors === 1,
       photoUri: row.photoUri || undefined,
-      createdAt: row.createdAt
+      createdAt: row.createdAt,
+      ownerId: row.ownerId || undefined,
+      updatedAt: row.updatedAt || undefined,
+      deletedAt: row.deletedAt || undefined
     };
   }
 
@@ -391,7 +449,10 @@ class DatabaseService {
       notificationIdDueDate: row.notificationIdDueDate || undefined,
       notificationIdReminder: row.notificationIdReminder || undefined,
       active: row.active === 1,
-      createdAt: row.createdAt
+      createdAt: row.createdAt,
+      ownerId: row.ownerId || undefined,
+      updatedAt: row.updatedAt || undefined,
+      deletedAt: row.deletedAt || undefined
     };
   }
 
@@ -402,7 +463,88 @@ class DatabaseService {
       petId: row.petId,
       appliedDate: row.appliedDate,
       notes: row.notes || undefined,
-      createdAt: row.createdAt
+      createdAt: row.createdAt,
+      ownerId: row.ownerId || undefined,
+      updatedAt: row.updatedAt || undefined,
+      deletedAt: row.deletedAt || undefined
+    };
+  }
+
+  // ============ SYNC QUEUE OPERATIONS ============
+
+  async enqueueSyncEntry(entry: Omit<SyncQueueEntry, 'id' | 'attempts'>): Promise<SyncQueueEntry> {
+    const fullEntry: SyncQueueEntry = { id: this.generateId(), attempts: 0, ...entry };
+
+    try {
+      const db = this.ensureDb();
+      await db.runAsync(
+        `INSERT INTO sync_queue (id, entityType, entityId, operation, status, updatedAt, attempts, lastError)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          fullEntry.id,
+          fullEntry.entityType,
+          fullEntry.entityId,
+          fullEntry.operation,
+          fullEntry.status,
+          fullEntry.updatedAt,
+          fullEntry.attempts,
+          fullEntry.lastError || null
+        ]
+      );
+
+      return fullEntry;
+    } catch (error) {
+      console.error('Failed to enqueue sync entry:', error);
+      throw error;
+    }
+  }
+
+  async getPendingSyncEntries(): Promise<SyncQueueEntry[]> {
+    try {
+      const db = this.ensureDb();
+      const rows = await db.getAllAsync<any>(
+        "SELECT * FROM sync_queue WHERE status = 'pending' ORDER BY updatedAt ASC"
+      );
+      return rows.map((row: any) => this.mapRowToSyncQueueEntry(row));
+    } catch (error) {
+      console.error('Failed to get pending sync entries:', error);
+      throw error;
+    }
+  }
+
+  async updateSyncEntryStatus(id: EntityId, status: SyncStatus, lastError?: string): Promise<void> {
+    try {
+      const db = this.ensureDb();
+      await db.runAsync(
+        'UPDATE sync_queue SET status = ?, lastError = ?, attempts = attempts + 1 WHERE id = ?',
+        [status, lastError || null, id]
+      );
+    } catch (error) {
+      console.error('Failed to update sync entry status:', error);
+      throw error;
+    }
+  }
+
+  async deleteSyncEntry(id: EntityId): Promise<void> {
+    try {
+      const db = this.ensureDb();
+      await db.runAsync('DELETE FROM sync_queue WHERE id = ?', [id]);
+    } catch (error) {
+      console.error('Failed to delete sync entry:', error);
+      throw error;
+    }
+  }
+
+  private mapRowToSyncQueueEntry(row: any): SyncQueueEntry {
+    return {
+      id: row.id,
+      entityType: row.entityType,
+      entityId: row.entityId,
+      operation: row.operation,
+      status: row.status,
+      updatedAt: row.updatedAt,
+      attempts: row.attempts,
+      lastError: row.lastError || undefined
     };
   }
 }

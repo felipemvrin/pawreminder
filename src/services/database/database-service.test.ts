@@ -60,7 +60,7 @@ describe('databaseService', () => {
     expect(pet.createdAt).toEqual(expect.any(String));
     expect(mockDatabase.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO pets'),
-      [pet.id, 'Luna', 'dog', null, null, 12.5, 0, null, pet.createdAt]
+      [pet.id, 'Luna', 'dog', null, null, 12.5, 0, null, pet.createdAt, null, pet.updatedAt, null]
     );
   });
 
@@ -112,7 +112,7 @@ describe('databaseService', () => {
     });
     expect(mockDatabase.runAsync).toHaveBeenCalledWith(
       expect.stringContaining('INSERT INTO treatment_logs'),
-      [log.id, 'treatment-1', 'pet-1', '2026-08-26', null, log.createdAt]
+      [log.id, 'treatment-1', 'pet-1', '2026-08-26', null, log.createdAt, null, log.updatedAt, null]
     );
   });
 
