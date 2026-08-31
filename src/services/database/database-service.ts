@@ -414,9 +414,8 @@ class DatabaseService {
   }
 
   private generateId(): EntityId {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substring(2, 15);
-    return `${timestamp}-${random}`;
+    // UUID v4: required so IDs generated on different devices never collide when synced
+    return crypto.randomUUID();
   }
 
   private mapRowToPet(row: any): Pet {
