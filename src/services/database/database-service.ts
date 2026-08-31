@@ -456,6 +456,17 @@ class DatabaseService {
     }
   }
 
+  async getTreatmentLogById(logId: EntityId): Promise<TreatmentLog | null> {
+    try {
+      const db = this.ensureDb();
+      const row = await db.getFirstAsync<any>('SELECT * FROM treatment_logs WHERE id = ?', [logId]);
+      return row ? this.mapRowToTreatmentLog(row) : null;
+    } catch (error) {
+      console.error('Failed to get treatment log:', error);
+      throw error;
+    }
+  }
+
   async getTreatmentLogsByTreatmentId(treatmentId: EntityId): Promise<TreatmentLog[]> {
     try {
       const db = this.ensureDb();
@@ -624,6 +635,110 @@ class DatabaseService {
       attempts: row.attempts,
       lastError: row.lastError || undefined
     };
+  }
+
+  // ============ REMOTE SYNC UPSERTS ============
+  // Applies rows pulled from Supabase as-is: no re-enqueueing, no bumping updatedAt
+  // (the remote updatedAt is authoritative for last-write-wins comparisons).
+
+  async upsertPetFromRemote(pet: Pet): Promise<void> {
+    try {
+      const db = this.ensureDb();
+      await db.runAsync(
+        `INSERT INTO pets (id, name, species, breed, birthDate, weightKg, livesOutdoors, photoUri, createdAt, ownerId, updatedAt, deletedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           name = excluded.name, species = excluded.species, breed = excluded.breed,
+           birthDate = excluded.birthDate, weightKg = excluded.weightKg, livesOutdoors = excluded.livesOutdoors,
+           photoUri = excluded.photoUri, ownerId = excluded.ownerId, updatedAt = excluded.updatedAt,
+           deletedAt = excluded.deletedAt`,
+        [
+          pet.id,
+          pet.name,
+          pet.species,
+          pet.breed || null,
+          pet.birthDate || null,
+          pet.weightKg,
+          pet.livesOutdoors ? 1 : 0,
+          pet.photoUri || null,
+          pet.createdAt,
+          pet.ownerId || null,
+          pet.updatedAt || null,
+          pet.deletedAt || null
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to upsert pet from remote:', error);
+      throw error;
+    }
+  }
+
+  async upsertTreatmentFromRemote(treatment: Treatment): Promise<void> {
+    try {
+      const db = this.ensureDb();
+      await db.runAsync(
+        `INSERT INTO treatments (
+          id, petId, type, productName, frequencyDays, lastAppliedDate, nextDueDate,
+          reminderDaysBefore, notificationIdDueDate, notificationIdReminder, active, createdAt,
+          ownerId, updatedAt, deletedAt
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          petId = excluded.petId, type = excluded.type, productName = excluded.productName,
+          frequencyDays = excluded.frequencyDays, lastAppliedDate = excluded.lastAppliedDate,
+          nextDueDate = excluded.nextDueDate, reminderDaysBefore = excluded.reminderDaysBefore,
+          active = excluded.active, ownerId = excluded.ownerId, updatedAt = excluded.updatedAt,
+          deletedAt = excluded.deletedAt`,
+        [
+          treatment.id,
+          treatment.petId,
+          treatment.type,
+          treatment.productName || null,
+          treatment.frequencyDays,
+          treatment.lastAppliedDate,
+          treatment.nextDueDate,
+          treatment.reminderDaysBefore,
+          null,
+          null,
+          treatment.active ? 1 : 0,
+          treatment.createdAt,
+          treatment.ownerId || null,
+          treatment.updatedAt || null,
+          treatment.deletedAt || null
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to upsert treatment from remote:', error);
+      throw error;
+    }
+  }
+
+  async upsertTreatmentLogFromRemote(log: TreatmentLog): Promise<void> {
+    try {
+      const db = this.ensureDb();
+      await db.runAsync(
+        `INSERT INTO treatment_logs (id, treatmentId, petId, appliedDate, notes, createdAt, ownerId, updatedAt, deletedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           treatmentId = excluded.treatmentId, petId = excluded.petId, appliedDate = excluded.appliedDate,
+           notes = excluded.notes, ownerId = excluded.ownerId, updatedAt = excluded.updatedAt,
+           deletedAt = excluded.deletedAt`,
+        [
+          log.id,
+          log.treatmentId,
+          log.petId,
+          log.appliedDate,
+          log.notes || null,
+          log.createdAt,
+          log.ownerId || null,
+          log.updatedAt || null,
+          log.deletedAt || null
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to upsert treatment log from remote:', error);
+      throw error;
+    }
   }
 }
 
