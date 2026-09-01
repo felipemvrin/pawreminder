@@ -13,6 +13,13 @@ async function createSessionFromUrl(url: string): Promise<Session | null> {
   const { params, errorCode } = QueryParams.getQueryParams(url);
   if (errorCode) throw new Error(errorCode);
 
+  const { code } = params;
+  if (code && supabase) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    return data.session;
+  }
+
   const { access_token: accessToken, refresh_token: refreshToken } = params;
   if (!accessToken || !refreshToken || !supabase) return null;
 
