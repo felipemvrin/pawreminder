@@ -14,14 +14,26 @@
         {
           "photosPermission": "Permite a PawReminder acceder a tus fotos para elegir una imagen de tu mascota."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
-    "experiments": { "typedRoutes": true },
+    "experiments": {
+      "typedRoutes": true
+    },
     "ios": {
       "supportsTablet": true,
-      "infoPlist": { "CFBundleLocalizations": ["es"] }
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "es"
+        ]
+      }
     },
-    "android": { "package": "com.felipemvrin.pawreminder" },
-    "web": { "bundler": "metro", "output": "static" }
+    "android": {
+      "package": "com.felipemvrin.pawreminder"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    }
   }
 }
