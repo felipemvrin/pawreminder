@@ -1,13 +1,13 @@
-import { makeRedirectUri } from 'expo-auth-session';
 import * as QueryParams from 'expo-auth-session/build/QueryParams';
 import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 import type { Session } from '@supabase/supabase-js';
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase/supabase-client';
 
 WebBrowser.maybeCompleteAuthSession();
 
-const redirectTo = makeRedirectUri();
+const redirectTo = Linking.createURL('auth-callback');
 
 async function createSessionFromUrl(url: string): Promise<Session | null> {
   const { params, errorCode } = QueryParams.getQueryParams(url);

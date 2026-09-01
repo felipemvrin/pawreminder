@@ -112,11 +112,10 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] validación real en dispositivos físicos Android e iOS
 - [x] revisión de permisos y comportamiento de notificaciones en entorno real
 - [x] mejorar estados de carga, error y vacío
-- [ ] completar cobertura de pruebas del flujo completo
+- [x] completar cobertura de pruebas del flujo completo
 - [x] mejorar validación de fechas y reglas del dominio
 - [x] calendario de tratamientos
 - [x] fotos de mascotas
-- [x] completar cobertura de pruebas del flujo completo
 - [ ] sincronización en la nube / usuario
 - [ ] publicación en tiendas
 
@@ -157,7 +156,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. Se completó la regresión manual del flujo principal en dispositivo/emulador. La prioridad actual es evaluar la sincronización en la nube y la publicación en tiendas.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La base de sincronización con Supabase y la pantalla de acceso con Google están implementadas; queda validar el flujo OAuth y la sincronización real en dispositivo antes de considerarlo completado.
 
 ## Registro de evolución
 
@@ -181,7 +180,13 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: TypeScript, ESLint y 56 pruebas unitarias ejecutadas correctamente.
 - [x] Se completaron las pruebas end-to-end y de regresión del flujo principal.
 - [x] Validado: regresión manual completa en dispositivo/emulador cubriendo alta, edición y eliminación de mascotas y tratamientos, notificaciones y calendario.
-- [ ] Siguiente paso pendiente: evaluar sincronización en la nube y preparación para publicación en tiendas.
+
+### 2026-09-01
+
+- [x] Se implementó la base de sincronización offline-first con Supabase: outbox local, soft-delete, push/pull incremental y resolución last-write-wins.
+- [x] Se agregó la pantalla de cuenta y el acceso con Google mediante OAuth compatible con Expo Go.
+- [x] Validado: esquema remoto con RLS, API REST, proveedor Google, TypeScript, ESLint y 60 pruebas unitarias.
+- [ ] Siguiente paso pendiente: validar el callback OAuth y una sincronización real desde un dispositivo físico.
 
 ## Evolución por sprint
 
