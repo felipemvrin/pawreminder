@@ -29,11 +29,20 @@
       }
     },
     "android": {
-      "package": "com.felipemvrin.pawreminder"
+      "package": "com.felipemvrin.pawreminder",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "60e7d3b3-2463-44a8-b2b1-d1ceac41721a"
+      }
     }
   }
 }
