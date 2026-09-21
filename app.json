@@ -4,7 +4,7 @@
     "slug": "pawreminder",
     "version": "1.0.0",
     "description": "Recordatorios de tratamientos y cuidados preventivos para mascotas.",
-    "icon": "./paw-reminder.png",
+    "icon": "./paw-reminder-icon.png",
     "splash": {
       "image": "./paw-reminder.png",
       "resizeMode": "contain",
