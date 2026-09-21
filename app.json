@@ -2,7 +2,14 @@
   "expo": {
     "name": "PawReminder",
     "slug": "pawreminder",
-    "version": "0.1.0",
+    "version": "1.0.0",
+    "description": "Recordatorios de tratamientos y cuidados preventivos para mascotas.",
+    "icon": "./paw-reminder-icon.png",
+    "splash": {
+      "image": "./paw-reminder.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F5FF"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "scheme": "pawreminder",
@@ -16,12 +23,36 @@
         }
       ]
     ],
-    "experiments": { "typedRoutes": true },
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": { "CFBundleLocalizations": ["es"] }
+    "experiments": {
+      "typedRoutes": true
     },
-    "android": { "package": "com.felipemvrin.pawreminder" },
-    "web": { "bundler": "metro", "output": "static" }
+    "ios": {
+      "bundleIdentifier": "com.felipemvrin.pawreminder",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "es"
+        ]
+      }
+    },
+    "android": {
+      "package": "com.felipemvrin.pawreminder",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "60e7d3b3-2463-44a8-b2b1-d1ceac41721a"
+      }
+    },
+    "owner": "felipemarin"
   }
 }

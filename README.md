@@ -119,6 +119,18 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [ ] sincronización en la nube / usuario
 - [ ] publicación en tiendas
 
+### Preparación para TestFlight
+
+- [x] identificador iOS `com.felipemvrin.pawreminder` y versión inicial `1.0.0 (1)` configurados
+- [x] perfiles EAS de desarrollo, preview y producción agregados en `eas.json`
+- [x] variables públicas de Supabase documentadas en `.env.example`
+- [x] crear y vincular el proyecto EAS con la cuenta de Expo
+- [x] añadir icono opaco para la app y splash desde los assets de `paw-reminder`
+- [ ] configurar Apple Developer y App Store Connect
+- [ ] ejecutar build iOS de producción y subirlo a TestFlight
+
+La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). EAS está vinculado al proyecto remoto `60e7d3b3-2463-44a8-b2b1-d1ceac41721a`; la publicación todavía requiere cuenta de Apple Developer, aplicación en App Store Connect y assets gráficos de tienda.
+
 ## Fases del proyecto
 
 ### Fase 0: preparación técnica
@@ -156,11 +168,25 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La prioridad actual es ampliar las pruebas de regresión del flujo principal.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La configuración técnica de EAS para iOS y el icono opaco para TestFlight están listos; la prioridad actual es completar las cuentas de distribución para generar el build de TestFlight.
 
 ## Registro de evolución
 
 Este registro sirve como historial formal del progreso del proyecto. Cada actualización debe documentar la fecha, el bloque completado, la validación asociada y el siguiente paso pendiente.
+
+### 2026-09-21
+
+- [x] Se corrigió el asset del icono principal para iOS/TestFlight usando `paw-reminder-icon.png` sin canal alfa y se mantuvo `paw-reminder.png` como splash.
+- [x] Validado: `npx expo config --type public --json`, `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; además el PNG generado quedó en formato RGB opaco.
+- [ ] Siguiente paso pendiente: completar Apple Developer/App Store Connect para generar el build de TestFlight.
+
+### 2026-09-20
+
+- [x] Se preparó la configuración de publicación iOS con bundle identifier, versión `1.0.0`, build inicial y perfiles EAS.
+- [x] Validado: `npx expo config --type public`, `npm run typecheck`, `npm run lint` y 56 pruebas Jest.
+- [x] Se añadió `paw-reminder.png` como base visual del splash y se preparó el asset gráfico para la publicación inicial.
+- [x] Validado: PNG cuadrado de 1254 × 1254 y configuración Expo resuelta correctamente.
+- [ ] Siguiente paso pendiente: completar Apple Developer/App Store Connect para generar el build de TestFlight.
 
 ### 2026-08-29
 
