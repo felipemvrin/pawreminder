@@ -29,7 +29,7 @@
     "ios": {
       "bundleIdentifier": "com.felipemvrin.pawreminder",
       "buildNumber": "1",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "CFBundleLocalizations": [
           "es",

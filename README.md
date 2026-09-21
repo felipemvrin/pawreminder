@@ -121,6 +121,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 
 ### Preparación para TestFlight
 
+- [x] política de privacidad publicada en Cloudflare Pages: https://pawreminder.pages.dev
 - [x] identificador iOS `com.felipemvrin.pawreminder` y versión inicial `1.0.0 (1)` configurados
 - [x] perfiles EAS de desarrollo, preview y producción agregados en `eas.json`
 - [x] variables públicas de Supabase documentadas en `.env.example`
@@ -129,7 +130,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [ ] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
 - [x] ejecutar build iOS de producción y subirlo a TestFlight
 
-La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). El build `1.0.0 (2)` fue subido correctamente a App Store Connect y está siendo procesado por Apple.
+La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). El build `1.0.0 (2)` fue subido correctamente a App Store Connect. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
 
 ## Fases del proyecto
 
@@ -176,6 +177,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 ### 2026-09-21
 
+- [x] Se publicó la política de privacidad bilingüe en Cloudflare Pages: https://pawreminder.pages.dev.
+- [x] Validado: la URL pública respondió HTTP 200.
+- [ ] Siguiente paso pendiente: completar en App Store Connect la URL de privacidad, los metadatos y el precio para enviar la versión a revisión.
 - [x] Se corrigió el asset del icono principal para iOS/TestFlight usando `paw-reminder-icon.png` sin canal alfa y se mantuvo `paw-reminder.png` como splash.
 - [x] Validado: `npx expo config --type public --json`, `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; además el PNG generado quedó en formato RGB opaco.
 - [x] Se inició el build iOS de producción en EAS y se validó la configuración de cifrado estándar/exento.
