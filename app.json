@@ -32,8 +32,10 @@
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
+          "es",
           "es"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

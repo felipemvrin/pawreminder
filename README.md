@@ -126,10 +126,10 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] variables públicas de Supabase documentadas en `.env.example`
 - [x] crear y vincular el proyecto EAS con la cuenta de Expo
 - [x] añadir icono opaco para la app y splash desde los assets de `paw-reminder`
-- [ ] configurar Apple Developer y App Store Connect
-- [ ] ejecutar build iOS de producción y subirlo a TestFlight
+- [ ] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
+- [x] ejecutar build iOS de producción y subirlo a TestFlight
 
-La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). EAS está vinculado al proyecto remoto `60e7d3b3-2463-44a8-b2b1-d1ceac41721a`; la publicación todavía requiere cuenta de Apple Developer, aplicación en App Store Connect y assets gráficos de tienda.
+La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). El build `1.0.0 (2)` fue subido correctamente a App Store Connect y está siendo procesado por Apple.
 
 ## Fases del proyecto
 
@@ -178,7 +178,11 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 
 - [x] Se corrigió el asset del icono principal para iOS/TestFlight usando `paw-reminder-icon.png` sin canal alfa y se mantuvo `paw-reminder.png` como splash.
 - [x] Validado: `npx expo config --type public --json`, `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; además el PNG generado quedó en formato RGB opaco.
-- [ ] Siguiente paso pendiente: completar Apple Developer/App Store Connect para generar el build de TestFlight.
+- [x] Se inició el build iOS de producción en EAS y se validó la configuración de cifrado estándar/exento.
+- [x] Validado: el proyecto pasó la preparación EAS, pero Apple rechazó el inicio de sesión con el error `-20209` (cuenta bloqueada por seguridad); no se creó un build remoto.
+- [x] Se generó el build iOS de producción `1.0.0 (2)` y se subió correctamente a App Store Connect.
+- [x] Validado: EAS registró el build como `finished` y App Store Connect confirmó la carga del binario.
+- [ ] Siguiente paso pendiente: esperar el procesamiento de Apple y probar la app desde TestFlight.
 
 ### 2026-09-20
 
