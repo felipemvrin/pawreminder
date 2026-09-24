@@ -62,9 +62,11 @@ export function TreatmentSwipeable({
   const swipeableRef = useRef<SwipeableMethods | null>(null);
 
   const handleActionPress = (action?: () => void) => {
+    if (!action) return;
+
     swipeableRef.current?.close();
     void hapticLight();
-    action?.();
+    action();
   };
 
   // TODO: conectar Posponer cuando exista una regla de negocio para mover la fecha sin aplicar el tratamiento.
