@@ -58,4 +58,61 @@ describe('OnboardingGate', () => {
     await waitFor(() => expect(screen.queryByRole('button', { name: 'Saltar' })).toBeNull());
     expect(onboardingService.markCompleted).toHaveBeenCalledTimes(1);
   });
+
+  it('evita llamadas duplicadas al completar mientras persiste', async () => {
+    let resolveMarkCompleted: (() => void) | undefined;
+    jest.mocked(onboardingService.markCompleted).mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveMarkCompleted = resolve;
+        })
+    );
+
+    render(
+      <OnboardingGate>
+        <RNText>Aplicacion</RNText>
+      </OnboardingGate>
+    );
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Saltar' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'Saltar' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Saltar' }));
+
+    expect(onboardingService.markCompleted).toHaveBeenCalledTimes(1);
+    resolveMarkCompleted?.();
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Saltar' })).toBeNull());
+  });
+
+  it('mantiene onboarding visible si falla la persistencia', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.mocked(onboardingService.markCompleted).mockRejectedValueOnce(new Error('save failed'));
+
+    render(
+      <OnboardingGate>
+        <RNText>Aplicacion</RNText>
+      </OnboardingGate>
+    );
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Saltar' })).toBeTruthy());
+    fireEvent.press(screen.getByRole('button', { name: 'Saltar' }));
+
+    await waitFor(() => expect(errorSpy).toHaveBeenCalled());
+    expect(screen.getByRole('button', { name: 'Saltar' })).toBeTruthy();
+    errorSpy.mockRestore();
+  });
+
+  it('continua sin onboarding si falla la lectura del estado inicial', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.mocked(onboardingService.hasCompleted).mockRejectedValueOnce(new Error('load failed'));
+
+    render(
+      <OnboardingGate>
+        <RNText>Aplicacion</RNText>
+      </OnboardingGate>
+    );
+
+    await waitFor(() => expect(errorSpy).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: 'Saltar' })).toBeNull();
+    errorSpy.mockRestore();
+  });
 });

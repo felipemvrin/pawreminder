@@ -26,30 +26,47 @@ const pages = [
 export function OnboardingGate({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
 
-    onboardingService.hasCompleted().then((completed) => {
-      if (cancelled) return;
-      setIsVisible(!completed);
-      setIsReady(true);
-    });
+    const loadOnboardingState = async () => {
+      try {
+        const completed = await onboardingService.hasCompleted();
+        if (cancelled) return;
+        setIsVisible(!completed);
+      } catch (error) {
+        console.error('Failed to load onboarding state:', error);
+      } finally {
+        if (!cancelled) setIsReady(true);
+      }
+    };
+
+    void loadOnboardingState();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const finish = () => {
-    setIsVisible(false);
-    void onboardingService.markCompleted();
+  const finish = async () => {
+    if (isFinishing) return;
+    setIsFinishing(true);
+    try {
+      await onboardingService.markCompleted();
+      setIsVisible(false);
+    } catch (error) {
+      console.error('Failed to persist onboarding completion:', error);
+    } finally {
+      setIsFinishing(false);
+    }
   };
 
   const next = () => {
     if (pageIndex === pages.length - 1) {
-      finish();
+      void finish();
       return;
     }
     setPageIndex((current) => current + 1);
@@ -99,13 +116,14 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
               accessibilityRole="button"
               accessibilityLabel={pageIndex === pages.length - 1 ? 'Comenzar' : 'Continuar'}
               onPress={next}
+              disabled={isFinishing}
               style={{ paddingVertical: spacing[3], borderRadius: radius.md, backgroundColor: colors.primary, alignItems: 'center' }}
             >
               <Text style={{ ...typography.label, color: colors.primaryForeground }}>
                 {pageIndex === pages.length - 1 ? 'Comenzar' : 'Continuar'}
               </Text>
             </Pressable>
-            <Pressable accessibilityRole="button" onPress={finish} style={{ alignItems: 'center', padding: spacing[2] }}>
+            <Pressable accessibilityRole="button" onPress={() => void finish()} disabled={isFinishing} style={{ alignItems: 'center', padding: spacing[2] }}>
               <Text style={{ ...typography.label, color: colors.muted }}>Saltar</Text>
             </Pressable>
           </View>

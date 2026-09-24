@@ -217,6 +217,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/progress-ring.test.tsx`.
 - [x] Se agregó onboarding opcional de tres pantallas con fallback de `PawAnimation`, indicador, acciones Continuar/Saltar y persistencia mediante el servicio de almacenamiento.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 77 pruebas pasan.
+- [x] Se robusteció el onboarding para manejar fallos de lectura/persistencia sin rechazos no controlados y evitar envíos duplicados al completar.
+- [x] Validado: `npm run lint -- src/components/onboarding.tsx src/components/onboarding.test.tsx` y `npm test -- --runTestsByPath src/components/onboarding.test.tsx src/services/storage/onboarding-service.test.ts`; 7 pruebas pasan.
 - [ ] Siguiente paso pendiente: conectar el `ProgressRing` al dashboard cuando se implemente esa vista.
 
 ### 2026-09-21
