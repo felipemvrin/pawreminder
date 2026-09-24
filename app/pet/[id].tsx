@@ -1,7 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Cat, Dog, Plus } from 'lucide-react-native';
 import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useReducedMotion } from 'react-native-reanimated';
 
+import { AnimatedPressable } from '@/components/animated-pressable';
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { EmptyState } from '@/components/empty-state';
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
@@ -14,6 +17,7 @@ import {
 } from '@/lib/treatment-status';
 import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { useToast } from '@/lib/toast-context';
+import { hapticLight } from '@/utils/haptics';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Treatment } from '@/types/domain';
 
@@ -27,11 +31,12 @@ function treatmentTypeLabel(type: Treatment['type']) {
   return labels[type];
 }
 
-function TreatmentCard({ treatment }: { treatment: Treatment }) {
+function TreatmentCard({ treatment, index }: { treatment: Treatment; index: number }) {
   const router = useRouter();
   const toast = useToast();
   const markApplied = useMarkTreatmentApplied();
   const status = getTreatmentStatus(treatment.nextDueDate);
+  const reducedMotion = useReducedMotion();
 
   const handleMarkApplied = () => {
     Alert.alert('Marcar como aplicado', '¿Confirmas que el tratamiento se aplicó hoy?', [
@@ -55,22 +60,30 @@ function TreatmentCard({ treatment }: { treatment: Treatment }) {
   };
 
   return (
-    <Pressable
-      onPress={() => router.push(`/treatment/edit/${treatment.id}`)}
-      style={{
-        padding: spacing[5],
-        borderRadius: radius.lg,
-        borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: colors.surface,
-        gap: spacing[3]
-      }}
+    <MotiView
+      from={reducedMotion ? { opacity: 1 } : { opacity: 0, translateY: 12 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ type: 'timing', duration: 220, delay: reducedMotion ? 0 : index * 55 }}
     >
+      <AnimatedPressable
+        onPress={() => router.push(`/treatment/edit/${treatment.id}`)}
+        style={{
+          padding: spacing[5],
+          borderRadius: radius.lg,
+          borderWidth: 1,
+          borderColor: colors.border,
+          backgroundColor: colors.surface,
+          gap: spacing[3]
+        }}
+      >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ ...typography.label, color: colors.foreground }}>
           {treatment.productName || treatmentTypeLabel(treatment.type)}
         </Text>
-        <View
+        <MotiView
+          from={reducedMotion ? { scale: 1 } : { scale: status === 'overdue' ? 0.96 : 1 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'timing', duration: 700, loop: !reducedMotion && status === 'overdue' }}
           style={{
             paddingHorizontal: spacing[3],
             paddingVertical: spacing[1],
@@ -81,7 +94,7 @@ function TreatmentCard({ treatment }: { treatment: Treatment }) {
           <Text style={{ ...typography.caption, color: colors.primaryForeground }}>
             {treatmentStatusLabels[status]}
           </Text>
-        </View>
+        </MotiView>
       </View>
       <Text style={{ ...typography.caption, color: colors.muted }}>
         {treatmentTypeLabel(treatment.type)} · cada {treatment.frequencyDays} días
@@ -99,12 +112,14 @@ function TreatmentCard({ treatment }: { treatment: Treatment }) {
           alignItems: 'center',
           opacity: markApplied.isPending ? 0.7 : 1
         }}
+        onPressIn={() => void hapticLight()}
       >
         <Text style={{ ...typography.label, color: colors.primaryForeground }}>
           Marcar como aplicado hoy
         </Text>
       </Pressable>
-    </Pressable>
+    </AnimatedPressable>
+    </MotiView>
   );
 }
 
@@ -299,8 +314,8 @@ export default function PetDetailScreen() {
           />
         ) : treatments && treatments.length > 0 ? (
           <View style={{ gap: spacing[3] }}>
-            {treatments.map((treatment) => (
-              <TreatmentCard key={treatment.id} treatment={treatment} />
+            {treatments.map((treatment, index) => (
+              <TreatmentCard key={treatment.id} treatment={treatment} index={index} />
             ))}
           </View>
         ) : (
