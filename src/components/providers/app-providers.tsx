@@ -90,7 +90,8 @@ function NotificationQuickActionHandler() {
       treatment={quickAction.treatment}
       petName={quickAction.petName}
       isLoading={quickAction.isLoading}
-      onConfirm={quickAction.confirm}
+      onConfirm={() => quickAction.confirm(true)}
+      onAnimationComplete={quickAction.dismiss}
       onDismiss={quickAction.dismiss}
     />
   );

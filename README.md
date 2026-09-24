@@ -107,6 +107,14 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
   - diseño con tokens y estilos centralizados
   - pruebas unitarias para utilidades y servicios clave
 
+### Animaciones e interacciones
+
+- `lottie-react-native` para animaciones JSON opcionales y `moti`/Reanimated para fallbacks y microinteracciones.
+- `expo-haptics` para feedback no bloqueante en acciones importantes.
+- `react-native-gesture-handler` está preparado en el layout raíz para interacciones táctiles.
+- Todas las animaciones deben consultar `useReducedMotion()` y ofrecer una versión estática.
+- Para agregar un Lottie: coloca el JSON con un nombre aprobado en `assets/animations/`, registra su fuente en `src/components/animation/registry.ts` y completa autor, fuente, licencia y atribución en `ASSETS_LICENSES.md`.
+
 ### Pendiente / en mejora
 
 - [x] validación real en dispositivos físicos Android e iOS
@@ -161,19 +169,35 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [x] calendario
 - [x] administración avanzada de recordatorios
 - [x] soporte para más tipos de cuidado
+- [ ] dashboard de seguimiento preventivo por mascota
+- [ ] calendario interactivo con detalle y filtros
+- [ ] historial ampliado con notas y resumen para veterinario
+- [ ] experiencia inicial y estados vacíos orientados a acciones
+- [ ] adaptación y validación de la experiencia en iPad
 
 ### Fase 5: publicación
 - [ ] sincronización en la nube
 - [ ] despliegue de producción
 - [ ] App Store / Google Play
+- [ ] superar la revisión de funcionalidad mínima de App Store (Guideline 4.2)
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La configuración técnica de EAS para iOS y el icono opaco para TestFlight están listos; la prioridad actual es completar las cuentas de distribución para generar el build de TestFlight.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2 debido a funcionalidad mínima percibida. La prioridad actual es ampliar el valor visible de la app con un dashboard de seguimiento preventivo, un calendario más interactivo, un historial útil para consultas veterinarias y una experiencia validada en iPad antes de generar una nueva build para revisión.
 
 ## Registro de evolución
 
 Este registro sirve como historial formal del progreso del proyecto. Cada actualización debe documentar la fecha, el bloque completado, la validación asociada y el siguiente paso pendiente.
+
+### 2026-09-24
+
+- [x] Se revisó el rechazo de App Review de la build `1.0.0 (4)` bajo Guideline 4.2 por funcionalidad mínima percibida.
+- [x] Validado: se contrastó la observación de Apple con las funciones existentes de mascotas, tratamientos, calendario, historial, fotos y notificaciones.
+- [x] Se actualizó el mapa de ruta para priorizar el valor de producto antes de una nueva entrega a revisión.
+- [x] Validado: las nuevas tareas quedaron separadas de las funcionalidades ya implementadas y ordenadas por impacto en la revisión.
+- [x] Se corrigió el modal de confirmación rápida para celebrar y cerrarse solo después de registrar el tratamiento correctamente.
+- [x] Validado: se ajustaron las pruebas del modal y del hook de quick action para cubrir éxito, fallo y dismiss diferido.
+- [ ] Siguiente paso pendiente: implementar el dashboard de seguimiento preventivo por mascota y sus pruebas.
 
 ### 2026-09-21
 
@@ -253,7 +277,13 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 | Bajo | Calendario de tratamientos | Completado |
 | Bajo | Fotos de mascotas | Completado |
 | Bajo | Sincronización en la nube / usuario | Pendiente |
-| Bajo | Publicación en tiendas | Pendiente |
+| Alto | Dashboard de seguimiento preventivo por mascota | Pendiente |
+| Alto | Calendario interactivo con detalle y filtros | Pendiente |
+| Alto | Historial ampliado y resumen para veterinario | Pendiente |
+| Alto | Experiencia inicial y estados vacíos orientados a acciones | Pendiente |
+| Alto | Adaptación y validación de la experiencia en iPad | Pendiente |
+| Alto | Nueva build para superar Guideline 4.2 | Pendiente |
+| Medio | Publicación en tiendas | Pendiente |
 
 ### Done
 

@@ -126,6 +126,24 @@ describe('useNotificationQuickAction', () => {
     expect(result.current.isOpen).toBe(false);
   });
 
+  it('returns success without dismissing when dismissal is deferred', async () => {
+    const { result } = renderHook(() => useNotificationQuickAction());
+    const listener = mockAddNotificationResponseReceivedListener.mock.calls[0][0];
+
+    await act(async () => {
+      await listener(notificationResponse());
+    });
+
+    let isConfirmed = false;
+    await act(async () => {
+      isConfirmed = await result.current.confirm(true);
+    });
+
+    expect(isConfirmed).toBe(true);
+    expect(success).toHaveBeenCalledWith('Tratamiento registrado, próxima fecha actualizada');
+    expect(result.current.isOpen).toBe(true);
+  });
+
   it('shows an error and keeps the action open when marking fails', async () => {
     mutateAsync.mockRejectedValueOnce(new Error('database failure'));
     const { result } = renderHook(() => useNotificationQuickAction());
@@ -134,10 +152,12 @@ describe('useNotificationQuickAction', () => {
     await act(async () => {
       await listener(notificationResponse());
     });
+    let isConfirmed = true;
     await act(async () => {
-      await result.current.confirm();
+      isConfirmed = await result.current.confirm();
     });
 
+    expect(isConfirmed).toBe(false);
     expect(error).toHaveBeenCalledWith('No se pudo registrar el tratamiento');
     expect(result.current.isOpen).toBe(true);
   });

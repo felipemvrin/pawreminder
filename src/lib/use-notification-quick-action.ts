@@ -37,8 +37,8 @@ export function useNotificationQuickAction() {
     setState({ isOpen: false, treatment: null, pet: null });
   }, []);
 
-  const confirm = useCallback(async () => {
-    if (!state.treatment) return;
+  const confirm = useCallback(async (deferDismiss = false) => {
+    if (!state.treatment) return false;
 
     try {
       await markApplied.mutateAsync({
@@ -47,9 +47,11 @@ export function useNotificationQuickAction() {
         appliedDate: new Date().toISOString().split('T')[0]
       });
       toast.success('Tratamiento registrado, próxima fecha actualizada');
-      dismiss();
+      if (!deferDismiss) dismiss();
+      return true;
     } catch {
       toast.error('No se pudo registrar el tratamiento');
+      return false;
     }
   }, [state.treatment, markApplied, toast, dismiss]);
 
