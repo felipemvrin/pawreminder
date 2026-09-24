@@ -218,13 +218,13 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Se agregó onboarding opcional de tres pantallas con fallback de `PawAnimation`, indicador, acciones Continuar/Saltar y persistencia mediante el servicio de almacenamiento.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 77 pruebas pasan.
 - [x] Se robusteció el onboarding para manejar fallos de lectura/persistencia sin rechazos no controlados y evitar envíos duplicados al completar.
-- [x] Se consolidó la carga del dashboard preventivo para reutilizar una sola consulta por mascota y evitar mostrar `0 de 0` mientras los tratamientos siguen cargando o fallan.
-- [x] Validado: `npm run lint`, `npm run typecheck` y `npm test -- --runInBand --runTestsByPath src/lib/hooks/use-treatments.test.tsx src/lib/treatment-status.test.ts`.
-- [ ] Siguiente paso pendiente: ampliar la cobertura de integración del home para estados del dashboard y navegación principal.
 - [x] Validado: `npm run lint -- src/components/onboarding.tsx src/components/onboarding.test.tsx` y `npm test -- --runTestsByPath src/components/onboarding.test.tsx src/services/storage/onboarding-service.test.ts`; 7 pruebas pasan.
 - [x] Se conectó `ProgressRing` a un dashboard de cuidados por mascota con conteo de tratamientos activos al día, próximos y vencidos.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 81 pruebas pasan.
 - [ ] Siguiente paso pendiente: validar visualmente el dashboard y onboarding en Expo Go antes de preparar la siguiente build.
+- [x] Se consolidó la carga del dashboard preventivo para reutilizar una sola consulta por mascota y evitar mostrar `0 de 0` mientras los tratamientos siguen cargando o fallan.
+- [x] Validado: `npm run lint`, `npm run typecheck` y `npm test -- --runInBand --runTestsByPath src/lib/hooks/use-treatments.test.tsx src/lib/treatment-status.test.ts`.
+- [ ] Siguiente paso pendiente: ampliar la cobertura de integración del home para estados del dashboard y navegación principal.
 
 ### 2026-09-21
 
