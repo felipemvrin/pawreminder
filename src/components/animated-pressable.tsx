@@ -12,6 +12,8 @@ interface AnimatedPressableProps extends PressableProps {
   style?: StyleProp<ViewStyle>;
 }
 
+const ReanimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export function AnimatedPressable({ style, onPressIn, onPressOut, ...props }: AnimatedPressableProps) {
   const scale = useSharedValue(1);
   const reducedMotion = useReducedMotion();
@@ -21,20 +23,18 @@ export function AnimatedPressable({ style, onPressIn, onPressOut, ...props }: An
   }));
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Pressable
-        {...props}
-        onPressIn={(event) => {
-          if (!reducedMotion) scale.value = withTiming(0.97, { duration: 100 });
-          void hapticLight();
-          onPressIn?.(event);
-        }}
-        onPressOut={(event) => {
-          if (!reducedMotion) scale.value = withTiming(1, { duration: 140 });
-          onPressOut?.(event);
-        }}
-        style={style}
-      />
-    </Animated.View>
+    <ReanimatedPressable
+      {...props}
+      onPressIn={(event) => {
+        if (!reducedMotion) scale.value = withTiming(0.97, { duration: 100 });
+        void hapticLight();
+        onPressIn?.(event);
+      }}
+      onPressOut={(event) => {
+        if (!reducedMotion) scale.value = withTiming(1, { duration: 140 });
+        onPressOut?.(event);
+      }}
+      style={[style, animatedStyle]}
+    />
   );
 }
