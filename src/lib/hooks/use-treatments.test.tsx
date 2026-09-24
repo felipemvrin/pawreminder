@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 
 import { databaseService } from '@/services/database/database-service';
 import type { Pet, Treatment } from '@/types/domain';
-import { usePetCareDashboard } from './use-treatments';
+import { treatmentsKeys, usePetCareDashboard } from './use-treatments';
 
 jest.mock('@/services/database/database-service', () => ({
   databaseService: {
@@ -21,6 +21,7 @@ jest.mock('@/services/notifications/notification-service', () => ({
 }));
 
 const mockGetTreatmentsByPetId = jest.mocked(databaseService.getTreatmentsByPetId);
+const queryClients: QueryClient[] = [];
 
 const pets: Pet[] = [
   {
@@ -56,7 +57,7 @@ function createTreatment(overrides: Partial<Treatment> = {}): Treatment {
   };
 }
 
-function createWrapper() {
+function createQueryClient() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -65,6 +66,11 @@ function createWrapper() {
     }
   });
 
+  queryClients.push(queryClient);
+  return queryClient;
+}
+
+function createWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   };
@@ -73,6 +79,12 @@ function createWrapper() {
 describe('usePetCareDashboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    queryClients.splice(0).forEach((queryClient) => {
+      queryClient.clear();
+    });
   });
 
   it('does not expose fake progress while pet treatments are still loading', async () => {
@@ -90,8 +102,9 @@ describe('usePetCareDashboard', () => {
         })
     );
 
+    const queryClient = createQueryClient();
     const { result } = renderHook(() => usePetCareDashboard(pets), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(queryClient)
     });
 
     expect(result.current.isLoading).toBe(true);
@@ -120,8 +133,9 @@ describe('usePetCareDashboard', () => {
     mockGetTreatmentsByPetId.mockRejectedValueOnce(new Error('db failed'));
     mockGetTreatmentsByPetId.mockResolvedValueOnce([createTreatment({ petId: 'pet-2' })]);
 
+    const queryClient = createQueryClient();
     const { result } = renderHook(() => usePetCareDashboard(pets), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(queryClient)
     });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -130,5 +144,39 @@ describe('usePetCareDashboard', () => {
     expect(result.current.progress.get('pet-1')).toBeUndefined();
     expect(result.current.summaries.get('pet-1')).toBeUndefined();
     expect(result.current.progress.get('pet-2')).toEqual({ completed: 1, total: 1 });
+  });
+
+  it('preserves dashboard data while a pet query is refetching', async () => {
+    mockGetTreatmentsByPetId.mockResolvedValueOnce([createTreatment()]);
+    mockGetTreatmentsByPetId.mockResolvedValueOnce([
+      createTreatment({ id: 'treatment-2', petId: 'pet-2' })
+    ]);
+
+    const queryClient = createQueryClient();
+    const { result } = renderHook(() => usePetCareDashboard(pets), {
+      wrapper: createWrapper(queryClient)
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.progress.get('pet-1')).toEqual({ completed: 1, total: 1 });
+
+    let resolveRefetch: ((value: Treatment[]) => void) | undefined;
+    mockGetTreatmentsByPetId.mockImplementationOnce(
+      () =>
+        new Promise<Treatment[]>((resolve) => {
+          resolveRefetch = resolve;
+        })
+    );
+
+    await act(async () => {
+      void queryClient.invalidateQueries({ queryKey: treatmentsKeys.byPet('pet-1') });
+    });
+
+    expect(result.current.progress.get('pet-1')).toEqual({ completed: 1, total: 1 });
+    expect(result.current.summaries.get('pet-1')?.id).toBe('treatment-1');
+
+    await act(async () => {
+      resolveRefetch?.([createTreatment()]);
+    });
   });
 });

@@ -28,7 +28,7 @@ function usePetTreatmentsData(pets: Pet[] | undefined) {
   const treatmentsByPet = new Map<string, Treatment[] | undefined>();
   (pets ?? []).forEach((pet, index) => {
     const result = results[index];
-    treatmentsByPet.set(pet.id, result?.isSuccess ? result.data : undefined);
+    treatmentsByPet.set(pet.id, result?.data);
   });
 
   return {
