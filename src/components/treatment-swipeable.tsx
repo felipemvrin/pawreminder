@@ -1,7 +1,8 @@
 import { Check, Clock } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import type { ReactNode } from 'react';
+import type { SwipeableMethods } from 'react-native-gesture-handler/lib/typescript/components/ReanimatedSwipeable';
+import { useRef, type ReactNode } from 'react';
 
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import { hapticLight } from '@/utils/haptics';
@@ -10,6 +11,7 @@ interface TreatmentSwipeableProps {
   children: ReactNode;
   onMarkApplied: () => void;
   onPostpone?: () => void;
+  markAppliedDisabled?: boolean;
 }
 
 function SwipeAction({
@@ -33,7 +35,6 @@ function SwipeAction({
       disabled={disabled}
       onPress={() => {
         if (disabled) return;
-        void hapticLight();
         onPress?.();
       }}
       style={{
@@ -52,10 +53,24 @@ function SwipeAction({
   );
 }
 
-export function TreatmentSwipeable({ children, onMarkApplied, onPostpone }: TreatmentSwipeableProps) {
+export function TreatmentSwipeable({
+  children,
+  onMarkApplied,
+  onPostpone,
+  markAppliedDisabled = false
+}: TreatmentSwipeableProps) {
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
+
+  const handleActionPress = (action?: () => void) => {
+    swipeableRef.current?.close();
+    void hapticLight();
+    action?.();
+  };
+
   // TODO: conectar Posponer cuando exista una regla de negocio para mover la fecha sin aplicar el tratamiento.
   return (
     <Swipeable
+      ref={swipeableRef}
       overshootLeft={false}
       overshootRight={false}
       renderLeftActions={() => (
@@ -64,14 +79,20 @@ export function TreatmentSwipeable({ children, onMarkApplied, onPostpone }: Trea
             label="Posponer"
             color={colors.warning}
             Icon={Clock}
-            onPress={onPostpone}
+            onPress={onPostpone ? () => handleActionPress(onPostpone) : undefined}
             disabled={!onPostpone}
           />
         </View>
       )}
       renderRightActions={() => (
         <View style={{ borderRadius: radius.lg, overflow: 'hidden' }}>
-          <SwipeAction label="Marcar aplicado" color={colors.success} Icon={Check} onPress={onMarkApplied} />
+          <SwipeAction
+            label="Marcar aplicado"
+            color={colors.success}
+            Icon={Check}
+            onPress={() => handleActionPress(onMarkApplied)}
+            disabled={markAppliedDisabled}
+          />
         </View>
       )}
     >

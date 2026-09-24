@@ -17,6 +17,11 @@ describe('TreatmentSwipeable', () => {
       </TreatmentSwipeable>
     );
 
+    expect(screen.queryByRole('button', { name: 'Marcar aplicado' })).toBeNull();
+
+    const swipeable = screen.getByRole('button', { name: 'Mostrar acciones de swipe' });
+    fireEvent.press(swipeable);
+
     fireEvent.press(screen.getByRole('button', { name: 'Marcar aplicado' }));
 
     expect(onMarkApplied).toHaveBeenCalledTimes(1);
@@ -29,8 +34,32 @@ describe('TreatmentSwipeable', () => {
       </TreatmentSwipeable>
     );
 
+    const swipeable = screen.getByRole('button', { name: 'Mostrar acciones de swipe' });
+    fireEvent.press(swipeable);
+
     expect(screen.getByRole('button', { name: 'Posponer' }).props.accessibilityState).toEqual({
       disabled: true
     });
+  });
+
+  it('deshabilita la accion de marcar aplicado mientras la mutacion sigue pendiente', () => {
+    const onMarkApplied = jest.fn();
+
+    render(
+      <TreatmentSwipeable onMarkApplied={onMarkApplied} markAppliedDisabled>
+        <></>
+      </TreatmentSwipeable>
+    );
+
+    const swipeable = screen.getByRole('button', { name: 'Mostrar acciones de swipe' });
+    fireEvent.press(swipeable);
+
+    const action = screen.getByRole('button', { name: 'Marcar aplicado' });
+
+    expect(action.props.accessibilityState).toEqual({ disabled: true });
+
+    fireEvent.press(action);
+
+    expect(onMarkApplied).not.toHaveBeenCalled();
   });
 });

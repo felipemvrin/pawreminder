@@ -40,6 +40,8 @@ function TreatmentCard({ treatment, index }: { treatment: Treatment; index: numb
   const reducedMotion = useReducedMotion();
 
   const handleMarkApplied = () => {
+    if (markApplied.isPending) return;
+
     Alert.alert('Marcar como aplicado', '¿Confirmas que el tratamiento se aplicó hoy?', [
       { text: 'Cancelar', style: 'cancel' },
       {
@@ -66,7 +68,10 @@ function TreatmentCard({ treatment, index }: { treatment: Treatment; index: numb
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ type: 'timing', duration: 220, delay: reducedMotion ? 0 : index * 55 }}
     >
-      <TreatmentSwipeable onMarkApplied={handleMarkApplied}>
+      <TreatmentSwipeable
+        onMarkApplied={handleMarkApplied}
+        markAppliedDisabled={markApplied.isPending}
+      >
         <AnimatedPressable
           onPress={() => router.push(`/treatment/edit/${treatment.id}`)}
           style={{
