@@ -10,7 +10,7 @@ import { PetCareDashboard } from '@/components/pet-care-dashboard';
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { EmptyState } from '@/components/empty-state';
 import { usePets } from '@/lib/hooks/use-pets';
-import { usePetCareProgress, usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
+import { usePetCareDashboard } from '@/lib/hooks/use-treatments';
 import {
   getTreatmentStatus,
   treatmentStatusColors,
@@ -89,8 +89,8 @@ function PetCard({ pet, nextTreatment, index }: { pet: Pet; nextTreatment?: Trea
 export default function HomeScreen() {
   const router = useRouter();
   const { data: pets, isLoading, isError, refetch } = usePets();
-  const { summaries } = usePetTreatmentSummaries(pets);
-  const { progress } = usePetCareProgress(pets);
+  const { summaries, progress, isLoading: isCareDashboardLoading, isError: isCareDashboardError } =
+    usePetCareDashboard(pets);
   const bottomPadding = useScreenBottomPadding();
 
   const showAnimation = !isLoading && (pets?.length ?? 0) > 0 && (pets?.length ?? 0) <= 4;
@@ -161,12 +161,18 @@ export default function HomeScreen() {
             gap: spacing[3]
           }}
           ListHeaderComponent={
-            pets && pets.length > 0 ? (
+            pets && pets.length > 0 && !isCareDashboardLoading && !isCareDashboardError ? (
               <PetCareDashboard pets={pets} progress={progress} />
             ) : null
           }
           renderItem={({ item, index }) => (
-            <PetCard pet={item} nextTreatment={summaries.get(item.id)} index={index} />
+            <PetCard
+              pet={item}
+              nextTreatment={
+                isCareDashboardLoading || isCareDashboardError ? undefined : summaries.get(item.id)
+              }
+              index={index}
+            />
           )}
         />
       )}

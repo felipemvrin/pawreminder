@@ -187,7 +187,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2 debido a funcionalidad mínima percibida. La prioridad actual es ampliar el valor visible de la app con un dashboard de seguimiento preventivo, un calendario más interactivo, un historial útil para consultas veterinarias y una experiencia validada en iPad antes de generar una nueva build para revisión.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2 debido a funcionalidad mínima percibida. La prioridad actual es ampliar el valor visible de la app con un dashboard de seguimiento preventivo, un calendario más interactivo, un historial útil para consultas veterinarias y una experiencia validada en iPad antes de generar una nueva build para revisión. El dashboard de seguimiento ya evita mostrar conteos transitorios incorrectos mientras carga los tratamientos por mascota.
 
 ## Registro de evolución
 
@@ -218,6 +218,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Se agregó onboarding opcional de tres pantallas con fallback de `PawAnimation`, indicador, acciones Continuar/Saltar y persistencia mediante el servicio de almacenamiento.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 77 pruebas pasan.
 - [x] Se robusteció el onboarding para manejar fallos de lectura/persistencia sin rechazos no controlados y evitar envíos duplicados al completar.
+- [x] Se consolidó la carga del dashboard preventivo para reutilizar una sola consulta por mascota y evitar mostrar `0 de 0` mientras los tratamientos siguen cargando o fallan.
+- [x] Validado: `npm run lint`, `npm run typecheck` y `npm test -- --runInBand --runTestsByPath src/lib/hooks/use-treatments.test.tsx src/lib/treatment-status.test.ts`.
+- [ ] Siguiente paso pendiente: ampliar la cobertura de integración del home para estados del dashboard y navegación principal.
 - [x] Validado: `npm run lint -- src/components/onboarding.tsx src/components/onboarding.test.tsx` y `npm test -- --runTestsByPath src/components/onboarding.test.tsx src/services/storage/onboarding-service.test.ts`; 7 pruebas pasan.
 - [x] Se conectó `ProgressRing` a un dashboard de cuidados por mascota con conteo de tratamientos activos al día, próximos y vencidos.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 81 pruebas pasan.
