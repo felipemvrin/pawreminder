@@ -33,7 +33,7 @@ function usePetTreatmentsData(pets: Pet[] | undefined) {
 
   return {
     treatmentsByPet,
-    isLoading: results.some((result) => result.isLoading),
+    isLoading: results.some((result) => result.isFetching),
     isError: results.some((result) => result.isError)
   };
 }
