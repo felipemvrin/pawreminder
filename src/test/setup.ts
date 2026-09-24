@@ -32,9 +32,9 @@ jest.mock('react-native-gesture-handler/ReanimatedSwipeable', () => {
 
 			useImperativeHandle(ref, () => ({
 				close: () => setIsOpen(false),
-				openLeft: jest.fn(),
-				openRight: jest.fn(),
-				reset: jest.fn()
+				openLeft: () => setIsOpen(true),
+				openRight: () => setIsOpen(true),
+				reset: () => setIsOpen(false)
 			}));
 
 			return createElement(
