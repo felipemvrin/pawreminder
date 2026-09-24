@@ -49,4 +49,15 @@ describe('ProgressRing', () => {
       now: 0
     });
   });
+
+  it('normaliza valores inválidos para evitar estados accesibles inconsistentes', () => {
+    render(<ProgressRing completed={Number.POSITIVE_INFINITY} total={-2} />);
+
+    expect(screen.getByText('0 / 0')).toBeTruthy();
+    expect(screen.getByRole('progressbar')).toHaveAccessibilityValue({
+      min: 0,
+      max: 0,
+      now: 0
+    });
+  });
 });

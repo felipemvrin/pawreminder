@@ -20,6 +20,15 @@ interface ProgressRingProps {
   accessibilityLabel?: string;
 }
 
+function sanitizeNumber(value: number, fallback = 0) {
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function sanitizePositive(value: number, fallback: number) {
+  if (!Number.isFinite(value) || value <= 0) return fallback;
+  return value;
+}
+
 function getProgress(completed: number, total: number) {
   if (total <= 0 || !Number.isFinite(completed) || !Number.isFinite(total)) return 0;
   return Math.min(Math.max(completed / total, 0), 1);
@@ -33,11 +42,18 @@ export function ProgressRing({
   accessibilityLabel
 }: ProgressRingProps) {
   const reducedMotion = useReducedMotion();
-  const progress = getProgress(completed, total);
+  const normalizedSize = sanitizePositive(size, 120);
+  const normalizedStrokeWidth = Math.min(
+    sanitizePositive(strokeWidth, 10),
+    normalizedSize
+  );
+  const normalizedCompleted = Math.max(sanitizeNumber(completed), 0);
+  const normalizedTotal = Math.max(sanitizeNumber(total), 0);
+  const progress = getProgress(normalizedCompleted, normalizedTotal);
   const animatedProgress = useSharedValue(reducedMotion ? progress : 0);
-  const radius = (size - strokeWidth) / 2;
+  const radius = (normalizedSize - normalizedStrokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const center = size / 2;
+  const center = normalizedSize / 2;
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: circumference * (1 - animatedProgress.value)
   }));
@@ -52,17 +68,32 @@ export function ProgressRing({
     <View
       accessible
       accessibilityRole="progressbar"
-      accessibilityLabel={accessibilityLabel ?? `${completed} de ${total} cuidados al día`}
-      accessibilityValue={{ min: 0, max: total, now: Math.min(Math.max(completed, 0), total) }}
-      style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
+      accessibilityLabel={
+        accessibilityLabel ?? `${normalizedCompleted} de ${normalizedTotal} cuidados al día`
+      }
+      accessibilityValue={{
+        min: 0,
+        max: normalizedTotal,
+        now: Math.min(normalizedCompleted, normalizedTotal)
+      }}
+      style={{
+        width: normalizedSize,
+        height: normalizedSize,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
     >
-      <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <Svg
+        width={normalizedSize}
+        height={normalizedSize}
+        viewBox={`0 0 ${normalizedSize} ${normalizedSize}`}
+      >
         <Circle
           cx={center}
           cy={center}
           r={radius}
           stroke={colors.secondary}
-          strokeWidth={strokeWidth}
+          strokeWidth={normalizedStrokeWidth}
           fill="none"
         />
         <AnimatedCircle
@@ -70,7 +101,7 @@ export function ProgressRing({
           cy={center}
           r={radius}
           stroke={colors.success}
-          strokeWidth={strokeWidth}
+          strokeWidth={normalizedStrokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
           animatedProps={animatedProps}
@@ -81,7 +112,7 @@ export function ProgressRing({
       </Svg>
       <View pointerEvents="none" style={{ position: 'absolute', alignItems: 'center' }}>
         <Text style={{ ...typography.heading, color: colors.foreground }}>
-          {completed} / {total}
+          {normalizedCompleted} / {normalizedTotal}
         </Text>
         <Text style={{ ...typography.caption, color: colors.muted }}>al día</Text>
       </View>

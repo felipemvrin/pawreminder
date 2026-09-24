@@ -212,6 +212,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 17 suites y 70 pruebas pasan.
 - [x] Se agregó `ProgressRing` aislado para mostrar cuidados al día con SVG, animación Reanimated y modo reducido estático; todavía no está conectado al dashboard.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 18 suites y 72 pruebas pasan.
+- [x] Se reforzó `ProgressRing` para normalizar valores inválidos/negativos y evitar estados accesibles inconsistentes en casos límite.
+- [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/progress-ring.test.tsx`.
 - [ ] Siguiente paso pendiente: conectar el `ProgressRing` al dashboard cuando se implemente esa vista.
 
 ### 2026-09-21
