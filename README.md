@@ -174,6 +174,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [ ] historial ampliado con notas y resumen para veterinario
 - [ ] experiencia inicial y estados vacíos orientados a acciones
 - [ ] adaptación y validación de la experiencia en iPad
+- [x] microinteracciones de presión, entrada escalonada y feedback háptico
 
 ### Fase 5: publicación
 - [ ] sincronización en la nube
@@ -201,7 +202,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: typecheck, ESLint y suite completa de Jest pasan después de añadir la prueba de `EmptyState`.
 - [x] Se ocultó de accesibilidad el fallback decorativo de `PawAnimation` para evitar que los lectores de pantalla anuncien nombres internos de estados vacíos y carga.
 - [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/animation/PawAnimation.test.tsx src/components/query-state.test.tsx src/components/empty-state.test.tsx`.
-- [ ] Siguiente paso pendiente: implementar las microinteracciones y la entrada escalonada de listas de la Fase 4.
+- [x] Se agregaron microinteracciones de presión, entrada escalonada para tarjetas, feedback háptico, pulso de vencidos y animación del avatar al cambiar la foto.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 15 suites y 66 pruebas pasan.
+- [ ] Siguiente paso pendiente: implementar el swipe accesible de tratamientos de la Fase 5.
 
 ### 2026-09-21
 

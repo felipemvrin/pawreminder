@@ -2,7 +2,10 @@ import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { CalendarDays, Cat, Dog, Plus } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useReducedMotion } from 'react-native-reanimated';
 
+import { AnimatedPressable } from '@/components/animated-pressable';
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { EmptyState } from '@/components/empty-state';
 import { usePets } from '@/lib/hooks/use-pets';
@@ -16,25 +19,31 @@ import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 import type { Pet, Treatment } from '@/types/domain';
 
-function PetCard({ pet, nextTreatment }: { pet: Pet; nextTreatment?: Treatment }) {
+function PetCard({ pet, nextTreatment, index }: { pet: Pet; nextTreatment?: Treatment; index: number }) {
   const router = useRouter();
   const Icon = pet.species === 'dog' ? Dog : Cat;
   const status = nextTreatment ? getTreatmentStatus(nextTreatment.nextDueDate) : undefined;
+  const reducedMotion = useReducedMotion();
 
   return (
-    <Pressable
-      onPress={() => router.push(`/pet/${pet.id}`)}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing[4],
-        padding: spacing[4],
-        backgroundColor: colors.surface,
-        borderRadius: radius.lg,
-        borderWidth: 1,
-        borderColor: colors.border
-      }}
+    <MotiView
+      from={reducedMotion ? { opacity: 1 } : { opacity: 0, translateY: 12 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ type: 'timing', duration: 220, delay: reducedMotion ? 0 : index * 55 }}
     >
+      <AnimatedPressable
+        onPress={() => router.push(`/pet/${pet.id}`)}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing[4],
+          padding: spacing[4],
+          backgroundColor: colors.surface,
+          borderRadius: radius.lg,
+          borderWidth: 1,
+          borderColor: colors.border
+        }}
+      >
       <View
         style={{
           width: 48,
@@ -55,7 +64,10 @@ function PetCard({ pet, nextTreatment }: { pet: Pet; nextTreatment?: Treatment }
         </Text>
       </View>
       {status && (
-        <View
+        <MotiView
+          from={reducedMotion ? { scale: 1 } : { scale: status === 'overdue' ? 0.96 : 1 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'timing', duration: 700, loop: !reducedMotion && status === 'overdue' }}
           style={{
             paddingHorizontal: spacing[3],
             paddingVertical: spacing[1],
@@ -66,9 +78,10 @@ function PetCard({ pet, nextTreatment }: { pet: Pet; nextTreatment?: Treatment }
           <Text style={{ ...typography.caption, color: colors.primaryForeground }}>
             {treatmentStatusLabels[status]}
           </Text>
-        </View>
+        </MotiView>
       )}
-    </Pressable>
+      </AnimatedPressable>
+    </MotiView>
   );
 }
 
@@ -145,7 +158,9 @@ export default function HomeScreen() {
             paddingBottom: showAnimation ? spacing[3] : bottomPadding,
             gap: spacing[3]
           }}
-          renderItem={({ item }) => <PetCard pet={item} nextTreatment={summaries.get(item.id)} />}
+          renderItem={({ item, index }) => (
+            <PetCard pet={item} nextTreatment={summaries.get(item.id)} index={index} />
+          )}
         />
       )}
 

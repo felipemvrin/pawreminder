@@ -3,6 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera, Cat, Dog, X } from 'lucide-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, Image, Linking, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { MotiView } from 'moti';
 
 import {
   petFormDefaultValues,
@@ -181,7 +182,12 @@ export function PetForm({
           render={({ field: { onChange, value } }) => (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[3] }}>
               {value ? (
-                <View>
+                <MotiView
+                  key={value}
+                  from={{ scale: 0.86, opacity: 0.7 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'timing', duration: 220 }}
+                >
                   <Image
                     source={{ uri: value }}
                     accessibilityLabel="Foto de la mascota"
@@ -205,7 +211,7 @@ export function PetForm({
                   >
                     <X size={14} color={colors.primaryForeground} />
                   </Pressable>
-                </View>
+                </MotiView>
               ) : null}
               <Pressable
                 onPress={() => void selectPhoto(onChange)}
