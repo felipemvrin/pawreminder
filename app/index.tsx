@@ -6,10 +6,11 @@ import { MotiView } from 'moti';
 import { useReducedMotion } from 'react-native-reanimated';
 
 import { AnimatedPressable } from '@/components/animated-pressable';
+import { PetCareDashboard } from '@/components/pet-care-dashboard';
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { EmptyState } from '@/components/empty-state';
 import { usePets } from '@/lib/hooks/use-pets';
-import { usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
+import { usePetCareProgress, usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
 import {
   getTreatmentStatus,
   treatmentStatusColors,
@@ -89,6 +90,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { data: pets, isLoading, isError, refetch } = usePets();
   const { summaries } = usePetTreatmentSummaries(pets);
+  const { progress } = usePetCareProgress(pets);
   const bottomPadding = useScreenBottomPadding();
 
   const showAnimation = !isLoading && (pets?.length ?? 0) > 0 && (pets?.length ?? 0) <= 4;
@@ -158,6 +160,11 @@ export default function HomeScreen() {
             paddingBottom: showAnimation ? spacing[3] : bottomPadding,
             gap: spacing[3]
           }}
+          ListHeaderComponent={
+            pets && pets.length > 0 ? (
+              <PetCareDashboard pets={pets} progress={progress} />
+            ) : null
+          }
           renderItem={({ item, index }) => (
             <PetCard pet={item} nextTreatment={summaries.get(item.id)} index={index} />
           )}

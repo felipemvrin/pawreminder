@@ -1,5 +1,5 @@
 import type { Treatment } from '@/types/domain';
-import { getMostUrgentTreatment, getTreatmentStatus } from './treatment-status';
+import { getCareProgress, getMostUrgentTreatment, getTreatmentStatus } from './treatment-status';
 
 const today = new Date(2026, 7, 26, 12);
 
@@ -47,5 +47,17 @@ describe('treatment status', () => {
 
   it('returns undefined when there are no active treatments', () => {
     expect(getMostUrgentTreatment([createTreatment({ active: false })])).toBeUndefined();
+  });
+
+  it('counts active treatments due today or later as care up to date', () => {
+    const overdue = createTreatment({ id: 'overdue', nextDueDate: '2026-08-25' });
+    const todayTreatment = createTreatment({ id: 'today', nextDueDate: '2026-08-26' });
+    const upcoming = createTreatment({ id: 'upcoming', nextDueDate: '2026-08-30' });
+    const inactive = createTreatment({ id: 'inactive', active: false, nextDueDate: '2026-08-30' });
+
+    expect(getCareProgress([overdue, todayTreatment, upcoming, inactive], today)).toEqual({
+      completed: 2,
+      total: 3
+    });
   });
 });

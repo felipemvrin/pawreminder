@@ -2,7 +2,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/rea
 
 import { databaseService } from '@/services/database/database-service';
 import { notificationService } from '@/services/notifications/notification-service';
-import { getMostUrgentTreatment } from '@/lib/treatment-status';
+import { getCareProgress, getMostUrgentTreatment } from '@/lib/treatment-status';
 import type { EntityId, ISODateString, Pet, Treatment } from '@/types/domain';
 
 export const treatmentsKeys = {
@@ -50,6 +50,26 @@ export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
   return {
     summaries,
     isLoading: results.some((r) => r.isLoading)
+  };
+}
+
+export function usePetCareProgress(pets: Pet[] | undefined) {
+  const results = useQueries({
+    queries: (pets ?? []).map((pet) => ({
+      queryKey: treatmentsKeys.byPet(pet.id),
+      queryFn: () => databaseService.getTreatmentsByPetId(pet.id),
+      enabled: Boolean(pets)
+    }))
+  });
+
+  const progress = new Map<string, ReturnType<typeof getCareProgress>>();
+  (pets ?? []).forEach((pet, index) => {
+    progress.set(pet.id, getCareProgress(results[index]?.data ?? []));
+  });
+
+  return {
+    progress,
+    isLoading: results.some((result) => result.isLoading)
   };
 }
 

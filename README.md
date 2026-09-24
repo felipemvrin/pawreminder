@@ -169,7 +169,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [x] calendario
 - [x] administración avanzada de recordatorios
 - [x] soporte para más tipos de cuidado
-- [ ] dashboard de seguimiento preventivo por mascota
+- [x] dashboard de seguimiento preventivo por mascota
 - [ ] calendario interactivo con detalle y filtros
 - [ ] historial ampliado con notas y resumen para veterinario
 - [ ] experiencia inicial y estados vacíos orientados a acciones
@@ -219,7 +219,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 77 pruebas pasan.
 - [x] Se robusteció el onboarding para manejar fallos de lectura/persistencia sin rechazos no controlados y evitar envíos duplicados al completar.
 - [x] Validado: `npm run lint -- src/components/onboarding.tsx src/components/onboarding.test.tsx` y `npm test -- --runTestsByPath src/components/onboarding.test.tsx src/services/storage/onboarding-service.test.ts`; 7 pruebas pasan.
-- [ ] Siguiente paso pendiente: conectar el `ProgressRing` al dashboard cuando se implemente esa vista.
+- [x] Se conectó `ProgressRing` a un dashboard de cuidados por mascota con conteo de tratamientos activos al día, próximos y vencidos.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 81 pruebas pasan.
+- [ ] Siguiente paso pendiente: validar visualmente el dashboard y onboarding en Expo Go antes de preparar la siguiente build.
 
 ### 2026-09-21
 
