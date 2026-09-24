@@ -61,7 +61,7 @@ export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
   const summaries = new Map<string, Treatment | undefined>();
   (pets ?? []).forEach((pet) => {
     const treatments = treatmentsByPet.get(pet.id);
-    if (!treatments) return;
+    if (treatments === undefined) return;
     summaries.set(pet.id, getMostUrgentTreatment(treatments));
   });
 
@@ -78,7 +78,7 @@ export function usePetCareProgress(pets: Pet[] | undefined) {
   const progress = new Map<string, ReturnType<typeof getCareProgress>>();
   (pets ?? []).forEach((pet) => {
     const treatments = treatmentsByPet.get(pet.id);
-    if (!treatments) return;
+    if (treatments === undefined) return;
     progress.set(pet.id, getCareProgress(treatments));
   });
 
@@ -97,7 +97,7 @@ export function usePetCareDashboard(pets: Pet[] | undefined) {
 
   (pets ?? []).forEach((pet) => {
     const treatments = treatmentsByPet.get(pet.id);
-    if (!treatments) return;
+    if (treatments === undefined) return;
     summaries.set(pet.id, getMostUrgentTreatment(treatments));
     progress.set(pet.id, getCareProgress(treatments));
   });
