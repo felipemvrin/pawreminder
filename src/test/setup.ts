@@ -9,3 +9,25 @@ jest.mock('moti', () => {
 			createElement(View, props, children)
 	};
 });
+
+jest.mock('react-native-gesture-handler/ReanimatedSwipeable', () => {
+	const { createElement } = jest.requireActual<typeof import('react')>('react');
+	const { View } = jest.requireActual<typeof import('react-native')>('react-native');
+
+	return ({
+		children,
+		renderLeftActions,
+		renderRightActions
+	}: {
+		children?: ReactNode;
+		renderLeftActions?: () => ReactNode;
+		renderRightActions?: () => ReactNode;
+	}) =>
+		createElement(
+			View,
+			null,
+			renderLeftActions?.(),
+			renderRightActions?.(),
+			children
+		);
+});

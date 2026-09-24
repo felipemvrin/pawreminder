@@ -7,6 +7,7 @@ import { useReducedMotion } from 'react-native-reanimated';
 import { AnimatedPressable } from '@/components/animated-pressable';
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
 import { EmptyState } from '@/components/empty-state';
+import { TreatmentSwipeable } from '@/components/treatment-swipeable';
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
 import { useMarkTreatmentApplied, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
 import { isoDateToDisplay, localDateToISO } from '@/lib/date-format';
@@ -65,17 +66,18 @@ function TreatmentCard({ treatment, index }: { treatment: Treatment; index: numb
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ type: 'timing', duration: 220, delay: reducedMotion ? 0 : index * 55 }}
     >
-      <AnimatedPressable
-        onPress={() => router.push(`/treatment/edit/${treatment.id}`)}
-        style={{
-          padding: spacing[5],
-          borderRadius: radius.lg,
-          borderWidth: 1,
-          borderColor: colors.border,
-          backgroundColor: colors.surface,
-          gap: spacing[3]
-        }}
-      >
+      <TreatmentSwipeable onMarkApplied={handleMarkApplied}>
+        <AnimatedPressable
+          onPress={() => router.push(`/treatment/edit/${treatment.id}`)}
+          style={{
+            padding: spacing[5],
+            borderRadius: radius.lg,
+            borderWidth: 1,
+            borderColor: colors.border,
+            backgroundColor: colors.surface,
+            gap: spacing[3]
+          }}
+        >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ ...typography.label, color: colors.foreground }}>
           {treatment.productName || treatmentTypeLabel(treatment.type)}
@@ -118,7 +120,8 @@ function TreatmentCard({ treatment, index }: { treatment: Treatment; index: numb
           Marcar como aplicado hoy
         </Text>
       </Pressable>
-    </AnimatedPressable>
+        </AnimatedPressable>
+      </TreatmentSwipeable>
     </MotiView>
   );
 }
