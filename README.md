@@ -195,6 +195,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: se contrastó la observación de Apple con las funciones existentes de mascotas, tratamientos, calendario, historial, fotos y notificaciones.
 - [x] Se actualizó el mapa de ruta para priorizar el valor de producto antes de una nueva entrega a revisión.
 - [x] Validado: las nuevas tareas quedaron separadas de las funcionalidades ya implementadas y ordenadas por impacto en la revisión.
+- [x] Se corrigió el modal de confirmación rápida para celebrar y cerrarse solo después de registrar el tratamiento correctamente.
+- [x] Validado: se ajustaron las pruebas del modal y del hook de quick action para cubrir éxito, fallo y dismiss diferido.
 - [ ] Siguiente paso pendiente: implementar el dashboard de seguimiento preventivo por mascota y sus pruebas.
 
 ### 2026-09-21

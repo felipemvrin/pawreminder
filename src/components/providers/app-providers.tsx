@@ -90,7 +90,7 @@ function NotificationQuickActionHandler() {
       treatment={quickAction.treatment}
       petName={quickAction.petName}
       isLoading={quickAction.isLoading}
-      onConfirm={() => void quickAction.confirm(true)}
+      onConfirm={() => quickAction.confirm(true)}
       onAnimationComplete={quickAction.dismiss}
       onDismiss={quickAction.dismiss}
     />

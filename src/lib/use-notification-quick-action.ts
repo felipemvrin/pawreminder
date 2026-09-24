@@ -38,7 +38,7 @@ export function useNotificationQuickAction() {
   }, []);
 
   const confirm = useCallback(async (deferDismiss = false) => {
-    if (!state.treatment) return;
+    if (!state.treatment) return false;
 
     try {
       await markApplied.mutateAsync({
@@ -48,8 +48,10 @@ export function useNotificationQuickAction() {
       });
       toast.success('Tratamiento registrado, próxima fecha actualizada');
       if (!deferDismiss) dismiss();
+      return true;
     } catch {
       toast.error('No se pudo registrar el tratamiento');
+      return false;
     }
   }, [state.treatment, markApplied, toast, dismiss]);
 
