@@ -207,9 +207,7 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 15 suites y 66 pruebas pasan.
 - [x] Se corrigió `AnimatedPressable` para usar un componente animado real de Reanimated y asegurar que la escala al presionar se aplique en ejecución.
 - [x] Validado: `npm run typecheck`, `npm run lint -- src/components/animated-pressable.tsx src/components/animated-pressable.test.tsx` y `npm test -- --runTestsByPath src/components/animated-pressable.test.tsx`.
-- [x] Se agregó swipe accesible en tarjetas de tratamiento para marcar aplicado y se dejó preparada la acción Posponer sin modificar fechas.
-- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 17 suites y 69 pruebas pasan.
-- [x] Se bloqueó la acción swipe de “Marcar aplicado” mientras el registro sigue en curso para evitar duplicados de historial y notificaciones.
+- [x] Se agregó swipe accesible en tarjetas de tratamiento para marcar aplicado y se bloqueó la acción mientras el registro sigue en curso para evitar duplicados de historial y notificaciones.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 17 suites y 70 pruebas pasan.
 - [ ] Siguiente paso pendiente: preparar el componente opcional `ProgressRing` de la Fase 6.
 
