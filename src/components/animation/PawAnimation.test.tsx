@@ -17,10 +17,16 @@ jest.mock('react-native-reanimated', () => ({
 }));
 
 describe('PawAnimation', () => {
-  it('muestra el fallback cuando no existe el asset', () => {
-    const { getByLabelText } = render(<PawAnimation name="empty-pets" />);
+  it('muestra el fallback cuando no existe el asset sin exponerlo a lectores de pantalla', () => {
+    const { queryByLabelText, toJSON } = render(<PawAnimation name="empty-pets" />);
 
-    expect(getByLabelText('Animacion empty-pets')).toBeTruthy();
+    expect(toJSON()).toMatchObject({
+      props: {
+        accessible: false,
+        importantForAccessibility: 'no-hide-descendants'
+      }
+    });
+    expect(queryByLabelText('Animacion empty-pets')).toBeNull();
   });
 
   it('mantiene el fallback estatico con reducir movimiento', () => {
@@ -29,9 +35,15 @@ describe('PawAnimation', () => {
     };
     useReducedMotion.mockReturnValue(true);
 
-    const { getByLabelText } = render(<PawAnimation name="success" loop />);
+    const { queryByLabelText, toJSON } = render(<PawAnimation name="success" loop />);
 
-    expect(getByLabelText('Animacion success')).toBeTruthy();
+    expect(toJSON()).toMatchObject({
+      props: {
+        accessible: false,
+        importantForAccessibility: 'no-hide-descendants'
+      }
+    });
+    expect(queryByLabelText('Animacion success')).toBeNull();
     useReducedMotion.mockReturnValue(false);
   });
 });

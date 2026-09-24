@@ -197,7 +197,11 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: las nuevas tareas quedaron separadas de las funcionalidades ya implementadas y ordenadas por impacto en la revisión.
 - [x] Se corrigió el modal de confirmación rápida para celebrar y cerrarse solo después de registrar el tratamiento correctamente.
 - [x] Validado: se ajustaron las pruebas del modal y del hook de quick action para cubrir éxito, fallo y dismiss diferido.
-- [ ] Siguiente paso pendiente: implementar el dashboard de seguimiento preventivo por mascota y sus pruebas.
+- [x] Se agregaron estados vacíos reutilizables con acciones, animaciones de carga y una animación sutil para errores.
+- [x] Validado: typecheck, ESLint y suite completa de Jest pasan después de añadir la prueba de `EmptyState`.
+- [x] Se ocultó de accesibilidad el fallback decorativo de `PawAnimation` para evitar que los lectores de pantalla anuncien nombres internos de estados vacíos y carga.
+- [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/animation/PawAnimation.test.tsx src/components/query-state.test.tsx src/components/empty-state.test.tsx`.
+- [ ] Siguiente paso pendiente: implementar las microinteracciones y la entrada escalonada de listas de la Fase 4.
 
 ### 2026-09-21
 

@@ -58,7 +58,8 @@ export function PawAnimation({
         alignItems: 'center',
         justifyContent: 'center'
       }}
-      accessibilityLabel={`Animacion ${name}`}
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
     >
       <Text style={{ color: colors.primary, fontSize: size * 0.42 }}>🐾</Text>
       {name === 'success' ? (
