@@ -4,6 +4,7 @@ import { CalendarDays, Cat, Dog, Plus } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
+import { EmptyState } from '@/components/empty-state';
 import { usePets } from '@/lib/hooks/use-pets';
 import { usePetTreatmentSummaries } from '@/lib/hooks/use-treatments';
 import {
@@ -71,27 +72,6 @@ function PetCard({ pet, nextTreatment }: { pet: Pet; nextTreatment?: Treatment }
   );
 }
 
-function EmptyState() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: spacing[2],
-        padding: spacing[6]
-      }}
-    >
-      <Text style={{ ...typography.heading, color: colors.foreground, textAlign: 'center' }}>
-        Aún no tienes mascotas
-      </Text>
-      <Text style={{ ...typography.body, color: colors.muted, textAlign: 'center' }}>
-        Agrega tu primera mascota para empezar a programar sus recordatorios.
-      </Text>
-    </View>
-  );
-}
-
 export default function HomeScreen() {
   const router = useRouter();
   const { data: pets, isLoading, isError, refetch } = usePets();
@@ -147,7 +127,13 @@ export default function HomeScreen() {
           onRetry={() => void refetch()}
         />
       ) : pets && pets.length === 0 ? (
-        <EmptyState />
+        <EmptyState
+          animation="empty-pets"
+          title="Aún no tienes mascotas"
+          message="Agrega tu primera mascota para empezar a programar sus recordatorios."
+          actionLabel="Agrega tu primera mascota"
+          onAction={() => router.push('/pet/new')}
+        />
       ) : (
         <FlatList
           data={pets}

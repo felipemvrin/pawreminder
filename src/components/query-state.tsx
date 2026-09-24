@@ -1,11 +1,15 @@
-import { ActivityIndicator, Pressable, Text, View, type ViewStyle } from 'react-native';
+import { Pressable, Text, View, type ViewStyle } from 'react-native';
 
+import { PawAnimation } from '@/components/animation/PawAnimation';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 export function QueryLoadingState({ style }: { style?: ViewStyle }) {
   return (
-    <View testID="query-loading" style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, style]}>
-      <ActivityIndicator color={colors.primary} />
+    <View
+      testID="query-loading"
+      style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, style]}
+    >
+      <PawAnimation name="loading" size={88} />
     </View>
   );
 }
@@ -21,6 +25,7 @@ export function QueryErrorState({
 }) {
   return (
     <View
+      testID="query-error"
       style={[
         {
           flex: 1,
@@ -32,6 +37,7 @@ export function QueryErrorState({
         style
       ]}
     >
+      <PawAnimation name="empty-treatments" size={88} loop={false} />
       <Text style={{ ...typography.heading, color: colors.foreground, textAlign: 'center' }}>
         No pudimos cargar esta información
       </Text>

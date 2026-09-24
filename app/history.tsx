@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
+import { EmptyState } from '@/components/empty-state';
 import { Screen, useScreenBottomPadding } from '@/components/screen';
 import { usePets } from '@/lib/hooks/use-pets';
 import { useTreatmentLogsByPet, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
@@ -127,13 +128,11 @@ export default function HistoryScreen() {
           onRetry={() => void refetch()}
         />
       ) : logs && logs.length === 0 ? (
-        <View
-          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing[6] }}
-        >
-          <Text style={{ ...typography.body, color: colors.muted, textAlign: 'center' }}>
-            Aún no hay tratamientos aplicados registrados.
-          </Text>
-        </View>
+        <EmptyState
+          animation="empty-treatments"
+          title="Aún no hay historial"
+          message="Cuando marques un tratamiento como aplicado, aparecerá aquí."
+        />
       ) : (
         <FlatList
           data={logs}

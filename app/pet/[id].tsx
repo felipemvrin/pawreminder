@@ -3,6 +3,7 @@ import { Cat, Dog, Plus } from 'lucide-react-native';
 import { Alert, Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { QueryErrorState, QueryLoadingState } from '@/components/query-state';
+import { EmptyState } from '@/components/empty-state';
 import { useDeletePet, usePet } from '@/lib/hooks/use-pets';
 import { useMarkTreatmentApplied, useTreatmentsByPet } from '@/lib/hooks/use-treatments';
 import { isoDateToDisplay, localDateToISO } from '@/lib/date-format';
@@ -303,19 +304,13 @@ export default function PetDetailScreen() {
             ))}
           </View>
         ) : (
-          <View
-            style={{
-              padding: spacing[5],
-              borderRadius: radius.lg,
-              borderWidth: 1,
-              borderColor: colors.border,
-              backgroundColor: colors.surface
-            }}
-          >
-            <Text style={{ ...typography.body, color: colors.muted }}>
-              Aún no hay tratamientos configurados para {pet.name}.
-            </Text>
-          </View>
+          <EmptyState
+            animation="empty-treatments"
+            title="Aún no hay tratamientos"
+            message={`Agrega un tratamiento para ${pet.name} y empieza a organizar sus cuidados.`}
+            actionLabel="Agrega un tratamiento"
+            onAction={() => router.push({ pathname: '/treatment/new', params: { petId: pet.id } })}
+          />
         )}
       </ScrollView>
     </Screen>
