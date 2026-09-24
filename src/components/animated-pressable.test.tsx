@@ -49,16 +49,16 @@ describe('AnimatedPressable', () => {
     );
 
     const pressable = screen.getByTestId('animated-pressable');
-    const animatedStyle = pressable.props.style[1];
+    const getScale = () => pressable.props.style[1].transform[0].scale;
 
-    expect(animatedStyle.transform[0].scale).toBe(1);
+    expect(getScale()).toBe(1);
 
     fireEvent(pressable, 'pressIn');
-    expect(animatedStyle.transform[0].scale).toBe(0.97);
+    expect(getScale()).toBe(0.97);
 
     fireEvent.press(pressable);
     fireEvent(pressable, 'pressOut');
-    expect(animatedStyle.transform[0].scale).toBe(1);
+    expect(getScale()).toBe(1);
 
     expect(mockHapticLight).toHaveBeenCalledTimes(1);
     expect(onPressIn).toHaveBeenCalledTimes(1);
