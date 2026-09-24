@@ -33,7 +33,8 @@ function usePetTreatmentsData(pets: Pet[] | undefined) {
 
   return {
     treatmentsByPet,
-    isLoading: results.some((result) => result.isFetching),
+    isLoading: results.some((result) => result.isLoading),
+    isRefreshing: results.some((result) => result.isFetching && result.data !== undefined),
     isError: results.some((result) => result.isError)
   };
 }
@@ -56,7 +57,7 @@ export function useTreatment(treatmentId: string | undefined) {
 
 /** Fetches the most urgent active treatment for each pet, used for status badges on the home list. */
 export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
-  const { treatmentsByPet, isLoading, isError } = usePetTreatmentsData(pets);
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
 
   const summaries = new Map<string, Treatment | undefined>();
   (pets ?? []).forEach((pet) => {
@@ -68,12 +69,13 @@ export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
   return {
     summaries,
     isLoading,
+    isRefreshing,
     isError
   };
 }
 
 export function usePetCareProgress(pets: Pet[] | undefined) {
-  const { treatmentsByPet, isLoading, isError } = usePetTreatmentsData(pets);
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
 
   const progress = new Map<string, ReturnType<typeof getCareProgress>>();
   (pets ?? []).forEach((pet) => {
@@ -85,12 +87,13 @@ export function usePetCareProgress(pets: Pet[] | undefined) {
   return {
     progress,
     isLoading,
+    isRefreshing,
     isError
   };
 }
 
 export function usePetCareDashboard(pets: Pet[] | undefined) {
-  const { treatmentsByPet, isLoading, isError } = usePetTreatmentsData(pets);
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
 
   const summaries = new Map<string, Treatment | undefined>();
   const progress = new Map<string, ReturnType<typeof getCareProgress>>();
@@ -106,6 +109,7 @@ export function usePetCareDashboard(pets: Pet[] | undefined) {
     summaries,
     progress,
     isLoading,
+    isRefreshing,
     isError
   };
 }

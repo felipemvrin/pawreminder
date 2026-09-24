@@ -172,7 +172,8 @@ describe('usePetCareDashboard', () => {
       void queryClient.invalidateQueries({ queryKey: treatmentsKeys.byPet('pet-1') });
     });
 
-    await waitFor(() => expect(result.current.isLoading).toBe(true));
+    await waitFor(() => expect(result.current.isRefreshing).toBe(true));
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.progress.get('pet-1')).toEqual({ completed: 1, total: 1 });
     expect(result.current.summaries.get('pet-1')?.id).toBe('treatment-1');
 
@@ -180,6 +181,6 @@ describe('usePetCareDashboard', () => {
       resolveRefetch?.([createTreatment()]);
     });
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.isRefreshing).toBe(false));
   });
 });
