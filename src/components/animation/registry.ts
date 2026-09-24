@@ -5,7 +5,10 @@ export type PawAnimationName =
   | 'empty-treatments'
   | 'loading'
   | 'success'
-  | 'confetti';
+  | 'confetti'
+  | 'onboarding-pet'
+  | 'onboarding-calendar'
+  | 'onboarding-bell';
 
 type LottieSource = string | AnimationObject | { uri: string };
 

@@ -177,6 +177,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [x] microinteracciones de presión, entrada escalonada y feedback háptico
 - [x] swipe accesible para marcar tratamientos como aplicados
 - [x] componente ProgressRing preparado para el dashboard
+- [x] onboarding opcional de tres pantallas con persistencia local
 
 ### Fase 5: publicación
 - [ ] sincronización en la nube
@@ -214,6 +215,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 18 suites y 72 pruebas pasan.
 - [x] Se reforzó `ProgressRing` para normalizar valores inválidos/negativos y evitar estados accesibles inconsistentes en casos límite.
 - [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/progress-ring.test.tsx`.
+- [x] Se agregó onboarding opcional de tres pantallas con fallback de `PawAnimation`, indicador, acciones Continuar/Saltar y persistencia mediante el servicio de almacenamiento.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 20 suites y 77 pruebas pasan.
 - [ ] Siguiente paso pendiente: conectar el `ProgressRing` al dashboard cuando se implemente esa vista.
 
 ### 2026-09-21
