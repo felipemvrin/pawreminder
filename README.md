@@ -176,6 +176,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [ ] adaptación y validación de la experiencia en iPad
 - [x] microinteracciones de presión, entrada escalonada y feedback háptico
 - [x] swipe accesible para marcar tratamientos como aplicados
+- [x] componente ProgressRing preparado para el dashboard
 
 ### Fase 5: publicación
 - [ ] sincronización en la nube
@@ -209,7 +210,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run typecheck`, `npm run lint -- src/components/animated-pressable.tsx src/components/animated-pressable.test.tsx` y `npm test -- --runTestsByPath src/components/animated-pressable.test.tsx`.
 - [x] Se agregó swipe accesible en tarjetas de tratamiento para marcar aplicado y se bloqueó la acción mientras el registro sigue en curso para evitar duplicados de historial y notificaciones.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 17 suites y 70 pruebas pasan.
-- [ ] Siguiente paso pendiente: preparar el componente opcional `ProgressRing` de la Fase 6.
+- [x] Se agregó `ProgressRing` aislado para mostrar cuidados al día con SVG, animación Reanimated y modo reducido estático; todavía no está conectado al dashboard.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 18 suites y 72 pruebas pasan.
+- [ ] Siguiente paso pendiente: conectar el `ProgressRing` al dashboard cuando se implemente esa vista.
 
 ### 2026-09-21
 
