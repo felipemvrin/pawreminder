@@ -199,6 +199,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: se ajustaron las pruebas del modal y del hook de quick action para cubrir éxito, fallo y dismiss diferido.
 - [x] Se agregaron estados vacíos reutilizables con acciones, animaciones de carga y una animación sutil para errores.
 - [x] Validado: typecheck, ESLint y suite completa de Jest pasan después de añadir la prueba de `EmptyState`.
+- [x] Se ocultó de accesibilidad el fallback decorativo de `PawAnimation` para evitar que los lectores de pantalla anuncien nombres internos de estados vacíos y carga.
+- [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/animation/PawAnimation.test.tsx src/components/query-state.test.tsx src/components/empty-state.test.tsx`.
 - [ ] Siguiente paso pendiente: implementar las microinteracciones y la entrada escalonada de listas de la Fase 4.
 
 ### 2026-09-21
