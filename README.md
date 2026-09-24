@@ -204,6 +204,8 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: `npm run lint` y `npm test -- --runTestsByPath src/components/animation/PawAnimation.test.tsx src/components/query-state.test.tsx src/components/empty-state.test.tsx`.
 - [x] Se agregaron microinteracciones de presión, entrada escalonada para tarjetas, feedback háptico, pulso de vencidos y animación del avatar al cambiar la foto.
 - [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 15 suites y 66 pruebas pasan.
+- [x] Se corrigió `AnimatedPressable` para usar un componente animado real de Reanimated y asegurar que la escala al presionar se aplique en ejecución.
+- [x] Validado: `npm run typecheck`, `npm run lint -- src/components/animated-pressable.tsx src/components/animated-pressable.test.tsx` y `npm test -- --runTestsByPath src/components/animated-pressable.test.tsx`.
 - [ ] Siguiente paso pendiente: implementar el swipe accesible de tratamientos de la Fase 5.
 
 ### 2026-09-21

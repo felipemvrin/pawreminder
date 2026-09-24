@@ -1,11 +1,18 @@
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
-import { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated';
 
 import { hapticLight } from '@/utils/haptics';
 
 interface AnimatedPressableProps extends PressableProps {
   style?: StyleProp<ViewStyle>;
 }
+
+const ReanimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function AnimatedPressable({ style, onPressIn, onPressOut, ...props }: AnimatedPressableProps) {
   const scale = useSharedValue(1);
@@ -16,7 +23,7 @@ export function AnimatedPressable({ style, onPressIn, onPressOut, ...props }: An
   }));
 
   return (
-    <Pressable
+    <ReanimatedPressable
       {...props}
       onPressIn={(event) => {
         if (!reducedMotion) scale.value = withTiming(0.97, { duration: 100 });
