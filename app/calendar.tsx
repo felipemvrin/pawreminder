@@ -18,6 +18,7 @@ import {
   treatmentStatusLabels
 } from '@/lib/treatment-status';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
+import { hapticLight } from '@/utils/haptics';
 
 const weekdayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 const monthFormatter = new Intl.DateTimeFormat('es-CL', { month: 'long', year: 'numeric' });
@@ -27,6 +28,8 @@ export default function CalendarScreen() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const {
     data: pets,
     isLoading: isLoadingPets,
@@ -36,10 +39,19 @@ export default function CalendarScreen() {
   const { treatments, isLoading, isError, refetch } = useUpcomingTreatments(pets);
   const bottomPadding = useScreenBottomPadding();
   const treatmentsInMonth = getTreatmentsInMonth(treatments, selectedMonth);
-  const treatmentsByDay = groupTreatmentsByDueDay(treatmentsInMonth);
+  const filteredTreatments = selectedPetId
+    ? treatmentsInMonth.filter((treatment) => treatment.petId === selectedPetId)
+    : treatmentsInMonth;
+  const treatmentsByDay = groupTreatmentsByDueDay(filteredTreatments);
+  const visibleTreatments = selectedDay
+    ? filteredTreatments.filter(
+        (treatment) => Number(treatment.nextDueDate.substring(8, 10)) === selectedDay
+      )
+    : filteredTreatments;
 
   const moveMonth = (offset: number) => {
     setSelectedMonth((month) => new Date(month.getFullYear(), month.getMonth() + offset, 1));
+    setSelectedDay(null);
   };
 
   if (isLoadingPets || isLoading) {
@@ -78,7 +90,10 @@ export default function CalendarScreen() {
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         >
           <Pressable
-            onPress={() => moveMonth(-1)}
+            onPress={() => {
+              void hapticLight();
+              moveMonth(-1);
+            }}
             accessibilityRole="button"
             accessibilityLabel="Mes anterior"
             hitSlop={12}
@@ -91,7 +106,10 @@ export default function CalendarScreen() {
             {monthFormatter.format(selectedMonth)}
           </Text>
           <Pressable
-            onPress={() => moveMonth(1)}
+            onPress={() => {
+              void hapticLight();
+              moveMonth(1);
+            }}
             accessibilityRole="button"
             accessibilityLabel="Mes siguiente"
             hitSlop={12}
@@ -99,6 +117,67 @@ export default function CalendarScreen() {
             <ChevronRight size={24} color={colors.primary} />
           </Pressable>
         </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: spacing[2] }}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Todas las mascotas"
+            accessibilityState={{ selected: selectedPetId === null }}
+            onPress={() => {
+              void hapticLight();
+              setSelectedPetId(null);
+            }}
+            style={{
+              paddingHorizontal: spacing[3],
+              paddingVertical: spacing[2],
+              borderRadius: radius.full,
+              backgroundColor: selectedPetId === null ? colors.primary : colors.secondary
+            }}
+          >
+            <Text
+              style={{
+                ...typography.caption,
+                color: selectedPetId === null ? colors.primaryForeground : colors.primary
+              }}
+            >
+              Todas
+            </Text>
+          </Pressable>
+          {(pets ?? []).map((pet) => {
+            const selected = selectedPetId === pet.id;
+            return (
+              <Pressable
+                key={pet.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Filtrar por ${pet.name}`}
+                accessibilityState={{ selected }}
+                onPress={() => {
+                  void hapticLight();
+                  setSelectedPetId(pet.id);
+                }}
+                style={{
+                  paddingHorizontal: spacing[3],
+                  paddingVertical: spacing[2],
+                  borderRadius: radius.full,
+                  backgroundColor: selected ? colors.primary : colors.secondary
+                }}
+              >
+                <Text
+                  style={{
+                    ...typography.caption,
+                    color: selected ? colors.primaryForeground : colors.primary
+                  }}
+                >
+                  {pet.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
 
         <View style={{ gap: spacing[2] }}>
           <View style={{ flexDirection: 'row' }}>
@@ -120,7 +199,14 @@ export default function CalendarScreen() {
                   style={{ width: '14.2857%', alignItems: 'center' }}
                 >
                   {day ? (
-                    <View
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`Seleccionar día ${day}`}
+                      accessibilityState={{ selected: selectedDay === day }}
+                      onPress={() => {
+                        void hapticLight();
+                        setSelectedDay((current) => (current === day ? null : day));
+                      }}
                       style={{
                         width: 36,
                         height: 42,
@@ -128,10 +214,22 @@ export default function CalendarScreen() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: spacing[1],
-                        backgroundColor: dayTreatments.length ? colors.secondary : undefined
+                        backgroundColor:
+                          selectedDay === day
+                            ? colors.primary
+                            : dayTreatments.length
+                              ? colors.secondary
+                              : undefined
                       }}
                     >
-                      <Text style={{ ...typography.label, color: colors.foreground }}>{day}</Text>
+                      <Text
+                        style={{
+                          ...typography.label,
+                          color: selectedDay === day ? colors.primaryForeground : colors.foreground
+                        }}
+                      >
+                        {day}
+                      </Text>
                       {dayTreatments.length ? (
                         <View style={{ flexDirection: 'row', gap: 3 }}>
                           {dayTreatments.slice(0, 3).map((treatment) => (
@@ -142,13 +240,15 @@ export default function CalendarScreen() {
                                 height: 5,
                                 borderRadius: radius.full,
                                 backgroundColor:
-                                  treatmentStatusColors[getTreatmentStatus(treatment.nextDueDate)]
+                                  selectedDay === day
+                                    ? colors.primaryForeground
+                                    : treatmentStatusColors[getTreatmentStatus(treatment.nextDueDate)]
                               }}
                             />
                           ))}
                         </View>
                       ) : null}
-                    </View>
+                    </Pressable>
                   ) : null}
                 </View>
               );
@@ -157,11 +257,22 @@ export default function CalendarScreen() {
         </View>
 
         <View style={{ gap: spacing[3] }}>
-          <Text style={{ ...typography.label, color: colors.foreground }}>
-            Tratamientos programados
-          </Text>
-          {treatmentsInMonth.length ? (
-            treatmentsInMonth.map((treatment) => {
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ ...typography.label, color: colors.foreground }}>
+              {selectedDay ? `Cuidados del día ${selectedDay}` : 'Tratamientos programados'}
+            </Text>
+            {selectedDay ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Ver todo el mes"
+                onPress={() => setSelectedDay(null)}
+              >
+                <Text style={{ ...typography.caption, color: colors.primary }}>Ver mes</Text>
+              </Pressable>
+            ) : null}
+          </View>
+          {visibleTreatments.length ? (
+            visibleTreatments.map((treatment) => {
               const status = getTreatmentStatus(treatment.nextDueDate);
               return (
                 <View
@@ -197,7 +308,9 @@ export default function CalendarScreen() {
             })
           ) : (
             <Text style={{ ...typography.body, color: colors.muted }}>
-              No hay tratamientos programados este mes.
+              {selectedDay
+                ? 'No hay cuidados programados para este día.'
+                : 'No hay tratamientos programados este mes.'}
             </Text>
           )}
         </View>
