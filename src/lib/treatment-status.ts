@@ -37,3 +37,18 @@ export function getMostUrgentTreatment(treatments: Treatment[]): Treatment | und
     .filter((t) => t.active)
     .sort((a, b) => new Date(a.nextDueDate).getTime() - new Date(b.nextDueDate).getTime())[0];
 }
+
+export interface CareProgress {
+  completed: number;
+  total: number;
+}
+
+export function getCareProgress(treatments: Treatment[], today: Date = new Date()): CareProgress {
+  const activeTreatments = treatments.filter((treatment) => treatment.active);
+  const completed = activeTreatments.filter((treatment) => {
+    const status = getTreatmentStatus(treatment.nextDueDate, today);
+    return status === 'today' || status === 'upcoming';
+  }).length;
+
+  return { completed, total: activeTreatments.length };
+}

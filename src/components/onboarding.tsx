@@ -54,11 +54,12 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
   const finish = async () => {
     if (isFinishing) return;
     setIsFinishing(true);
+    setIsVisible(false);
     try {
       await onboardingService.markCompleted();
-      setIsVisible(false);
     } catch (error) {
       console.error('Failed to persist onboarding completion:', error);
+      setIsVisible(true);
     } finally {
       setIsFinishing(false);
     }

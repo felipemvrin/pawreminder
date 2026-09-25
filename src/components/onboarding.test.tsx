@@ -75,8 +75,9 @@ describe('OnboardingGate', () => {
     );
 
     await waitFor(() => expect(screen.getByRole('button', { name: 'Saltar' })).toBeTruthy());
-    fireEvent.press(screen.getByRole('button', { name: 'Saltar' }));
-    fireEvent.press(screen.getByRole('button', { name: 'Saltar' }));
+    const skipButton = screen.getByRole('button', { name: 'Saltar' });
+    fireEvent.press(skipButton);
+    fireEvent.press(skipButton);
 
     expect(onboardingService.markCompleted).toHaveBeenCalledTimes(1);
     resolveMarkCompleted?.();

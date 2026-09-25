@@ -2,7 +2,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/rea
 
 import { databaseService } from '@/services/database/database-service';
 import { notificationService } from '@/services/notifications/notification-service';
-import { getMostUrgentTreatment } from '@/lib/treatment-status';
+import { getCareProgress, getMostUrgentTreatment } from '@/lib/treatment-status';
 import type { EntityId, ISODateString, Pet, Treatment } from '@/types/domain';
 
 export const treatmentsKeys = {
@@ -15,6 +15,29 @@ export const treatmentLogsKeys = {
   byPet: (petId: string) => ['treatment-logs', 'pet', petId] as const,
   byTreatment: (treatmentId: string) => ['treatment-logs', 'treatment', treatmentId] as const
 };
+
+function usePetTreatmentsData(pets: Pet[] | undefined) {
+  const results = useQueries({
+    queries: (pets ?? []).map((pet) => ({
+      queryKey: treatmentsKeys.byPet(pet.id),
+      queryFn: () => databaseService.getTreatmentsByPetId(pet.id),
+      enabled: Boolean(pets)
+    }))
+  });
+
+  const treatmentsByPet = new Map<string, Treatment[] | undefined>();
+  (pets ?? []).forEach((pet, index) => {
+    const result = results[index];
+    treatmentsByPet.set(pet.id, result?.data);
+  });
+
+  return {
+    treatmentsByPet,
+    isLoading: results.some((result) => result.isLoading),
+    isRefreshing: results.some((result) => result.isFetching && result.data !== undefined),
+    isError: results.some((result) => result.isError)
+  };
+}
 
 export function useTreatmentsByPet(petId: string | undefined) {
   return useQuery({
@@ -34,22 +57,60 @@ export function useTreatment(treatmentId: string | undefined) {
 
 /** Fetches the most urgent active treatment for each pet, used for status badges on the home list. */
 export function usePetTreatmentSummaries(pets: Pet[] | undefined) {
-  const results = useQueries({
-    queries: (pets ?? []).map((pet) => ({
-      queryKey: treatmentsKeys.byPet(pet.id),
-      queryFn: () => databaseService.getTreatmentsByPetId(pet.id),
-      enabled: Boolean(pets)
-    }))
-  });
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
 
   const summaries = new Map<string, Treatment | undefined>();
-  (pets ?? []).forEach((pet, index) => {
-    summaries.set(pet.id, getMostUrgentTreatment(results[index]?.data ?? []));
+  (pets ?? []).forEach((pet) => {
+    const treatments = treatmentsByPet.get(pet.id);
+    if (treatments === undefined) return;
+    summaries.set(pet.id, getMostUrgentTreatment(treatments));
   });
 
   return {
     summaries,
-    isLoading: results.some((r) => r.isLoading)
+    isLoading,
+    isRefreshing,
+    isError
+  };
+}
+
+export function usePetCareProgress(pets: Pet[] | undefined) {
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
+
+  const progress = new Map<string, ReturnType<typeof getCareProgress>>();
+  (pets ?? []).forEach((pet) => {
+    const treatments = treatmentsByPet.get(pet.id);
+    if (treatments === undefined) return;
+    progress.set(pet.id, getCareProgress(treatments));
+  });
+
+  return {
+    progress,
+    isLoading,
+    isRefreshing,
+    isError
+  };
+}
+
+export function usePetCareDashboard(pets: Pet[] | undefined) {
+  const { treatmentsByPet, isLoading, isRefreshing, isError } = usePetTreatmentsData(pets);
+
+  const summaries = new Map<string, Treatment | undefined>();
+  const progress = new Map<string, ReturnType<typeof getCareProgress>>();
+
+  (pets ?? []).forEach((pet) => {
+    const treatments = treatmentsByPet.get(pet.id);
+    if (treatments === undefined) return;
+    summaries.set(pet.id, getMostUrgentTreatment(treatments));
+    progress.set(pet.id, getCareProgress(treatments));
+  });
+
+  return {
+    summaries,
+    progress,
+    isLoading,
+    isRefreshing,
+    isError
   };
 }
 
