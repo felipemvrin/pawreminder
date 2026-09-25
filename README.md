@@ -170,7 +170,7 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 - [x] administración avanzada de recordatorios
 - [x] soporte para más tipos de cuidado
 - [x] dashboard de seguimiento preventivo por mascota
-- [ ] calendario interactivo con detalle y filtros
+- [x] calendario interactivo con detalle y filtros
 - [ ] historial ampliado con notas y resumen para veterinario
 - [ ] experiencia inicial y estados vacíos orientados a acciones
 - [ ] adaptación y validación de la experiencia en iPad
@@ -224,7 +224,9 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [ ] Siguiente paso pendiente: validar visualmente el dashboard y onboarding en Expo Go antes de preparar la siguiente build.
 - [x] Se consolidó la carga del dashboard preventivo para reutilizar una sola consulta por mascota y evitar mostrar `0 de 0` mientras los tratamientos siguen cargando o fallan.
 - [x] Validado: `npm run lint`, `npm run typecheck` y `npm test -- --runInBand --runTestsByPath src/lib/hooks/use-treatments.test.tsx src/lib/treatment-status.test.ts`.
-- [ ] Siguiente paso pendiente: ampliar la cobertura de integración del home para estados del dashboard y navegación principal.
+- [x] Se hizo interactivo el calendario con selección de día, detalle contextual y filtro por mascota, manteniendo la lógica de fechas existente.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 21 suites y 84 pruebas pasan.
+- [ ] Siguiente paso pendiente: ampliar el historial con notas y resumen para veterinario.
 
 ### 2026-09-21
 
