@@ -98,12 +98,14 @@ export function usePetCareDashboard(pets: Pet[] | undefined) {
   const summaries = new Map<string, Treatment | undefined>();
   const progress = new Map<string, ReturnType<typeof getCareProgress>>();
 
-  (pets ?? []).forEach((pet) => {
-    const treatments = treatmentsByPet.get(pet.id);
-    if (treatments === undefined) return;
-    summaries.set(pet.id, getMostUrgentTreatment(treatments));
-    progress.set(pet.id, getCareProgress(treatments));
-  });
+  if (!isLoading) {
+    (pets ?? []).forEach((pet) => {
+      const treatments = treatmentsByPet.get(pet.id);
+      if (treatments === undefined) return;
+      summaries.set(pet.id, getMostUrgentTreatment(treatments));
+      progress.set(pet.id, getCareProgress(treatments));
+    });
+  }
 
   return {
     summaries,
