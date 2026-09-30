@@ -138,7 +138,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [ ] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
 - [x] ejecutar build iOS de producción y subirlo a TestFlight
 
-La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --runInBand` (56 pruebas). El build `1.0.0 (2)` fue subido correctamente a App Store Connect. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
+La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. El último intento de generar una nueva build fue bloqueado por el límite mensual de EAS; no se creó ni subió un binario. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
 
 ## Fases del proyecto
 
@@ -187,11 +187,19 @@ La build pasa actualmente `npm run typecheck`, `npm run lint` y `npm test -- --r
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2 debido a funcionalidad mínima percibida. La prioridad actual es ampliar el valor visible de la app con un dashboard de seguimiento preventivo, un calendario más interactivo, un historial útil para consultas veterinarias y una experiencia validada en iPad antes de generar una nueva build para revisión. El dashboard de seguimiento ya evita mostrar conteos transitorios incorrectos mientras carga los tratamientos por mascota.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados; el dashboard espera a que finalice la carga inicial de tratamientos antes de exponer sus métricas. El siguiente paso inmediato es generar la build `1.0.0 (7)` cuando se restablezca el cupo mensual de EAS y probarla en TestFlight; EAS no registró una nueva build y reportó el restablecimiento para el 1 de octubre de 2026.
 
 ## Registro de evolución
 
 Este registro sirve como historial formal del progreso del proyecto. Cada actualización debe documentar la fecha, el bloque completado, la validación asociada y el siguiente paso pendiente.
+
+### 2026-09-30
+
+- [x] Se corrigió el dashboard para no exponer progreso parcial mientras cargan los tratamientos de todas las mascotas.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 21 suites y 84 pruebas pasan.
+- [x] Se verificaron las credenciales remotas de firma y App Store Connect; el certificado y el perfil están activos.
+- [x] Validado: EAS bloqueó el build por el límite mensual del plan gratuito antes de crear un binario; el intento reservó el número remoto `6` y el siguiente intento usará `7`.
+- [ ] Siguiente paso pendiente: reintentar el build iOS de producción después del restablecimiento de cuota de EAS y probarlo en TestFlight.
 
 ### 2026-09-24
 
