@@ -13,6 +13,38 @@ interface PetCareDashboardProps {
 export function PetCareDashboard({ pets, progress }: PetCareDashboardProps) {
   const total = pets.reduce((sum, pet) => sum + (progress.get(pet.id)?.total ?? 0), 0);
   const completed = pets.reduce((sum, pet) => sum + (progress.get(pet.id)?.completed ?? 0), 0);
+  const isScrollable = pets.length > 2;
+
+  const petCards = pets.map((pet) => {
+    const petProgress = progress.get(pet.id) ?? { completed: 0, total: 0 };
+    return (
+      <View
+        key={pet.id}
+        style={{
+          width: isScrollable ? 148 : undefined,
+          flex: isScrollable ? undefined : 1,
+          alignItems: 'center',
+          gap: spacing[2],
+          padding: spacing[3],
+          borderRadius: radius.lg,
+          borderWidth: 1,
+          borderColor: colors.border,
+          backgroundColor: colors.surface
+        }}
+      >
+        <ProgressRing
+          completed={petProgress.completed}
+          total={petProgress.total}
+          size={88}
+          strokeWidth={8}
+          accessibilityLabel={`${pet.name}: ${petProgress.completed} de ${petProgress.total} cuidados al día`}
+        />
+        <Text style={{ ...typography.label, color: colors.foreground }} numberOfLines={1}>
+          {pet.name}
+        </Text>
+      </View>
+    );
+  });
 
   return (
     <View style={{ gap: spacing[3] }}>
@@ -22,41 +54,17 @@ export function PetCareDashboard({ pets, progress }: PetCareDashboardProps) {
           {completed} de {total} cuidados al día
         </Text>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: spacing[3] }}
-      >
-        {pets.map((pet) => {
-          const petProgress = progress.get(pet.id) ?? { completed: 0, total: 0 };
-          return (
-            <View
-              key={pet.id}
-              style={{
-                width: 148,
-                alignItems: 'center',
-                gap: spacing[2],
-                padding: spacing[3],
-                borderRadius: radius.lg,
-                borderWidth: 1,
-                borderColor: colors.border,
-                backgroundColor: colors.surface
-              }}
-            >
-              <ProgressRing
-                completed={petProgress.completed}
-                total={petProgress.total}
-                size={88}
-                strokeWidth={8}
-                accessibilityLabel={`${pet.name}: ${petProgress.completed} de ${petProgress.total} cuidados al día`}
-              />
-              <Text style={{ ...typography.label, color: colors.foreground }} numberOfLines={1}>
-                {pet.name}
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
+      {isScrollable ? (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: spacing[3] }}
+        >
+          {petCards}
+        </ScrollView>
+      ) : (
+        <View style={{ flexDirection: 'row', gap: spacing[3] }}>{petCards}</View>
+      )}
     </View>
   );
 }
