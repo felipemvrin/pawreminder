@@ -135,10 +135,10 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] variables públicas de Supabase documentadas en `.env.example`
 - [x] crear y vincular el proyecto EAS con la cuenta de Expo
 - [x] añadir icono opaco para la app y splash desde los assets de `paw-reminder`
-- [ ] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
-- [x] ejecutar build iOS de producción y subirlo a TestFlight
+- [x] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
+- [x] ejecutar build iOS de producción y subirla a App Store Connect
 
-La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. El último intento de generar una nueva build fue bloqueado por el límite mensual de EAS; no se creó ni subió un binario. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
+La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. La build iOS de producción `1.0.0 (7)` se subió correctamente a App Store Connect y Apple la está procesando para TestFlight. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
 
 ## Fases del proyecto
 
@@ -187,11 +187,22 @@ La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboa
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados; el dashboard espera a que finalice la carga inicial de tratamientos antes de exponer sus métricas. El siguiente paso inmediato es generar la build `1.0.0 (7)` cuando se restablezca el cupo mensual de EAS y probarla en TestFlight; EAS no registró una nueva build y reportó el restablecimiento para el 1 de octubre de 2026.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados; ahora sus tarjetas se adaptan al ancho disponible con hasta dos mascotas y usan scroll horizontal con más de dos. La build iOS `1.0.0 (7)` se subió a App Store Connect el 1 de octubre de 2026 y está pendiente de procesamiento de Apple; no incluye este último ajuste local. El siguiente paso es validar visualmente el layout adaptable en dispositivos.
 
 ## Registro de evolución
 
 Este registro sirve como historial formal del progreso del proyecto. Cada actualización debe documentar la fecha, el bloque completado, la validación asociada y el siguiente paso pendiente.
+
+### 2026-10-01
+
+- [x] Se adaptó el dashboard de cuidados: hasta dos mascotas comparten el ancho disponible y desde tres se muestra scroll horizontal.
+- [x] Validado: `npm run typecheck`, `npm run lint` y `npm test -- --runInBand`; 22 suites y 86 pruebas pasan, incluyendo ambos modos de distribución.
+- [ ] Siguiente paso pendiente: validar visualmente la distribución con una, dos y tres mascotas en un dispositivo.
+- [x] Se generó en EAS el build iOS de producción `1.0.0 (7)` para TestFlight.
+- [x] Validado: EAS completó el build `c617a101-cdbe-4b21-ae82-fad7aad78e20` con las credenciales remotas activas y produjo el [IPA](https://expo.dev/artifacts/eas/uMjYFXhNrIlhGhhtT9QCkXQ13wF88BRpN1mmgzSStKc.ipa).
+- [x] Se subió la build `1.0.0 (7)` a App Store Connect después de recuperar el acceso al Apple ID.
+- [x] Validado: EAS confirmó la carga del binario; envío `db799818-96f1-445d-a985-72d0b6b091ca`, App Store Connect App ID `6814319266`. Apple está procesando la build.
+- [ ] Siguiente paso pendiente: esperar el procesamiento de Apple e instalar la build desde TestFlight para validar el flujo principal.
 
 ### 2026-09-30
 
