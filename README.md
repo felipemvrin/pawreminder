@@ -135,8 +135,8 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] variables públicas de Supabase documentadas en `.env.example`
 - [x] crear y vincular el proyecto EAS con la cuenta de Expo
 - [x] añadir icono opaco para la app y splash desde los assets de `paw-reminder`
-- [ ] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
-- [x] ejecutar build iOS de producción y subirlo a TestFlight
+- [x] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
+- [x] ejecutar build iOS de producción y subirla a App Store Connect
 
 La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. La build iOS de producción `1.0.0 (7)` se subió correctamente a App Store Connect y Apple la está procesando para TestFlight. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
 
