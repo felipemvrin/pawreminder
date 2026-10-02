@@ -138,7 +138,7 @@ A fecha de revisión actual, este proyecto ya incluye funcionalidad real en vari
 - [x] desbloquear el Apple ID y configurar Apple Developer/App Store Connect
 - [x] ejecutar build iOS de producción y subirla a App Store Connect
 
-La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. La build iOS de producción `1.0.0 (7)` se subió correctamente a App Store Connect y Apple la está procesando para TestFlight. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
+La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados en `main`. La build iOS de producción `1.0.0 (8)`, que incluye el layout adaptable del dashboard, se subió correctamente a App Store Connect y Apple la está procesando para TestFlight. La política de privacidad pública está disponible en https://pawreminder.pages.dev.
 
 ## Fases del proyecto
 
@@ -187,7 +187,7 @@ La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboa
 
 ## Estado actual del proceso
 
-El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados; ahora sus tarjetas se adaptan al ancho disponible con hasta dos mascotas y usan scroll horizontal con más de dos. La build iOS `1.0.0 (7)` se subió a App Store Connect el 1 de octubre de 2026 y está pendiente de procesamiento de Apple; no incluye este último ajuste local. El siguiente paso es validar visualmente el layout adaptable en dispositivos.
+El proyecto se encuentra en una etapa de MVP funcional local con calendario mensual, fotos locales, administración de recordatorios y soporte para vacunas u otros cuidados. La build `1.0.0 (4)` fue rechazada por App Review bajo Guideline 4.2. El dashboard preventivo y el calendario interactivo ya están implementados; sus tarjetas se adaptan al ancho disponible con hasta dos mascotas y usan scroll horizontal con más de dos. La build iOS `1.0.0 (8)` incluye este cambio y se subió a App Store Connect el 1 de octubre de 2026; Apple está procesándola. El siguiente paso es instalarla desde TestFlight y validar el layout con una, dos y tres mascotas.
 
 ## Registro de evolución
 
@@ -202,7 +202,11 @@ Este registro sirve como historial formal del progreso del proyecto. Cada actual
 - [x] Validado: EAS completó el build `c617a101-cdbe-4b21-ae82-fad7aad78e20` con las credenciales remotas activas y produjo el [IPA](https://expo.dev/artifacts/eas/uMjYFXhNrIlhGhhtT9QCkXQ13wF88BRpN1mmgzSStKc.ipa).
 - [x] Se subió la build `1.0.0 (7)` a App Store Connect después de recuperar el acceso al Apple ID.
 - [x] Validado: EAS confirmó la carga del binario; envío `db799818-96f1-445d-a985-72d0b6b091ca`, App Store Connect App ID `6814319266`. Apple está procesando la build.
-- [ ] Siguiente paso pendiente: esperar el procesamiento de Apple e instalar la build desde TestFlight para validar el flujo principal.
+- [x] Se generó el build iOS de producción `1.0.0 (8)` desde `main`, incluyendo el layout adaptable del dashboard.
+- [x] Validado: EAS completó el build `f423314b-de5f-4435-8f5c-471a3891b8d5` y produjo el [IPA](https://expo.dev/artifacts/eas/NQMYkr3ibgPDcgG3SkUCtfqkE7iVTnmLS7tENtrgzYQ.ipa).
+- [x] Se subió la build `1.0.0 (8)` a App Store Connect; envío `4ea17528-0456-4b9a-96a3-8449e553fe83`.
+- [x] Validado: EAS confirmó que Apple recibió el binario y comenzó su procesamiento.
+- [ ] Siguiente paso pendiente: esperar el procesamiento e instalar la build `1.0.0 (8)` desde TestFlight para validar el dashboard con una, dos y tres mascotas.
 
 ### 2026-09-30
 
